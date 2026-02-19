@@ -11,10 +11,10 @@
 | 1 | Setup do Projeto (repo, estrutura, configs) | ✅ Concluída | — | 18/02/2026 |
 | 2 | Copiar Design System do Pulse | ✅ Concluída | — | 18/02/2026 |
 | 3 | Adaptar componentes (Next.js → React/Vite) | ✅ Concluída | — | 18/02/2026 |
-| 4 | Backend: Setup (Express, Prisma, PostgreSQL, Docker) | 🔶 Em progresso | — | — |
-| 5 | Backend: Autenticação (register, login, JWT, refresh token) | ⬚ Pendente | — | — |
-| 6 | Frontend: Páginas de Auth (Login, Registro, Forgot Password) | ⬚ Pendente | — | — |
-| 7 | Backend: CRUD de Salas + Membros | ⬚ Pendente | — | — |
+| 4 | Backend: Setup (Express, Prisma, PostgreSQL, Docker) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
+| 5 | Backend: Autenticação (register, login, JWT, refresh token) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
+| 6 | Frontend: Páginas de Auth (Login, Registro, Forgot Password) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
+| 7 | Backend: CRUD de Salas + Membros | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 8 | Frontend: Lista de Salas + Criar/Entrar em Sala | ⬚ Pendente | — | — |
 | 9 | Backend: Socket.io + Eventos de Conexão | ⬚ Pendente | — | — |
 | 10 | Mensagens em Tempo Real (envio/recebimento) | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 3/23 fases concluídas (~13%) + 1 em progresso**
+**Progresso global: 7/23 fases concluídas (~30%)**
 
 ---
 
@@ -71,42 +71,80 @@
 - [x] Instalar dependências necessárias (11 pacotes Radix UI, CVA, tailwind-merge, clsx)
 - [x] Verificar que todos os componentes compilam sem erros (App.tsx usa vários componentes)
 
-### Fase 4 — Backend: Setup 🔶
+### Fase 4 — Backend: Setup ✅
 
 - [x] Inicializar Node.js + Express + TypeScript (Express 5, TypeScript 5.9, tsx)
 - [x] Configurar PostgreSQL no Docker (docker-compose.yml com health checks)
-- [x] Configurar Prisma ORM (Prisma 7 instalado, prisma.config.ts)
+- [x] Configurar Prisma ORM (Prisma 7 + @prisma/adapter-pg + pg driver)
 - [x] Criar schema do banco (User, Room, RoomMember, Message + 3 enums + indexes)
-- [ ] Rodar primeira migration (`prisma migrate dev`)
-- [ ] Criar script de seed com dados demo (`prisma/seed.ts`)
-- [ ] Criar `src/app.ts` (servidor Express com middleware base)
-- [ ] Criar estrutura de pastas do backend (controllers/, routes/, services/, middleware/)
+- [x] Rodar primeira migration (`prisma migrate dev --name init`)
+- [x] Criar script de seed com dados demo (5 users, 4 rooms, 13 memberships, 14 messages)
+- [x] Criar `src/app.ts` (Express server + helmet + cors + rate limiter + morgan + error handler)
+- [x] Criar estrutura de pastas do backend:
+  - `src/config/` — env.ts (Zod validation), database.ts (Prisma + PrismaPg adapter), index.ts
+  - `src/errors/` — AppError, AuthError, ForbiddenError, NotFoundError, ConflictError, RateLimitError, ValidationError
+  - `src/middleware/` — auth.ts (JWT), errorHandler.ts, rateLimiter.ts, requestLogger.ts (Morgan), validate.ts (Zod)
+  - `src/routes/` — health.ts (GET /api/v1/health), index.ts (route aggregator)
+  - `src/types/` — api.ts (ApiResponse, AuthPayload, AuthenticatedRequest, pagination types)
+- [x] Health check endpoint testado (GET /api/v1/health → { success: true, data: { server: "ok", database: "ok" } })
 
-### Fase 5 — Backend: Autenticação ⬚
+### Fase 5 — Backend: Autenticação ✅
 
-- [ ] Rota POST `/auth/register` (bcrypt + JWT)
-- [ ] Rota POST `/auth/login` (access + refresh token)
-- [ ] Rota POST `/auth/refresh-token`
-- [ ] Rota POST `/auth/forgot-password`
-- [ ] Middleware de autenticação (verificar JWT)
-- [ ] Rate limiter nas rotas de auth
+- [x] Arquitetura 3 camadas: Controller → Service → Repository
+  - `src/repositories/user.repository.ts` — Queries Prisma (findByEmail, findById, create, updateStatus)
+  - `src/services/auth.service.ts` — Lógica de negócio (register, login, refreshToken, getProfile)
+  - `src/controllers/auth.controller.ts` — Request handling + response formatting + cookie management
+- [x] Rota POST `/api/v1/auth/register` (bcrypt saltRounds:12 + JWT + validação Zod)
+- [x] Rota POST `/api/v1/auth/login` (access token 15min + refresh token 7d httpOnly cookie)
+- [x] Rota POST `/api/v1/auth/refresh-token` (lê refresh do cookie, gera novo par)
+- [x] Rota POST `/api/v1/auth/logout` (limpa cookie do refresh token)
+- [x] Rota GET `/api/v1/auth/me` (rota protegida, retorna perfil do user autenticado)
+- [x] JWT utils (generateAccessToken, generateRefreshToken, verifyRefreshToken)
+- [x] Validação Zod: registerSchema (name 2-50, email, password 6-128), loginSchema
+- [x] Middleware de autenticação (verificar JWT) — já criado na Fase 4
+- [x] Rate limiter nas rotas de auth (10 req/min) — já criado na Fase 4
+- [x] Todos os endpoints testados com curl (9 testes: register, duplicate, validation, login, wrong password, me auth, me no token, refresh, logout)
 
-### Fase 6 — Frontend: Auth ⬚
+### Fase 6 — Frontend: Auth ✅
 
-- [ ] Página de Login (reutilizando AuthCard + AuthBackground do Pulse)
-- [ ] Página de Registro
-- [ ] Página de Recuperação de Senha
-- [ ] Integração com API (React Query)
-- [ ] Proteção de rotas (ProtectedRoute)
-- [ ] Botão "Entrar como Demo"
+- [x] AuthLayout split-screen (AuthBackground animada à esquerda + form à direita, responsivo)
+- [x] Página de Login (`/login`) — reutilizando AuthCard, AuthDivider, AuthLink, Input, PasswordInput do Pulse
+- [x] Página de Registro (`/register`) — reutilizando AuthCard, Form + ControlledField + FormLabel + FormControl + FormMessage, PasswordInput com showStrength
+- [x] SocialLoginButtons (Google, GitHub) — visuais desativados (disabled), preparados para integração futura
+- [x] API client com auto-refresh de token (`services/api.ts`) — intercepta 401, tenta refresh, retry
+- [x] Auth service (`services/auth.service.ts`) — register, login, refreshToken, logout, getProfile
+- [x] Auth store Zustand (`store/auth.store.ts`) — user, accessToken, isAuthenticated, isLoading
+- [x] Proteção de rotas (`ProtectedRoute`) — redireciona para /login se não autenticado, Spinner durante loading
+- [x] Restore de sessão no App mount — tenta refresh token + getProfile ao carregar
+- [x] Botão "Entrar como Demo" (usa credenciais seed: andriy@example.com)
+- [x] Server errors inline com estilo do design system
+- [x] Validação Zod no frontend (nome 2-50, email, senha 6+) + errors por campo do backend (422)
+- [x] Página placeholder pós-login (`/chat`) com header, avatar, nome do user, logout
+- [x] Fluxo completo testado: register → login → /me → refresh → proxy Vite → tudo OK
 
-### Fase 7 — Backend: Salas ⬚
+### Fase 7 — Backend: Salas ✅
 
-- [ ] CRUD de salas (criar, listar, editar, deletar)
-- [ ] Sistema de membros (entrar, sair, remover)
-- [ ] Salas públicas vs privadas
-- [ ] Convite por link (invite code)
-- [ ] Roles (ADMIN, MEMBER)
+- [x] Arquitetura 3 camadas: Controller → Service → Repository
+  - `src/repositories/room.repository.ts` — Room + RoomMember Prisma queries (CRUD, join, leave, role management)
+  - `src/services/room.service.ts` — Lógica de negócio (permissões, invite codes, validações)
+  - `src/controllers/room.controller.ts` — Request handling + response formatting
+- [x] Tipos + validação Zod (`src/types/room.ts`) — createRoom, updateRoom, joinRoom, updateMemberRole, listRoomsQuery (paginação + search)
+- [x] 12 endpoints RESTful:
+  - `POST /rooms` — Criar sala (pública ou privada, gera invite code automático)
+  - `GET /rooms` — Listar minhas salas (paginado + busca por nome)
+  - `GET /rooms/public` — Descobrir salas públicas (paginado + busca)
+  - `GET /rooms/:roomId` — Detalhes da sala (membros, contagem de mensagens)
+  - `PATCH /rooms/:roomId` — Atualizar sala (admin/owner only)
+  - `DELETE /rooms/:roomId` — Excluir sala (owner only)
+  - `POST /rooms/:roomId/join` — Entrar (público direto, privado com invite code)
+  - `POST /rooms/:roomId/leave` — Sair da sala (owner não pode sair)
+  - `GET /rooms/:roomId/members` — Listar membros
+  - `PATCH /rooms/:roomId/members/:memberId` — Alterar cargo (admin/owner only)
+  - `DELETE /rooms/:roomId/members/:memberId` — Remover membro (admin/owner only)
+  - `POST /rooms/:roomId/invite-code` — Regenerar código de convite
+- [x] Regras de negócio: owner auto-ADMIN, owner não pode sair, proteção contra auto-alteração de cargo, admin não remove admin (só owner), invite code 8 chars hex
+- [x] Fix Express 5: `req.query`/`req.params` read-only → dados validados em `res.locals`
+- [x] 16 testes manuais via curl — todos passaram
 
 ### Fase 8 — Frontend: Salas ⬚
 
