@@ -6,7 +6,7 @@ import AuthLayout from '@pages/auth/AuthLayout'
 import LoginPage from '@pages/auth/LoginPage'
 import RegisterPage from '@pages/auth/RegisterPage'
 import ProtectedRoute from '@components/ProtectedRoute'
-import ChatPage from '@pages/chat/ChatPage'
+import ChatLayout from '@pages/chat/ChatLayout'
 
 export default function App() {
   const setAuth = useAuthStore((s) => s.setAuth)
@@ -36,7 +36,7 @@ export default function App() {
 
       {/* Protected pages */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat" element={<ChatLayout />} />
       </Route>
 
       {/* Catch-all redirect */}

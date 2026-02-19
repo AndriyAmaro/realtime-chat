@@ -15,7 +15,7 @@
 | 5 | Backend: Autenticação (register, login, JWT, refresh token) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 6 | Frontend: Páginas de Auth (Login, Registro, Forgot Password) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 7 | Backend: CRUD de Salas + Membros | ✅ Concluída | 19/02/2026 | 19/02/2026 |
-| 8 | Frontend: Lista de Salas + Criar/Entrar em Sala | ⬚ Pendente | — | — |
+| 8 | Frontend: Lista de Salas + Criar/Entrar em Sala | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 9 | Backend: Socket.io + Eventos de Conexão | ⬚ Pendente | — | — |
 | 10 | Mensagens em Tempo Real (envio/recebimento) | ⬚ Pendente | — | — |
 | 11 | Indicador "digitando..." + Status online/offline | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 7/23 fases concluídas (~30%)**
+**Progresso global: 8/23 fases concluídas (~35%)**
 
 ---
 
@@ -146,13 +146,25 @@
 - [x] Fix Express 5: `req.query`/`req.params` read-only → dados validados em `res.locals`
 - [x] 16 testes manuais via curl — todos passaram
 
-### Fase 8 — Frontend: Salas ⬚
+### Fase 8 — Frontend: Salas ✅
 
-- [ ] Lista de salas na Sidebar (reutilizando Sidebar do Pulse)
-- [ ] Card de sala com info (membros online, última mensagem)
-- [ ] Modal para criar sala
-- [ ] Entrar em sala por convite
-- [ ] Lista de membros da sala
+- [x] ChatLayout completo (header + sidebar colapsável + main area)
+- [x] RoomSidebar com tabs "Minhas salas" / "Descobrir" (salas públicas)
+  - Reutiliza: Tabs (underline), SearchBar (filled, debounce 300ms), EmptyState, Avatar, Badge
+- [x] RoomItem com ícone (Hash/Lock), nome, descrição, badge "dono"
+- [x] CreateRoomModal — Form com React Hook Form + Zod, Switch para sala privada
+  - Reutiliza: Modal (compound), Form + ControlledField, Input, Switch, SubmitButton
+- [x] JoinRoomModal — Entrar via ID da sala + código de convite
+  - Reutiliza: Modal, Input, Button, Spinner
+- [x] RoomView — Header da sala + painel de membros + placeholder para mensagens
+  - Copiar ID da sala, ver invite code (admin/owner), sair/excluir sala
+  - Reutiliza: Avatar (com status online/offline/away), Badge, Button, EmptyState
+- [x] Room service (`services/room.service.ts`) — CRUD + join/leave + members API calls
+- [x] React Query hooks (`hooks/useRooms.ts`) — useMyRooms, usePublicRooms, useRoom, useRoomMembers, mutations (create, join, leave, delete)
+- [x] Zustand store (`store/room.store.ts`) — selectedRoomId
+- [x] Types (`types/room.ts`) — Room, RoomDetail, RoomMember, PaginationMeta
+- [x] App.tsx atualizado: /chat agora renderiza ChatLayout
+- [x] Zero erros TypeScript, fluxo completo testado via proxy Vite
 
 ### Fase 9 — Backend: Socket.io ⬚
 
