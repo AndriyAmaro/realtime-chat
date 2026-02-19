@@ -1,6 +1,7 @@
 import { registerRoomHandlers } from './room.handler.js'
 import { registerMessageHandlers } from './message.handler.js'
 import { registerStatusHandlers } from './status.handler.js'
+import { roomMemberRepository } from '../repositories/room.repository.js'
 import type { TypedServer, TypedSocket } from '../types/socket.js'
 
 /**
@@ -8,6 +9,9 @@ import type { TypedServer, TypedSocket } from '../types/socket.js'
  * Called once per client connection after auth middleware passes.
  */
 export function registerSocketHandlers(io: TypedServer, socket: TypedSocket): void {
+  // Auto-join all user's rooms so they receive message:new for every room
+  autoJoinUserRooms(socket)
+
   // Typing indicator events
   registerTypingHandlers(socket)
 
@@ -19,6 +23,19 @@ export function registerSocketHandlers(io: TypedServer, socket: TypedSocket): vo
 
   // Online/offline status
   registerStatusHandlers(io, socket)
+}
+
+// ============ AUTO-JOIN ============
+
+async function autoJoinUserRooms(socket: TypedSocket): Promise<void> {
+  try {
+    const roomIds = await roomMemberRepository.findRoomIdsByUserId(socket.data.userId)
+    for (const roomId of roomIds) {
+      await socket.join(roomId)
+    }
+  } catch (err) {
+    console.error('[socket] Failed to auto-join rooms:', err)
+  }
 }
 
 // ============ TYPING ============

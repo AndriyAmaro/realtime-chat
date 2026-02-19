@@ -8,6 +8,7 @@ import { Plus, Link2, Hash, Lock } from 'lucide-react'
 import { useMyRooms, usePublicRooms } from '@hooks/useRooms'
 import { useRoomStore } from '@store/room.store'
 import { useAuthStore } from '@store/auth.store'
+import { useNotificationStore } from '@store/notification.store'
 import { Avatar } from '@core/primitives/Avatar'
 import { Badge } from '@core/primitives/Badge'
 import { CreateRoomModal } from './CreateRoomModal'
@@ -152,20 +153,36 @@ function RoomItem({ room, showJoinHint }: { room: Room; showJoinHint?: boolean }
   const selectedRoomId = useRoomStore((s) => s.selectedRoomId)
   const selectRoom = useRoomStore((s) => s.selectRoom)
   const userId = useAuthStore((s) => s.user?.id)
+  const unreadCount = useNotificationStore((s) => s.unreadCounts[room.id] ?? 0)
+  const clearUnread = useNotificationStore((s) => s.clearUnread)
   const isSelected = selectedRoomId === room.id
   const isOwner = room.ownerId === userId
+
+  function handleSelect() {
+    selectRoom(room.id)
+    if (unreadCount > 0) {
+      clearUnread(room.id)
+    }
+  }
 
   return (
     <button
       type="button"
-      onClick={() => selectRoom(room.id)}
+      onClick={handleSelect}
       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
         isSelected
           ? 'bg-primary-500/10 text-primary-500'
           : 'text-[var(--text-primary)] hover:bg-[var(--bg-subtle)]'
       }`}
     >
-      <Avatar fallback={room.name.slice(0, 2).toUpperCase()} size="sm" />
+      <div className="relative">
+        <Avatar fallback={room.name.slice(0, 2).toUpperCase()} size="sm" />
+        {unreadCount > 0 && !isSelected && (
+          <span className="bg-error-base absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white">
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
+        )}
+      </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           {room.isPrivate ? (
@@ -173,7 +190,11 @@ function RoomItem({ room, showJoinHint }: { room: Room; showJoinHint?: boolean }
           ) : (
             <Hash className="h-3 w-3 shrink-0 text-[var(--text-muted)]" />
           )}
-          <span className="truncate text-sm font-medium">{room.name}</span>
+          <span
+            className={`truncate text-sm ${unreadCount > 0 && !isSelected ? 'font-semibold' : 'font-medium'}`}
+          >
+            {room.name}
+          </span>
           {isOwner && (
             <Badge variant="primary" size="sm">
               dono

@@ -3,9 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { ThemeToggle } from '@core/primitives/ThemeToggle'
 import { Avatar } from '@core/primitives/Avatar'
 import { Button } from '@core/primitives/Button'
+import { Toast } from '@core/patterns/Toast'
 import { useAuthStore } from '@store/auth.store'
+import { useNotificationStore } from '@store/notification.store'
 import { authService } from '@services/auth.service'
-import { LogOut, MessageSquare, PanelLeftClose, PanelLeft } from 'lucide-react'
+import { useSocket } from '@hooks/useSocket'
+import { useToast } from '@hooks/useToast'
+import { useNotifications } from '@hooks/useNotifications'
+import { LogOut, MessageSquare, PanelLeftClose, PanelLeft, Volume2, VolumeX } from 'lucide-react'
 import { RoomSidebar } from './RoomSidebar'
 import { RoomView } from './RoomView'
 import { useRoomStore } from '@store/room.store'
@@ -15,7 +20,14 @@ export default function ChatLayout() {
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
   const selectedRoomId = useRoomStore((s) => s.selectedRoomId)
+  const soundEnabled = useNotificationStore((s) => s.soundEnabled)
+  const toggleSound = useNotificationStore((s) => s.toggleSound)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+
+  // Socket + notifications
+  const { socket, isConnected } = useSocket()
+  const { toasts, addToast, dismissToast } = useToast()
+  useNotifications({ socket, isConnected, addToast })
 
   async function handleLogout() {
     try {
@@ -49,6 +61,18 @@ export default function ChatLayout() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={toggleSound}
+            aria-label={soundEnabled ? 'Desativar som' : 'Ativar som'}
+          >
+            {soundEnabled ? (
+              <Volume2 className="h-4 w-4" />
+            ) : (
+              <VolumeX className="h-4 w-4 text-[var(--text-muted)]" />
+            )}
+          </Button>
           <ThemeToggle />
           <div className="flex items-center gap-2">
             <Avatar
@@ -96,6 +120,20 @@ export default function ChatLayout() {
           )}
         </main>
       </div>
+
+      {/* Toast notifications */}
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          variant={toast.variant}
+          title={toast.title}
+          description={toast.description}
+          duration={toast.duration ?? 4000}
+          onOpenChange={(open) => {
+            if (!open) dismissToast(toast.id)
+          }}
+        />
+      ))}
     </div>
   )
 }

@@ -177,6 +177,15 @@ export const roomMemberRepository = {
   async countByRoomId(roomId: string) {
     return prisma.roomMember.count({ where: { roomId } })
   },
+
+  /** Get all room IDs for a user (lightweight — for socket auto-join) */
+  async findRoomIdsByUserId(userId: string): Promise<string[]> {
+    const memberships = await prisma.roomMember.findMany({
+      where: { userId },
+      select: { roomId: true },
+    })
+    return memberships.map((m) => m.roomId)
+  },
 }
 
 // ============ REUSABLE SELECTS ============

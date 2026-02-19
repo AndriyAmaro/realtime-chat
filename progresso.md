@@ -21,7 +21,7 @@
 | 11 | Indicador "digitando..." + Status online/offline | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 12 | Histórico de Mensagens + Scroll Infinito | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 13 | Upload de Imagens/Arquivos nas Mensagens | ✅ Concluída | 18/02/2026 | 18/02/2026 |
-| 14 | Notificações (badge, som, destaque visual) | ⬚ Pendente | — | — |
+| 14 | Notificações (badge, som, destaque visual) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 15 | Busca dentro das Mensagens | ⬚ Pendente | — | — |
 | 16 | Indicador de Leitura (visto ✓✓) | ⬚ Pendente | — | — |
 | 17 | Responsividade Completa (mobile) | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 13/23 fases concluídas (~57%)**
+**Progresso global: 14/23 fases concluídas (~61%)**
 
 ---
 
@@ -229,12 +229,24 @@
 - [x] Vite proxy `/uploads` → backend para servir arquivos em dev
 - [x] Zero erros TypeScript + ESLint
 
-### Fase 14 — Notificações ⬚
+### Fase 14 — Notificações ✅
 
-- [ ] Badge com contagem de não lidas (reutilizando Badge do Pulse)
-- [ ] Som de notificação para novas mensagens
-- [ ] Destaque visual em salas com mensagens novas
-- [ ] Toast notifications (reutilizando Toast do Pulse)
+- [x] Backend: Auto-join de todas as salas do user no socket connect (para receber `message:new` de todas)
+- [x] Backend: `roomMemberRepository.findRoomIdsByUserId()` — query leve para IDs das salas
+- [x] `notification.store.ts` — Zustand store para unread counts + preferência de som
+- [x] `useToast.ts` — Hook imperativo para gerenciar toasts (add/dismiss)
+- [x] `useNotifications.ts` — Hook global que escuta `message:new` para salas não ativas
+  - Incrementa unread count no notification store
+  - Toca som de notificação via Web Audio API (oscilador 800→600Hz, 0.3s)
+  - Mostra toast com nome do user + preview da mensagem (60 chars max)
+  - Não notifica mensagens próprias nem da sala ativa
+- [x] Badge de não lidas no `RoomItem` — bolinha vermelha com contagem (max "99+")
+- [x] Destaque visual — nome da sala em negrito quando há mensagens não lidas
+- [x] Limpa unreads ao clicar na sala
+- [x] Botão de toggle som no header (Volume2/VolumeX icons)
+- [x] `ToastProvider` + `ToastViewport` wired no `main.tsx` (position: top-right)
+- [x] Toasts renderizados no `ChatLayout` com auto-dismiss em 4s
+- [x] Zero erros TypeScript + ESLint
 
 ### Fase 15 — Busca de Mensagens ⬚
 
