@@ -28,11 +28,11 @@
 | 18 | Testes (Vitest + React Testing Library) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 19 | Documentação Swagger da API | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 20 | Docker Compose (tudo funciona com 1 comando) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
-| 21 | CI/CD (GitHub Actions) | ⬚ Pendente | — | — |
+| 21 | CI/CD (GitHub Actions) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 20/23 fases concluídas (~87%)**
+**Progresso global: 21/23 fases concluídas (~91%)**
 
 ---
 
@@ -372,11 +372,19 @@
 - [x] Ambiente de produção: `NODE_ENV=production`, todas as env vars configuráveis via `.env`
 - [x] Testado end-to-end: server healthy, client HTTP 200, API proxy OK, Swagger OK, migrations OK
 
-### Fase 21 — CI/CD ⬚
+### Fase 21 — CI/CD ✅
 
-- [ ] GitHub Actions: lint + tests em cada PR
-- [ ] Badge de CI no README
-- [ ] Auto-deploy no merge para main
+- [x] Criado `.github/workflows/ci.yml` — pipeline completo com GitHub Actions
+- [x] **4 jobs paralelos + sequenciais:**
+  - `lint` — ESLint (client + server) + Prettier check (formatting)
+  - `typecheck` — `tsc --noEmit` no server (com Prisma generate)
+  - `test` — Vitest server (25 tests) + Vitest client (12 tests)
+  - `build` — Compila server (`tsc`) + client (`vite build`) — roda após lint/typecheck/test passarem
+- [x] **Triggers:** push para `main` + pull requests contra `main`
+- [x] **Concurrency:** cancela runs anteriores da mesma branch (`cancel-in-progress: true`)
+- [x] **Cache:** npm cache com `cache-dependency-path` para os 3 lock files (root, server, client)
+- [x] **Node.js 22** em todas as jobs
+- [x] Pipeline: lint + typecheck + test (paralelos) → build (sequencial, depende dos 3)
 
 ### Fase 22 — Deploy ⬚
 
