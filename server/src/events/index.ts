@@ -1,6 +1,7 @@
 import { registerRoomHandlers } from './room.handler.js'
 import { registerMessageHandlers } from './message.handler.js'
 import { registerStatusHandlers } from './status.handler.js'
+import { registerReadHandlers } from './read.handler.js'
 import { roomMemberRepository } from '../repositories/room.repository.js'
 import type { TypedServer, TypedSocket } from '../types/socket.js'
 
@@ -23,6 +24,9 @@ export function registerSocketHandlers(io: TypedServer, socket: TypedSocket): vo
 
   // Online/offline status
   registerStatusHandlers(io, socket)
+
+  // Read receipts
+  registerReadHandlers(io, socket)
 }
 
 // ============ AUTO-JOIN ============

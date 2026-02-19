@@ -23,7 +23,7 @@
 | 13 | Upload de Imagens/Arquivos nas Mensagens | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 14 | Notificações (badge, som, destaque visual) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 15 | Busca dentro das Mensagens | ✅ Concluída | 18/02/2026 | 18/02/2026 |
-| 16 | Indicador de Leitura (visto ✓✓) | ⬚ Pendente | — | — |
+| 16 | Indicador de Leitura (visto ✓✓) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 17 | Responsividade Completa (mobile) | ⬚ Pendente | — | — |
 | 18 | Testes (Jest + React Testing Library) | ⬚ Pendente | — | — |
 | 19 | Documentação Swagger da API | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 15/23 fases concluídas (~65%)**
+**Progresso global: 16/23 fases concluídas (~70%)**
 
 ---
 
@@ -264,11 +264,23 @@
 - [x] Frontend: Painel de busca substitui painel de membros quando aberto
 - [x] Zero erros TypeScript + ESLint
 
-### Fase 16 — Indicador de Leitura ⬚
+### Fase 16 — Indicador de Leitura ✅
 
-- [ ] Marcar mensagens como lidas ao visualizar
-- [ ] Evento `messages-read` via Socket
-- [ ] Frontend: ícone ✓✓ nas mensagens
+- [x] Backend: `lastReadAt` DateTime no RoomMember (per-user per-room, não per-message)
+- [x] Backend: Migration `add_last_read_at` aplicada
+- [x] Backend: `roomMemberRepository.updateLastReadAt()` + `getReadReceipts()`
+- [x] Backend: `read.handler.ts` — escuta `messages:read`, persiste no DB, broadcast para room
+- [x] Backend: Envia read receipts iniciais no `room:join` (`messages:read_receipts`)
+- [x] Socket types: `messages:read` (bidirecional) + `messages:read_receipts` (server→client)
+- [x] Frontend: `useReadReceipts` hook — emit `messages:read` ao abrir sala + novos messages
+  - Escuta `messages:read_receipts` (bulk inicial) e `messages:read` (updates em tempo real)
+  - Expõe `isReadByOthers(createdAt)` — verifica se algum outro membro leu após o timestamp
+  - Reset de receipts ao trocar de sala ("adjust state during render" pattern)
+- [x] Frontend: ChatArea — `showStatus` habilitado no `ChatMessage`
+  - `toChatMessage` agora calcula `status: 'read'` (✓✓ azul) vs `'sent'` (✓ branco)
+  - Status só aparece em mensagens enviadas (`position === 'sent'`)
+- [x] Reutiliza `MessageStatusIcon` do Pulse — `CheckCheck` azul para read, `Check` branco para sent
+- [x] Zero erros TypeScript + ESLint
 
 ### Fase 17 — Responsividade ⬚
 

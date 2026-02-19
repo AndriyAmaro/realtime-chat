@@ -34,6 +34,16 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
       // Send list of online members in this room
       const onlineUserIds = await getOnlineUserIds(io, roomId)
       socket.emit('room:members_online', { roomId, userIds: onlineUserIds })
+
+      // Send read receipts for this room
+      const readReceipts = await roomMemberRepository.getReadReceipts(roomId)
+      socket.emit('messages:read_receipts', {
+        roomId,
+        receipts: readReceipts.map((r) => ({
+          userId: r.userId,
+          readAt: r.lastReadAt?.toISOString() ?? null,
+        })),
+      })
     } catch {
       socket.emit('error', { message: 'Failed to join room' })
     }

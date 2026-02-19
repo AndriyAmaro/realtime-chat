@@ -31,6 +31,13 @@ export interface ServerToClientEvents {
   'typing:start': (data: { roomId: string; userId: string; userName: string }) => void
   'typing:stop': (data: { roomId: string; userId: string }) => void
 
+  // Read receipts
+  'messages:read': (data: { roomId: string; userId: string; readAt: string }) => void
+  'messages:read_receipts': (data: {
+    roomId: string
+    receipts: { userId: string; readAt: string | null }[]
+  }) => void
+
   // Error
   error: (data: { message: string }) => void
 }
@@ -49,6 +56,9 @@ export interface ClientToServerEvents {
   // Typing
   'typing:start': (roomId: string) => void
   'typing:stop': (roomId: string) => void
+
+  // Read receipts
+  'messages:read': (roomId: string) => void
 }
 
 // ============ INTER-SERVER EVENTS ============

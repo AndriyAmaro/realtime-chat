@@ -186,6 +186,22 @@ export const roomMemberRepository = {
     })
     return memberships.map((m) => m.roomId)
   },
+
+  /** Update lastReadAt for a member in a room */
+  async updateLastReadAt(userId: string, roomId: string, readAt: Date) {
+    return prisma.roomMember.update({
+      where: { userId_roomId: { userId, roomId } },
+      data: { lastReadAt: readAt },
+    })
+  },
+
+  /** Get read receipts (lastReadAt) for all members in a room */
+  async getReadReceipts(roomId: string): Promise<{ userId: string; lastReadAt: Date | null }[]> {
+    return prisma.roomMember.findMany({
+      where: { roomId },
+      select: { userId: true, lastReadAt: true },
+    })
+  },
 }
 
 // ============ REUSABLE SELECTS ============

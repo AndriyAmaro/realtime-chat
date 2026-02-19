@@ -5,9 +5,10 @@ import { useAuthStore } from '@store/auth.store'
 import { useSocket } from '@hooks/useSocket'
 import { useMessages } from '@hooks/useMessages'
 import { useTyping } from '@hooks/useTyping'
+import { useReadReceipts } from '@hooks/useReadReceipts'
 import { uploadFile } from '@services/upload.service'
 import type { MessagePayload } from '@/types/socket'
-import type { ChatMessageData, ChatUser } from '@core/patterns/ChatUI/ChatUI'
+import type { ChatMessageData, ChatUser, MessageStatus } from '@core/patterns/ChatUI/ChatUI'
 
 interface ChatAreaProps {
   roomId: string
@@ -20,6 +21,13 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
   const { messages, hasMore, isLoadingHistory, sendMessage, sendFileMessage, loadMore } =
     useMessages({ socket, roomId, isConnected })
   const { typingUsers, startTyping, stopTyping } = useTyping({ socket, roomId, isConnected })
+  const { isReadByOthers } = useReadReceipts({
+    socket,
+    roomId,
+    isConnected,
+    userId,
+    messageCount: messages.length,
+  })
   const [isUploading, setIsUploading] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -108,7 +116,9 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
     startTyping()
   }
 
-  const chatMessages: ChatMessageData[] = messages.map((msg) => toChatMessage(msg, userId))
+  const chatMessages: ChatMessageData[] = messages.map((msg) =>
+    toChatMessage(msg, userId, isReadByOthers)
+  )
 
   const typingChatUsers: ChatUser[] = typingUsers.map((u) => ({
     id: u.userId,
@@ -167,7 +177,7 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
                 : ''
             }
           >
-            <ChatMessage message={msg} showAvatar showTimestamp showStatus={false} />
+            <ChatMessage message={msg} showAvatar showTimestamp showStatus />
           </div>
         ))}
 
@@ -200,7 +210,12 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
 
 // ============ HELPERS ============
 
-function toChatMessage(msg: MessagePayload, currentUserId: string | undefined): ChatMessageData {
+function toChatMessage(
+  msg: MessagePayload,
+  currentUserId: string | undefined,
+  isReadByOthers: (createdAt: string) => boolean
+): ChatMessageData {
+  const isSent = msg.userId === currentUserId
   const attachments =
     msg.fileUrl && msg.type !== 'TEXT'
       ? [
@@ -213,12 +228,17 @@ function toChatMessage(msg: MessagePayload, currentUserId: string | undefined): 
         ]
       : undefined
 
+  let status: MessageStatus = 'sent'
+  if (isSent && isReadByOthers(msg.createdAt)) {
+    status = 'read'
+  }
+
   return {
     id: msg.id,
     content: msg.type === 'TEXT' ? msg.content : '',
     timestamp: msg.createdAt,
-    position: msg.userId === currentUserId ? 'sent' : 'received',
-    status: 'sent',
+    position: isSent ? 'sent' : 'received',
+    status,
     user: {
       id: msg.user.id,
       name: msg.user.name,
