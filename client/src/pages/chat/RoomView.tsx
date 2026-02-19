@@ -6,7 +6,9 @@ import { EmptyState } from '@core/patterns/EmptyState'
 import { useRoom, useRoomMembers, useLeaveRoom, useDeleteRoom } from '@hooks/useRooms'
 import { useAuthStore } from '@store/auth.store'
 import { useRoomStore } from '@store/room.store'
-import { Hash, Lock, Users, Crown, LogOut, Trash2 } from 'lucide-react'
+import { Hash, Lock, Users, Crown, LogOut, Trash2, Circle } from 'lucide-react'
+import { useSocket } from '@hooks/useSocket'
+import { useOnlineStatus } from '@hooks/useOnlineStatus'
 import { ChatArea } from './ChatArea'
 
 interface RoomViewProps {
@@ -20,6 +22,8 @@ export function RoomView({ roomId }: RoomViewProps) {
   const clearRoom = useRoomStore((s) => s.clearRoom)
   const leaveRoom = useLeaveRoom()
   const deleteRoom = useDeleteRoom()
+  const { socket, isConnected } = useSocket()
+  const { getUserStatus, onlineCount } = useOnlineStatus({ socket, roomId, isConnected })
 
   if (isLoading) {
     return (
@@ -86,9 +90,17 @@ export function RoomView({ roomId }: RoomViewProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
-            <Users className="h-3.5 w-3.5" />
-            {memberCount}
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <div className="flex items-center gap-1">
+              <Users className="h-3.5 w-3.5" />
+              {memberCount}
+            </div>
+            {onlineCount > 0 && (
+              <div className="flex items-center gap-1 text-[var(--success-base)]">
+                <Circle className="h-2 w-2 fill-current" />
+                {onlineCount}
+              </div>
+            )}
           </div>
           {!isOwner && (
             <Button
@@ -134,13 +146,7 @@ export function RoomView({ roomId }: RoomViewProps) {
                     fallback={member.user.name.slice(0, 2).toUpperCase()}
                     src={member.user.avatar ?? undefined}
                     size="xs"
-                    status={
-                      member.user.status === 'ONLINE'
-                        ? 'online'
-                        : member.user.status === 'AWAY'
-                          ? 'away'
-                          : 'offline'
-                    }
+                    status={statusToAvatarStatus(getUserStatus(member.userId, member.user.status))}
                   />
                   <span className="flex-1 truncate text-sm text-[var(--text-primary)]">
                     {member.user.name}
@@ -161,4 +167,12 @@ export function RoomView({ roomId }: RoomViewProps) {
       </div>
     </div>
   )
+}
+
+// ============ HELPERS ============
+
+function statusToAvatarStatus(status: string): 'online' | 'away' | 'offline' {
+  if (status === 'ONLINE') return 'online'
+  if (status === 'AWAY') return 'away'
+  return 'offline'
 }

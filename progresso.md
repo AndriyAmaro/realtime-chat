@@ -18,8 +18,8 @@
 | 8 | Frontend: Lista de Salas + Criar/Entrar em Sala | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 9 | Backend: Socket.io + Eventos de Conexão | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 10 | Mensagens em Tempo Real (envio/recebimento) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
-| 11 | Indicador "digitando..." + Status online/offline | ⬚ Pendente | — | — |
-| 12 | Histórico de Mensagens + Scroll Infinito | ⬚ Pendente | — | — |
+| 11 | Indicador "digitando..." + Status online/offline | ✅ Concluída | 18/02/2026 | 18/02/2026 |
+| 12 | Histórico de Mensagens + Scroll Infinito | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 13 | Upload de Imagens/Arquivos nas Mensagens | ⬚ Pendente | — | — |
 | 14 | Notificações (badge, som, destaque visual) | ⬚ Pendente | — | — |
 | 15 | Busca dentro das Mensagens | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 10/23 fases concluídas (~43%)**
+**Progresso global: 12/23 fases concluídas (~52%)**
 
 ---
 
@@ -196,18 +196,23 @@
 - [x] React 19 compliant — zero setState em effects, "adjust state during render" pattern
 - [x] Zero erros TypeScript + ESLint
 
-### Fase 11 — Indicadores em Tempo Real ⬚
+### Fase 11 — Indicadores em Tempo Real ✅
 
-- [ ] Evento `typing` + `stop-typing`
-- [ ] Frontend: TypingIndicator component
-- [ ] Status online/offline/away em tempo real
-- [ ] Avatar com indicador de status (reutilizando Avatar do Pulse)
+- [x] `useTyping` hook — emit typing:start/stop com auto-timeout 3s (implementado na Fase 10)
+- [x] TypingIndicator do Pulse — animação bounce, mostra nomes dos users digitando
+- [x] `useOnlineStatus` hook — escuta `user:status` e `room:members_online` via Socket.io
+- [x] Status em tempo real no painel de membros — Avatar com indicador online/away/offline
+- [x] Contador de online no header da sala — bolinha verde + número de online
+- [x] Fallback inteligente — usa status da REST API enquanto não há dados do socket
 
-### Fase 12 — Histórico de Mensagens ⬚
+### Fase 12 — Histórico de Mensagens ✅
 
-- [ ] Endpoint GET `/rooms/:id/messages` com paginação cursor-based
-- [ ] Frontend: scroll infinito (carregar mais ao subir)
-- [ ] Skeleton loading enquanto carrega
+- [x] Backend: cursor-based pagination no `message.repository.ts` (implementado na Fase 9)
+- [x] `useMessages` hook — `message:history` com cursor + limit (implementado na Fase 10)
+- [x] Scroll infinito — detecta scroll no topo, carrega mais, preserva posição do scroll
+- [x] Botão "Carregar mensagens anteriores" como fallback
+- [x] Spinner de loading enquanto carrega histórico
+- [x] Auto-scroll inteligente — só rola para baixo se estiver perto do bottom
 
 ### Fase 13 — Upload de Arquivos ⬚
 
