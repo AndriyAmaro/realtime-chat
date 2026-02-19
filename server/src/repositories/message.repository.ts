@@ -44,6 +44,27 @@ export const messageRepository = {
   async countByRoomId(roomId: string) {
     return prisma.message.count({ where: { roomId } })
   },
+
+  /** Search messages in a room by content (case-insensitive) */
+  async searchInRoom(roomId: string, query: string, limit: number, offset: number) {
+    const where = {
+      roomId,
+      content: { contains: query, mode: 'insensitive' as const },
+    }
+
+    const [messages, total] = await Promise.all([
+      prisma.message.findMany({
+        where,
+        select: messageSelect,
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: offset,
+      }),
+      prisma.message.count({ where }),
+    ])
+
+    return { messages, total }
+  },
 }
 
 // ============ REUSABLE SELECT ============

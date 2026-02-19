@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Avatar } from '@core/primitives/Avatar'
 import { Badge } from '@core/primitives/Badge'
 import { Button } from '@core/primitives/Button'
@@ -6,10 +7,11 @@ import { EmptyState } from '@core/patterns/EmptyState'
 import { useRoom, useRoomMembers, useLeaveRoom, useDeleteRoom } from '@hooks/useRooms'
 import { useAuthStore } from '@store/auth.store'
 import { useRoomStore } from '@store/room.store'
-import { Hash, Lock, Users, Crown, LogOut, Trash2, Circle } from 'lucide-react'
+import { Hash, Lock, Users, Crown, LogOut, Trash2, Circle, Search } from 'lucide-react'
 import { useSocket } from '@hooks/useSocket'
 import { useOnlineStatus } from '@hooks/useOnlineStatus'
 import { ChatArea } from './ChatArea'
+import { MessageSearch } from './MessageSearch'
 
 interface RoomViewProps {
   roomId: string
@@ -24,6 +26,8 @@ export function RoomView({ roomId }: RoomViewProps) {
   const deleteRoom = useDeleteRoom()
   const { socket, isConnected } = useSocket()
   const { getUserStatus, onlineCount } = useOnlineStatus({ socket, roomId, isConnected })
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null)
 
   if (isLoading) {
     return (
@@ -60,6 +64,13 @@ export function RoomView({ roomId }: RoomViewProps) {
   async function handleDelete() {
     await deleteRoom.mutateAsync(roomId)
     clearRoom()
+  }
+
+  function handleSearchNavigate(messageId: string) {
+    setHighlightedMessageId(messageId)
+    setSearchOpen(false)
+    // Clear highlight after animation
+    setTimeout(() => setHighlightedMessageId(null), 3000)
   }
 
   return (
@@ -102,6 +113,15 @@ export function RoomView({ roomId }: RoomViewProps) {
               </div>
             )}
           </div>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setSearchOpen(!searchOpen)}
+            aria-label="Buscar mensagens"
+            className={searchOpen ? 'text-primary-500' : ''}
+          >
+            <Search className="h-4 w-4" />
+          </Button>
           {!isOwner && (
             <Button
               variant="ghost"
@@ -128,42 +148,57 @@ export function RoomView({ roomId }: RoomViewProps) {
         </div>
       </div>
 
-      {/* Content: two panels */}
+      {/* Content: panels */}
       <div className="flex flex-1 overflow-hidden">
         {/* Chat area */}
-        <ChatArea roomId={roomId} />
+        <ChatArea roomId={roomId} highlightedMessageId={highlightedMessageId} />
+
+        {/* Search panel (replaces members panel when open) */}
+        {searchOpen && (
+          <div className="w-72 shrink-0 border-l border-[var(--border-default)]">
+            <MessageSearch
+              roomId={roomId}
+              onClose={() => setSearchOpen(false)}
+              onNavigate={handleSearchNavigate}
+            />
+          </div>
+        )}
 
         {/* Members panel */}
-        <div className="hidden w-60 shrink-0 border-l border-[var(--border-default)] lg:block">
-          <div className="p-4">
-            <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
-              Membros — {memberCount}
-            </h4>
-            <div className="space-y-1">
-              {members?.map((member) => (
-                <div key={member.id} className="flex items-center gap-2 rounded-md px-2 py-1.5">
-                  <Avatar
-                    fallback={member.user.name.slice(0, 2).toUpperCase()}
-                    src={member.user.avatar ?? undefined}
-                    size="xs"
-                    status={statusToAvatarStatus(getUserStatus(member.userId, member.user.status))}
-                  />
-                  <span className="flex-1 truncate text-sm text-[var(--text-primary)]">
-                    {member.user.name}
-                  </span>
-                  {member.userId === room.ownerId && (
-                    <Crown className="text-warning-base h-3.5 w-3.5 shrink-0" />
-                  )}
-                  {member.role === 'ADMIN' && member.userId !== room.ownerId && (
-                    <Badge variant="info" size="sm">
-                      admin
-                    </Badge>
-                  )}
-                </div>
-              ))}
+        {!searchOpen && (
+          <div className="hidden w-60 shrink-0 border-l border-[var(--border-default)] lg:block">
+            <div className="p-4">
+              <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
+                Membros — {memberCount}
+              </h4>
+              <div className="space-y-1">
+                {members?.map((member) => (
+                  <div key={member.id} className="flex items-center gap-2 rounded-md px-2 py-1.5">
+                    <Avatar
+                      fallback={member.user.name.slice(0, 2).toUpperCase()}
+                      src={member.user.avatar ?? undefined}
+                      size="xs"
+                      status={statusToAvatarStatus(
+                        getUserStatus(member.userId, member.user.status)
+                      )}
+                    />
+                    <span className="flex-1 truncate text-sm text-[var(--text-primary)]">
+                      {member.user.name}
+                    </span>
+                    {member.userId === room.ownerId && (
+                      <Crown className="text-warning-base h-3.5 w-3.5 shrink-0" />
+                    )}
+                    {member.role === 'ADMIN' && member.userId !== room.ownerId && (
+                      <Badge variant="info" size="sm">
+                        admin
+                      </Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

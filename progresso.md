@@ -22,7 +22,7 @@
 | 12 | Histórico de Mensagens + Scroll Infinito | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 13 | Upload de Imagens/Arquivos nas Mensagens | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 14 | Notificações (badge, som, destaque visual) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
-| 15 | Busca dentro das Mensagens | ⬚ Pendente | — | — |
+| 15 | Busca dentro das Mensagens | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 16 | Indicador de Leitura (visto ✓✓) | ⬚ Pendente | — | — |
 | 17 | Responsividade Completa (mobile) | ⬚ Pendente | — | — |
 | 18 | Testes (Jest + React Testing Library) | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 14/23 fases concluídas (~61%)**
+**Progresso global: 15/23 fases concluídas (~65%)**
 
 ---
 
@@ -248,12 +248,21 @@
 - [x] Toasts renderizados no `ChatLayout` com auto-dismiss em 4s
 - [x] Zero erros TypeScript + ESLint
 
-### Fase 15 — Busca de Mensagens ⬚
+### Fase 15 — Busca de Mensagens ✅
 
-- [ ] Endpoint GET `/rooms/:id/messages/search?q=`
-- [ ] Frontend: SearchBar (reutilizando do Pulse)
-- [ ] Highlight do texto encontrado
-- [ ] Navegar até a mensagem encontrada
+- [x] Backend: `messageRepository.searchInRoom()` — busca case-insensitive com Prisma `contains`
+- [x] Backend: `messageService.search()` — valida membership, offset-based pagination
+- [x] Backend: `messageController.search()` — GET `/rooms/:roomId/messages/search?q=&page=&limit=`
+- [x] Backend: Zod validation (`searchMessagesQuerySchema`) — q (1-100 chars), page, limit (max 50)
+- [x] Frontend: `messageService.search()` — API client via React Query
+- [x] Frontend: `useMessageSearch` hook — React Query com staleTime 30s, enabled quando query >= 1 char
+- [x] Frontend: `MessageSearch` component — painel lateral com SearchBar (Pulse), resultados com avatar + timestamp
+- [x] Frontend: `HighlightText` — regex-based highlight com `<mark>` amarelo nos termos encontrados
+- [x] Frontend: `SearchResultItem` — clicável, navega até a mensagem no chat
+- [x] Frontend: Scroll to message — `scrollIntoView({ behavior: 'smooth', block: 'center' })` + highlight pulse
+- [x] Frontend: Botão de busca no header da sala (ícone Search) — abre/fecha painel de busca
+- [x] Frontend: Painel de busca substitui painel de membros quando aberto
+- [x] Zero erros TypeScript + ESLint
 
 ### Fase 16 — Indicador de Leitura ⬚
 

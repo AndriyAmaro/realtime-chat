@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { authenticate } from '../middleware/auth.js'
 import { validate } from '../middleware/validate.js'
 import { roomController } from '../controllers/room.controller.js'
+import { messageController } from '../controllers/message.controller.js'
 import {
   createRoomSchema,
   updateRoomSchema,
@@ -11,6 +12,7 @@ import {
   memberIdParamSchema,
   listRoomsQuerySchema,
 } from '../types/room.js'
+import { searchMessagesQuerySchema } from '../types/message.js'
 
 const router = Router()
 
@@ -40,6 +42,15 @@ router.patch(
 
 // DELETE /rooms/:roomId — delete room
 router.delete('/:roomId', validate({ params: roomIdParamSchema }), roomController.deleteRoom)
+
+// ============ MESSAGES ============
+
+// GET /rooms/:roomId/messages/search?q=&page=&limit=
+router.get(
+  '/:roomId/messages/search',
+  validate({ params: roomIdParamSchema, query: searchMessagesQuerySchema }),
+  messageController.search
+)
 
 // ============ JOIN / LEAVE ============
 

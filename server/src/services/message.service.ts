@@ -55,6 +55,28 @@ export const messageService = {
       hasMore: result.hasMore,
     }
   },
+  /** Search messages in a room (validates membership) */
+  async search(
+    userId: string,
+    roomId: string,
+    query: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<{ messages: MessagePayload[]; meta: { page: number; limit: number; total: number } }> {
+    const membership = await roomMemberRepository.findMembership(userId, roomId)
+    if (!membership) {
+      throw new Error('You are not a member of this room')
+    }
+
+    const safeLimit = Math.min(limit, MAX_HISTORY_LIMIT)
+    const offset = (page - 1) * safeLimit
+    const result = await messageRepository.searchInRoom(roomId, query, safeLimit, offset)
+
+    return {
+      messages: result.messages.map(formatMessage),
+      meta: { page, limit: safeLimit, total: result.total },
+    }
+  },
 }
 
 // ============ HELPERS ============

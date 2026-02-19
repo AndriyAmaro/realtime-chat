@@ -11,9 +11,10 @@ import type { ChatMessageData, ChatUser } from '@core/patterns/ChatUI/ChatUI'
 
 interface ChatAreaProps {
   roomId: string
+  highlightedMessageId?: string | null
 }
 
-export function ChatArea({ roomId }: ChatAreaProps) {
+export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
   const userId = useAuthStore((s) => s.user?.id)
   const { socket, isConnected } = useSocket()
   const { messages, hasMore, isLoadingHistory, sendMessage, sendFileMessage, loadMore } =
@@ -46,6 +47,15 @@ export function ChatArea({ roomId }: ChatAreaProps) {
       messagesEndRef.current?.scrollIntoView()
     }
   }, [roomId]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Scroll to highlighted message (from search)
+  useEffect(() => {
+    if (!highlightedMessageId) return
+    const el = document.getElementById(`msg-${highlightedMessageId}`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [highlightedMessageId])
 
   // Infinite scroll: load more when scrolling to top
   function handleScroll() {
@@ -148,7 +158,17 @@ export function ChatArea({ roomId }: ChatAreaProps) {
         )}
 
         {chatMessages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} showAvatar showTimestamp showStatus={false} />
+          <div
+            key={msg.id}
+            id={`msg-${msg.id}`}
+            className={
+              highlightedMessageId === msg.id
+                ? 'animate-pulse rounded-lg bg-[var(--warning-base)]/10 transition-colors duration-500'
+                : ''
+            }
+          >
+            <ChatMessage message={msg} showAvatar showTimestamp showStatus={false} />
+          </div>
         ))}
 
         <div ref={messagesEndRef} />
