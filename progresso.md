@@ -27,12 +27,12 @@
 | 17 | Responsividade Completa (mobile) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 18 | Testes (Vitest + React Testing Library) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 19 | Documentação Swagger da API | ✅ Concluída | 19/02/2026 | 19/02/2026 |
-| 20 | Docker Compose (tudo funciona com 1 comando) | ⬚ Pendente | — | — |
+| 20 | Docker Compose (tudo funciona com 1 comando) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 21 | CI/CD (GitHub Actions) | ⬚ Pendente | — | — |
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 19/23 fases concluídas (~83%)**
+**Progresso global: 20/23 fases concluídas (~87%)**
 
 ---
 
@@ -347,12 +347,30 @@
 - [x] Console log do server atualizado com link para API Docs
 - [x] Zero erros TypeScript + ESLint
 
-### Fase 20 — Docker Compose Final ⬚
+### Fase 20 — Docker Compose Final ✅
 
-- [ ] Frontend + Backend + PostgreSQL num só `docker-compose up`
-- [ ] Volumes para persistência do banco
-- [ ] Health checks
-- [ ] Script de seed automático
+- [x] **5 serviços orquestrados** com `docker compose up -d`:
+  - `postgres` — PostgreSQL 16 Alpine com health check (`pg_isready`)
+  - `redis` — Redis 7 Alpine com health check (`redis-cli ping`)
+  - `server` — Backend Node.js (multi-stage build) com health check (wget /health)
+  - `client` — Frontend Vite + Nginx Alpine com proxy reverso (API + Socket.io + uploads)
+  - `migrate` — Container one-shot para `prisma migrate deploy` (run-once, `restart: no`)
+- [x] **Multi-stage Dockerfiles:**
+  - Server: `builder` (npm ci + prisma generate + tsc + CJS fix) → `runner` (prod deps only, ~245 pkgs)
+  - Client: `builder` (npm ci + vite build) → `runner` (nginx:alpine, ~7MB static)
+  - Fix Prisma 7 CJS: sed post-build substitui `import.meta.url` por equivalente CJS
+- [x] **Nginx reverse proxy** (`client/nginx.conf`):
+  - `/api/` → proxy para `server:4000` (HTTP)
+  - `/socket.io/` → proxy para `server:4000` (WebSocket upgrade)
+  - `/uploads/` → proxy para `server:4000`
+  - `/` → SPA fallback (`try_files $uri /index.html`)
+  - Gzip habilitado, cache de assets estáticos (1 ano, immutable)
+- [x] **Volumes nomeados:** `postgres_data`, `redis_data`, `uploads_data` (persistência)
+- [x] **Dependency ordering:** postgres/redis (healthy) → migrate + server → client
+- [x] **Health checks** em todos os serviços com intervalos configurados
+- [x] `.dockerignore` para server e client (exclui node_modules, .git, .env, coverage)
+- [x] Ambiente de produção: `NODE_ENV=production`, todas as env vars configuráveis via `.env`
+- [x] Testado end-to-end: server healthy, client HTTP 200, API proxy OK, Swagger OK, migrations OK
 
 ### Fase 21 — CI/CD ⬚
 
