@@ -16,7 +16,7 @@
 | 6 | Frontend: Páginas de Auth (Login, Registro, Forgot Password) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 7 | Backend: CRUD de Salas + Membros | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 8 | Frontend: Lista de Salas + Criar/Entrar em Sala | ✅ Concluída | 19/02/2026 | 19/02/2026 |
-| 9 | Backend: Socket.io + Eventos de Conexão | ⬚ Pendente | — | — |
+| 9 | Backend: Socket.io + Eventos de Conexão | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 10 | Mensagens em Tempo Real (envio/recebimento) | ⬚ Pendente | — | — |
 | 11 | Indicador "digitando..." + Status online/offline | ⬚ Pendente | — | — |
 | 12 | Histórico de Mensagens + Scroll Infinito | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 8/23 fases concluídas (~35%)**
+**Progresso global: 9/23 fases concluídas (~39%)**
 
 ---
 
@@ -166,13 +166,20 @@
 - [x] App.tsx atualizado: /chat agora renderiza ChatLayout
 - [x] Zero erros TypeScript, fluxo completo testado via proxy Vite
 
-### Fase 9 — Backend: Socket.io ⬚
+### Fase 9 — Backend: Socket.io ✅
 
-- [ ] Configurar Socket.io no servidor
-- [ ] Autenticação via Socket (JWT no handshake)
-- [ ] Eventos: `join-room`, `leave-room`
-- [ ] Gestão de status online/offline/away
-- [ ] Broadcast de eventos por sala
+- [x] Configurar Socket.io no httpServer (`config/socket.ts`) — CORS, ping interval, typed server
+- [x] Autenticação JWT no handshake (`middleware/socketAuth.ts`) — extrai token do `socket.handshake.auth`
+- [x] Tipos tipados (`types/socket.ts`) — ServerToClientEvents, ClientToServerEvents, payloads, TypedServer/TypedSocket
+- [x] Message repository (`repositories/message.repository.ts`) — create, cursor-based pagination (findByRoomId)
+- [x] Message service (`services/message.service.ts`) — send (valida membership), getHistory (cursor + limit)
+- [x] Event handlers em `events/`:
+  - `room.handler.ts` — room:join (valida membership, notifica), room:leave, getOnlineUserIds helper
+  - `message.handler.ts` — message:send (persist + broadcast + ACK), message:history (cursor pagination)
+  - `status.handler.ts` — ONLINE no connect, OFFLINE no disconnect (verifica sockets múltiplos)
+  - `index.ts` — registro central + typing:start/typing:stop
+- [x] Integração no `app.ts` — `initializeSocket(httpServer)`, `io.close()` no graceful shutdown, export `io`
+- [x] 14 eventos Socket.io: room:join, room:leave, room:joined, room:left, room:members_online, message:send, message:new, message:history, user:status, typing:start, typing:stop, error
 
 ### Fase 10 — Mensagens em Tempo Real ⬚
 

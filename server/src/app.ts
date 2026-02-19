@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import { createServer } from 'http'
 
 import { env } from './config/index.js'
+import { initializeSocket } from './config/socket.js'
 import { requestLogger } from './middleware/requestLogger.js'
 import { apiLimiter } from './middleware/rateLimiter.js'
 import { errorHandler } from './middleware/errorHandler.js'
@@ -38,6 +39,10 @@ app.use('/api/v1', routes)
 
 app.use(errorHandler)
 
+// ============ SOCKET.IO ============
+
+const io = initializeSocket(httpServer)
+
 // ============ SERVER START ============
 
 httpServer.listen(env.PORT, () => {
@@ -50,6 +55,7 @@ httpServer.listen(env.PORT, () => {
 
 function gracefulShutdown(signal: string) {
   console.log(`\n${signal} received. Shutting down gracefully...`)
+  io.close()
   httpServer.close(() => {
     console.log('✅ HTTP server closed')
     process.exit(0)
@@ -65,4 +71,4 @@ function gracefulShutdown(signal: string) {
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'))
 process.on('SIGINT', () => gracefulShutdown('SIGINT'))
 
-export { app, httpServer }
+export { app, httpServer, io }
