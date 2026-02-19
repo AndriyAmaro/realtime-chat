@@ -24,7 +24,7 @@
 | 14 | Notificações (badge, som, destaque visual) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 15 | Busca dentro das Mensagens | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 16 | Indicador de Leitura (visto ✓✓) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
-| 17 | Responsividade Completa (mobile) | ⬚ Pendente | — | — |
+| 17 | Responsividade Completa (mobile) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 18 | Testes (Jest + React Testing Library) | ⬚ Pendente | — | — |
 | 19 | Documentação Swagger da API | ⬚ Pendente | — | — |
 | 20 | Docker Compose (tudo funciona com 1 comando) | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 16/23 fases concluídas (~70%)**
+**Progresso global: 17/23 fases concluídas (~74%)**
 
 ---
 
@@ -282,11 +282,28 @@
 - [x] Reutiliza `MessageStatusIcon` do Pulse — `CheckCheck` azul para read, `Check` branco para sent
 - [x] Zero erros TypeScript + ESLint
 
-### Fase 17 — Responsividade ⬚
+### Fase 17 — Responsividade ✅
 
-- [ ] Layout mobile para o chat (drawer para salas)
-- [ ] Testar em vários tamanhos de ecrã
-- [ ] Touch-friendly em todos os componentes
+- [x] `useMediaQuery` hook — reactivo via `window.matchMedia`, reutilizável em todo o app
+- [x] ChatLayout: mobile-first full-screen swap (sidebar OR room view, como WhatsApp)
+  - `< 768px`: sidebar full screen quando nenhuma sala selecionada, room view quando selecionada
+  - `≥ 768px`: sidebar collapsível + room view side-by-side (comportamento anterior)
+  - Header principal oculto no mobile quando dentro de uma sala (room tem header próprio)
+  - Sidebar toggle button apenas no desktop
+- [x] RoomView: back button (ArrowLeft) no mobile para voltar à lista de salas
+  - Ícone da sala (`Hash`/`Lock`) oculto em `< 640px`, visível em `sm:flex`
+  - Descrição da sala oculta em `< 640px`, visível em `sm:block`
+  - Header padding responsivo: `px-3 sm:px-4 md:px-6`
+  - Room name `text-sm` no mobile, `sm:text-base` no desktop
+  - Botões com `gap-1 sm:gap-2` para melhor espaçamento
+- [x] Painéis laterais responsivos com Drawer do Pulse:
+  - `≥ 1024px` (desktop): painéis de membros e busca inline (side panels)
+  - `< 1024px` (mobile/tablet): painéis em Drawer (slide-in right, `max-w-[92vw]`)
+  - Member count clicável em `< lg` para abrir drawer de membros
+  - Busca em Drawer com `sr-only` title para acessibilidade (Radix Dialog compliance)
+- [x] `MembersList` extraído como componente reutilizado no inline e no Drawer (zero duplicação)
+- [x] Touch-friendly: todos os botões ≥ 40px, tap targets adequados, gaps responsivos
+- [x] Zero erros TypeScript + ESLint
 
 ### Fase 18 — Testes ⬚
 
