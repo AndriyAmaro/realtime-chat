@@ -26,13 +26,13 @@
 | 16 | Indicador de Leitura (visto ✓✓) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 17 | Responsividade Completa (mobile) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 18 | Testes (Vitest + React Testing Library) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
-| 19 | Documentação Swagger da API | ⬚ Pendente | — | — |
+| 19 | Documentação Swagger da API | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 20 | Docker Compose (tudo funciona com 1 comando) | ⬚ Pendente | — | — |
 | 21 | CI/CD (GitHub Actions) | ⬚ Pendente | — | — |
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 18/23 fases concluídas (~78%)**
+**Progresso global: 19/23 fases concluídas (~83%)**
 
 ---
 
@@ -324,11 +324,28 @@
 - [x] **Total: 37 testes, 4 suites, todos passando**
 - [x] Zero erros TypeScript + ESLint
 
-### Fase 19 — Documentação Swagger ⬚
+### Fase 19 — Documentação Swagger ✅
 
-- [ ] Configurar Swagger/OpenAPI no Express
-- [ ] Documentar todas as rotas
-- [ ] Exemplos de request/response
+- [x] Instalado `swagger-ui-express` + `@types/swagger-ui-express`
+- [x] Criado `server/src/config/swagger.ts` — spec OpenAPI 3.0.3 completo em TypeScript
+- [x] Swagger UI montado em `/api/docs` com custom CSS (topbar removida)
+- [x] JSON spec exposto em `/api/docs.json` para consumo externo
+- [x] **20 operações documentadas em 16 paths:**
+  - Health: `GET /health`
+  - Auth (5): register, login, refresh-token, logout, me
+  - Rooms (6): create, list, discover public, get details, update, delete
+  - Room Actions (3): join, leave, regenerate invite code
+  - Members (3): list, update role, remove
+  - Messages (1): search
+  - Uploads (1): file upload
+- [x] **18 schemas reutilizáveis:** ApiResponse, ErrorResponse, ValidationErrorResponse, PaginationMeta, RegisterInput, LoginInput, AuthResponse, UserProfile, CreateRoomInput, UpdateRoomInput, JoinRoomInput, UpdateMemberRoleInput, Room, RoomDetail, RoomMember, RoomMemberWithUser, Message, UploadResult
+- [x] **6 tags organizacionais:** Health, Auth, Rooms, Members, Messages, Uploads
+- [x] Segurança: Bearer JWT documentado com `securitySchemes`
+- [x] Parâmetros reutilizáveis: RoomId, MemberId, Page, Limit, Search
+- [x] Respostas reutilizáveis: Unauthorized (401), Forbidden (403), NotFound (404), Conflict (409), ValidationError (422), RateLimited (429)
+- [x] Exemplos de request/response em todos os endpoints
+- [x] Console log do server atualizado com link para API Docs
+- [x] Zero erros TypeScript + ESLint
 
 ### Fase 20 — Docker Compose Final ⬚
 

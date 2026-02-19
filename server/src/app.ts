@@ -5,7 +5,10 @@ import cookieParser from 'cookie-parser'
 import path from 'path'
 import { createServer } from 'http'
 
+import swaggerUi from 'swagger-ui-express'
+
 import { env } from './config/index.js'
+import { swaggerSpec } from './config/swagger.js'
 import { initializeSocket } from './config/socket.js'
 import { requestLogger } from './middleware/requestLogger.js'
 import { apiLimiter } from './middleware/rateLimiter.js'
@@ -36,6 +39,20 @@ app.use(apiLimiter)
 
 app.use('/uploads', express.static(path.resolve(env.UPLOAD_DIR)))
 
+// ============ API DOCS ============
+
+app.use(
+  '/api/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'Realtime Chat API — Swagger',
+  })
+)
+app.get('/api/docs.json', (_req, res) => {
+  res.json(swaggerSpec)
+})
+
 // ============ ROUTES ============
 
 app.use('/api/v1', routes)
@@ -54,6 +71,7 @@ httpServer.listen(env.PORT, () => {
   console.log(`🚀 Server running on port ${env.PORT}`)
   console.log(`📍 Environment: ${env.NODE_ENV}`)
   console.log(`🔗 Health check: http://localhost:${env.PORT}/api/v1/health`)
+  console.log(`📚 API Docs: http://localhost:${env.PORT}/api/docs`)
 })
 
 // ============ GRACEFUL SHUTDOWN ============
