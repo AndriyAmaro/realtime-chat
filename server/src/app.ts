@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import path from 'path'
 import { createServer } from 'http'
 
 import { env } from './config/index.js'
@@ -30,6 +31,10 @@ app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.use(requestLogger)
 app.use(apiLimiter)
+
+// ============ STATIC FILES ============
+
+app.use('/uploads', express.static(path.resolve(env.UPLOAD_DIR)))
 
 // ============ ROUTES ============
 

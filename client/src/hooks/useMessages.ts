@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@store/auth.store'
 import type { TypedSocket } from '@services/socket'
-import type { MessagePayload, SendMessagePayload } from '@/types/socket'
+import type { MessagePayload, MessageType, SendMessagePayload } from '@/types/socket'
 
 interface UseMessagesOptions {
   socket: TypedSocket | null
@@ -14,6 +14,7 @@ interface UseMessagesReturn {
   hasMore: boolean
   isLoadingHistory: boolean
   sendMessage: (content: string) => void
+  sendFileMessage: (content: string, fileUrl: string, type: MessageType) => void
   loadMore: () => void
 }
 
@@ -118,6 +119,27 @@ export function useMessages({
     [socket, isConnected, roomId, userId]
   )
 
+  // Send file message with ACK
+  const sendFileMessage = useCallback(
+    (content: string, fileUrl: string, type: MessageType) => {
+      if (!socket || !isConnected || !userId) return
+
+      const payload: SendMessagePayload = {
+        roomId,
+        content,
+        type,
+        fileUrl,
+      }
+
+      socket.emit('message:send', payload, (ack) => {
+        if (!ack.success) {
+          console.error('[socket] Failed to send file message:', ack.error)
+        }
+      })
+    },
+    [socket, isConnected, roomId, userId]
+  )
+
   // Load more (older) messages
   const loadMore = useCallback(() => {
     if (!socket || !isConnected || !hasMore || isLoadingHistory) return
@@ -133,5 +155,5 @@ export function useMessages({
     })
   }, [socket, isConnected, hasMore, isLoadingHistory, messages, roomId])
 
-  return { messages, hasMore, isLoadingHistory, sendMessage, loadMore }
+  return { messages, hasMore, isLoadingHistory, sendMessage, sendFileMessage, loadMore }
 }

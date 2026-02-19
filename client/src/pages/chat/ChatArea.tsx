@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChatInput, ChatMessage, TypingIndicator } from '@core/patterns/ChatUI/ChatUI'
 import { Spinner } from '@core/primitives/Spinner'
 import { useAuthStore } from '@store/auth.store'
 import { useSocket } from '@hooks/useSocket'
 import { useMessages } from '@hooks/useMessages'
 import { useTyping } from '@hooks/useTyping'
+import { uploadFile } from '@services/upload.service'
 import type { MessagePayload } from '@/types/socket'
 import type { ChatMessageData, ChatUser } from '@core/patterns/ChatUI/ChatUI'
 
@@ -15,12 +16,10 @@ interface ChatAreaProps {
 export function ChatArea({ roomId }: ChatAreaProps) {
   const userId = useAuthStore((s) => s.user?.id)
   const { socket, isConnected } = useSocket()
-  const { messages, hasMore, isLoadingHistory, sendMessage, loadMore } = useMessages({
-    socket,
-    roomId,
-    isConnected,
-  })
+  const { messages, hasMore, isLoadingHistory, sendMessage, sendFileMessage, loadMore } =
+    useMessages({ socket, roomId, isConnected })
   const { typingUsers, startTyping, stopTyping } = useTyping({ socket, roomId, isConnected })
+  const [isUploading, setIsUploading] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -57,7 +56,6 @@ export function ChatArea({ roomId }: ChatAreaProps) {
       const prevScrollHeight = container.scrollHeight
       loadMore()
 
-      // Preserve scroll position after loading older messages
       requestAnimationFrame(() => {
         const newScrollHeight = container.scrollHeight
         container.scrollTop = newScrollHeight - prevScrollHeight
@@ -65,10 +63,32 @@ export function ChatArea({ roomId }: ChatAreaProps) {
     }
   }
 
-  function handleSubmit(value: string) {
-    sendMessage(value)
+  async function handleSubmit(value: string, attachments?: File[]) {
     stopTyping()
-    // Scroll to bottom after sending
+
+    // Upload files first, then send messages
+    if (attachments && attachments.length > 0) {
+      setIsUploading(true)
+      try {
+        for (const file of attachments) {
+          const result = await uploadFile(file)
+          const type = result.isImage ? 'IMAGE' : 'FILE'
+          const content = value.trim() || result.originalName
+          sendFileMessage(content, result.url, type)
+        }
+        // If there's also text without files, send it separately
+        if (value.trim() && attachments.length > 0) {
+          // Text was already included with the first file
+        }
+      } catch (err) {
+        console.error('[upload] Failed to upload file:', err)
+      } finally {
+        setIsUploading(false)
+      }
+    } else if (value.trim()) {
+      sendMessage(value)
+    }
+
     requestAnimationFrame(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     })
@@ -78,10 +98,8 @@ export function ChatArea({ roomId }: ChatAreaProps) {
     startTyping()
   }
 
-  // Convert MessagePayload to ChatMessageData for design system components
   const chatMessages: ChatMessageData[] = messages.map((msg) => toChatMessage(msg, userId))
 
-  // Convert typing users to ChatUser format
   const typingChatUsers: ChatUser[] = typingUsers.map((u) => ({
     id: u.userId,
     name: u.userName,
@@ -103,7 +121,6 @@ export function ChatArea({ roomId }: ChatAreaProps) {
         onScroll={handleScroll}
         className="flex-1 space-y-4 overflow-y-auto p-4"
       >
-        {/* Load more indicator */}
         {isLoadingHistory && (
           <div className="flex justify-center py-2">
             <Spinner size="sm" />
@@ -122,7 +139,6 @@ export function ChatArea({ roomId }: ChatAreaProps) {
           </div>
         )}
 
-        {/* Empty state */}
         {messages.length === 0 && !isLoadingHistory && (
           <div className="flex flex-1 items-center justify-center py-12">
             <p className="text-sm text-[var(--text-muted)]">
@@ -131,13 +147,20 @@ export function ChatArea({ roomId }: ChatAreaProps) {
           </div>
         )}
 
-        {/* Messages */}
         {chatMessages.map((msg) => (
           <ChatMessage key={msg.id} message={msg} showAvatar showTimestamp showStatus={false} />
         ))}
 
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Upload indicator */}
+      {isUploading && (
+        <div className="flex items-center gap-2 border-t border-[var(--border-default)] px-4 py-2 text-sm text-[var(--text-muted)]">
+          <Spinner size="xs" />
+          Enviando arquivo...
+        </div>
+      )}
 
       {/* Typing indicator */}
       <TypingIndicator users={typingChatUsers} />
@@ -147,9 +170,9 @@ export function ChatArea({ roomId }: ChatAreaProps) {
         onSubmit={handleSubmit}
         onChange={handleInputChange}
         placeholder="Digite uma mensagem..."
-        disabled={!isConnected}
+        disabled={!isConnected || isUploading}
         showEmoji={false}
-        showAttach={false}
+        showAttach
       />
     </div>
   )
@@ -158,9 +181,21 @@ export function ChatArea({ roomId }: ChatAreaProps) {
 // ============ HELPERS ============
 
 function toChatMessage(msg: MessagePayload, currentUserId: string | undefined): ChatMessageData {
+  const attachments =
+    msg.fileUrl && msg.type !== 'TEXT'
+      ? [
+          {
+            id: msg.id,
+            name: msg.content,
+            type: (msg.type === 'IMAGE' ? 'image' : 'file') as 'image' | 'file',
+            url: msg.fileUrl,
+          },
+        ]
+      : undefined
+
   return {
     id: msg.id,
-    content: msg.content,
+    content: msg.type === 'TEXT' ? msg.content : '',
     timestamp: msg.createdAt,
     position: msg.userId === currentUserId ? 'sent' : 'received',
     status: 'sent',
@@ -169,5 +204,6 @@ function toChatMessage(msg: MessagePayload, currentUserId: string | undefined): 
       name: msg.user.name,
       avatar: msg.user.avatar ?? undefined,
     },
+    attachments,
   }
 }

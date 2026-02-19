@@ -20,7 +20,7 @@
 | 10 | Mensagens em Tempo Real (envio/recebimento) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 11 | Indicador "digitando..." + Status online/offline | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 12 | Histórico de Mensagens + Scroll Infinito | ✅ Concluída | 18/02/2026 | 18/02/2026 |
-| 13 | Upload de Imagens/Arquivos nas Mensagens | ⬚ Pendente | — | — |
+| 13 | Upload de Imagens/Arquivos nas Mensagens | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 14 | Notificações (badge, som, destaque visual) | ⬚ Pendente | — | — |
 | 15 | Busca dentro das Mensagens | ⬚ Pendente | — | — |
 | 16 | Indicador de Leitura (visto ✓✓) | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 12/23 fases concluídas (~52%)**
+**Progresso global: 13/23 fases concluídas (~57%)**
 
 ---
 
@@ -214,12 +214,20 @@
 - [x] Spinner de loading enquanto carrega histórico
 - [x] Auto-scroll inteligente — só rola para baixo se estiver perto do bottom
 
-### Fase 13 — Upload de Arquivos ⬚
+### Fase 13 — Upload de Arquivos ✅
 
-- [ ] Endpoint de upload (imagens + arquivos)
-- [ ] Frontend: FileUpload (reutilizando do Pulse)
-- [ ] Preview de imagens nas mensagens
-- [ ] Download de arquivos
+- [x] Backend: Multer com disk storage (random hex filenames, 5MB max, filtro de tipos)
+- [x] Backend: `upload.service.ts` — configuração Multer, filtro de MIME types (imagens + PDF + texto + ZIP)
+- [x] Backend: `upload.controller.ts` — handler de upload, retorna { url, filename, originalName, mimetype, size, isImage }
+- [x] Backend: `upload.routes.ts` — POST `/api/v1/uploads` (autenticado, single file)
+- [x] Backend: Servir arquivos estáticos de `/uploads` via `express.static`
+- [x] Frontend: `upload.service.ts` — FormData + fetch com auth token
+- [x] Frontend: ChatArea integrado com upload — botão de anexo, upload antes de enviar
+- [x] Frontend: `sendFileMessage` no `useMessages` hook — envia tipo IMAGE ou FILE com fileUrl
+- [x] Frontend: Preview de imagens e links de arquivos nas mensagens (via ChatMessage attachments)
+- [x] Frontend: Indicador de upload em progresso ("Enviando arquivo...")
+- [x] Vite proxy `/uploads` → backend para servir arquivos em dev
+- [x] Zero erros TypeScript + ESLint
 
 ### Fase 14 — Notificações ⬚
 
