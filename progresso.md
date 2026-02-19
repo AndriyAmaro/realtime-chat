@@ -25,14 +25,14 @@
 | 15 | Busca dentro das Mensagens | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 16 | Indicador de Leitura (visto ✓✓) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 17 | Responsividade Completa (mobile) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
-| 18 | Testes (Jest + React Testing Library) | ⬚ Pendente | — | — |
+| 18 | Testes (Vitest + React Testing Library) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 19 | Documentação Swagger da API | ⬚ Pendente | — | — |
 | 20 | Docker Compose (tudo funciona com 1 comando) | ⬚ Pendente | — | — |
 | 21 | CI/CD (GitHub Actions) | ⬚ Pendente | — | — |
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 17/23 fases concluídas (~74%)**
+**Progresso global: 18/23 fases concluídas (~78%)**
 
 ---
 
@@ -305,12 +305,24 @@
 - [x] Touch-friendly: todos os botões ≥ 40px, tap targets adequados, gaps responsivos
 - [x] Zero erros TypeScript + ESLint
 
-### Fase 18 — Testes ⬚
+### Fase 18 — Testes ✅
 
-- [ ] Testes unitários do backend (auth, rooms, messages)
-- [ ] Testes de integração das rotas API
-- [ ] Testes frontend (React Testing Library)
-- [ ] Cobertura mínima de 70%
+- [x] Vitest configurado para server e client (configs separadas, globals, ambientes node/jsdom)
+- [x] Client: setup file com `@testing-library/jest-dom/vitest` para matchers extra
+- [x] Scripts `test`, `test:watch`, `test:coverage` em ambos package.json
+- [x] **Backend — 25 testes (2 suites):**
+  - `auth.service.test.ts` (10 testes): register (success, duplicate email), login (success, wrong password, not found), refreshToken (success, user deleted, invalid token), getProfile (success, not found)
+  - `room.service.test.ts` (15 testes): createRoom (public, private with invite code), joinRoom (public, private valid code, wrong code, already member, not found), leaveRoom (success, owner forbidden), deleteRoom (owner, non-owner), getRoom (member, hide invite code, show to owner, private forbidden)
+  - Mocks: repositories com `vi.mock()`, bcryptjs, jwt utils
+  - Factory functions: `createUserRecord()`, `createUserProfile()`, `createRoomRecord()`, `createMemberRecord()`
+  - Padrão AAA (Arrange-Act-Assert), describe/it naming convention
+- [x] **Frontend — 12 testes (2 suites):**
+  - `notification.store.test.ts` (8 testes): incrementUnread (new room, existing, independent), clearUnread (specific room, nonexistent), resetAll, toggleSound (on→off, off→on)
+  - `useMediaQuery.test.ts` (4 testes): matches true, matches false, update on change, cleanup listener on unmount
+  - React Testing Library `renderHook` + `act` para testar hooks
+  - Zustand store testado via `getState()`/`setState()` (sem DOM)
+- [x] **Total: 37 testes, 4 suites, todos passando**
+- [x] Zero erros TypeScript + ESLint
 
 ### Fase 19 — Documentação Swagger ⬚
 
