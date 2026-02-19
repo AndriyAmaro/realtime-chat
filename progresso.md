@@ -17,7 +17,7 @@
 | 7 | Backend: CRUD de Salas + Membros | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 8 | Frontend: Lista de Salas + Criar/Entrar em Sala | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 9 | Backend: Socket.io + Eventos de Conexão | ✅ Concluída | 18/02/2026 | 18/02/2026 |
-| 10 | Mensagens em Tempo Real (envio/recebimento) | ⬚ Pendente | — | — |
+| 10 | Mensagens em Tempo Real (envio/recebimento) | ✅ Concluída | 18/02/2026 | 18/02/2026 |
 | 11 | Indicador "digitando..." + Status online/offline | ⬚ Pendente | — | — |
 | 12 | Histórico de Mensagens + Scroll Infinito | ⬚ Pendente | — | — |
 | 13 | Upload de Imagens/Arquivos nas Mensagens | ⬚ Pendente | — | — |
@@ -32,7 +32,7 @@
 | 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 9/23 fases concluídas (~39%)**
+**Progresso global: 10/23 fases concluídas (~43%)**
 
 ---
 
@@ -181,12 +181,20 @@
 - [x] Integração no `app.ts` — `initializeSocket(httpServer)`, `io.close()` no graceful shutdown, export `io`
 - [x] 14 eventos Socket.io: room:join, room:leave, room:joined, room:left, room:members_online, message:send, message:new, message:history, user:status, typing:start, typing:stop, error
 
-### Fase 10 — Mensagens em Tempo Real ⬚
+### Fase 10 — Mensagens em Tempo Real ✅
 
-- [ ] Evento `send-message` + `receive-message`
-- [ ] Persistir mensagens no banco (Prisma)
-- [ ] Frontend: ChatWindow + MessageBubble + MessageInput
-- [ ] Emojis no input de mensagens
+- [x] socket.io-client instalado + socket singleton manager (`services/socket.ts`)
+- [x] `useSocket` hook — conexão com JWT auth, auto-reconnect, derive socket do auth state
+- [x] `useMessages` hook — send com ACK, receive broadcast, cursor-based history, load more
+- [x] `useTyping` hook — emit typing:start/stop com auto-timeout 3s, listen de outros users
+- [x] `ChatArea` component — reutiliza ChatMessage + ChatInput + TypingIndicator do Pulse
+- [x] Scroll infinito — load more ao chegar no topo, preserva posição do scroll
+- [x] Auto-scroll inteligente — só rola para baixo se estiver perto do bottom
+- [x] Banner de conexão — mostra "Conectando..." quando socket desconectado
+- [x] Empty state — "Nenhuma mensagem ainda. Seja o primeiro a enviar!"
+- [x] RoomView atualizado — placeholder removido, `<ChatArea>` integrado
+- [x] React 19 compliant — zero setState em effects, "adjust state during render" pattern
+- [x] Zero erros TypeScript + ESLint
 
 ### Fase 11 — Indicadores em Tempo Real ⬚
 

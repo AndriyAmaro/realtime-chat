@@ -6,8 +6,8 @@ import { EmptyState } from '@core/patterns/EmptyState'
 import { useRoom, useRoomMembers, useLeaveRoom, useDeleteRoom } from '@hooks/useRooms'
 import { useAuthStore } from '@store/auth.store'
 import { useRoomStore } from '@store/room.store'
-import { Hash, Lock, Users, Crown, LogOut, Trash2, MessageSquare, Copy, Check } from 'lucide-react'
-import { useState } from 'react'
+import { Hash, Lock, Users, Crown, LogOut, Trash2 } from 'lucide-react'
+import { ChatArea } from './ChatArea'
 
 interface RoomViewProps {
   roomId: string
@@ -20,7 +20,6 @@ export function RoomView({ roomId }: RoomViewProps) {
   const clearRoom = useRoomStore((s) => s.clearRoom)
   const leaveRoom = useLeaveRoom()
   const deleteRoom = useDeleteRoom()
-  const [copied, setCopied] = useState(false)
 
   if (isLoading) {
     return (
@@ -57,12 +56,6 @@ export function RoomView({ roomId }: RoomViewProps) {
   async function handleDelete() {
     await deleteRoom.mutateAsync(roomId)
     clearRoom()
-  }
-
-  async function handleCopyId() {
-    await navigator.clipboard.writeText(room.id)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -125,47 +118,8 @@ export function RoomView({ roomId }: RoomViewProps) {
 
       {/* Content: two panels */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Chat area (placeholder) */}
-        <div className="flex flex-1 flex-col items-center justify-center p-8">
-          <div className="text-center">
-            <div className="bg-primary-500/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
-              <MessageSquare className="text-primary-500 h-8 w-8" />
-            </div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)]">Sala pronta!</h3>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
-              As mensagens em tempo real serão implementadas na próxima fase
-            </p>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-              <Badge variant="success">Fase 8 ✓</Badge>
-              <Badge variant="default">Fase 9 — Socket.io (próxima)</Badge>
-            </div>
-
-            {/* Room info */}
-            <div className="mx-auto mt-6 max-w-xs space-y-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-subtle)] p-4 text-left">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[var(--text-muted)]">ID da sala</span>
-                <button
-                  type="button"
-                  onClick={handleCopyId}
-                  className="text-primary-500 flex items-center gap-1 hover:underline"
-                >
-                  {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                  {copied ? 'Copiado!' : 'Copiar'}
-                </button>
-              </div>
-              <code className="block truncate text-xs text-[var(--text-primary)]">{room.id}</code>
-
-              {room.inviteCode && (
-                <>
-                  <div className="text-xs text-[var(--text-muted)]">Código de convite</div>
-                  <code className="text-primary-500 block text-xs font-semibold">
-                    {room.inviteCode}
-                  </code>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* Chat area */}
+        <ChatArea roomId={roomId} />
 
         {/* Members panel */}
         <div className="hidden w-60 shrink-0 border-l border-[var(--border-default)] lg:block">
