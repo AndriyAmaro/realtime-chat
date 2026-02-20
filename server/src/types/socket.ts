@@ -18,6 +18,13 @@ export interface ServerToClientEvents {
   // Messages
   'message:new': (message: MessagePayload) => void
   'message:history': (data: { messages: MessagePayload[]; hasMore: boolean }) => void
+  'message:edited': (message: MessagePayload) => void
+  'message:deleted': (data: { roomId: string; messageId: string }) => void
+  'message:reaction_updated': (data: {
+    roomId: string
+    messageId: string
+    reactions: ReactionGroup[]
+  }) => void
 
   // Room
   'room:joined': (data: { roomId: string; userId: string; userName: string }) => void
@@ -52,6 +59,18 @@ export interface ClientToServerEvents {
   // Messages
   'message:send': (data: SendMessagePayload, callback: (response: MessageAck) => void) => void
   'message:history': (data: { roomId: string; cursor?: string; limit?: number }) => void
+  'message:edit': (
+    data: { roomId: string; messageId: string; content: string },
+    callback: (response: MessageAck) => void
+  ) => void
+  'message:delete': (
+    data: { roomId: string; messageId: string },
+    callback: (response: MessageAck) => void
+  ) => void
+  'message:react': (
+    data: { roomId: string; messageId: string; emoji: string },
+    callback: (response: MessageAck) => void
+  ) => void
 
   // Typing
   'typing:start': (roomId: string) => void
@@ -74,14 +93,29 @@ export interface MessagePayload {
   content: string
   type: MessageType
   fileUrl: string | null
+  editedAt: string | null
+  deletedAt: string | null
   userId: string
   roomId: string
+  replyToId: string | null
+  replyTo: {
+    id: string
+    content: string
+    user: { id: string; name: string }
+  } | null
   createdAt: string
   user: {
     id: string
     name: string
     avatar: string | null
   }
+  reactions: ReactionGroup[]
+}
+
+export interface ReactionGroup {
+  emoji: string
+  count: number
+  userIds: string[]
 }
 
 export interface SendMessagePayload {
@@ -89,6 +123,7 @@ export interface SendMessagePayload {
   content: string
   type?: MessageType
   fileUrl?: string
+  replyToId?: string
 }
 
 export interface MessageAck {

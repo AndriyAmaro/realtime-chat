@@ -11,6 +11,7 @@ export const messageRepository = {
     fileUrl?: string
     userId: string
     roomId: string
+    replyToId?: string
   }) {
     return prisma.message.create({
       data: {
@@ -19,8 +20,34 @@ export const messageRepository = {
         fileUrl: data.fileUrl,
         userId: data.userId,
         roomId: data.roomId,
+        replyToId: data.replyToId,
       },
       select: messageSelect,
+    })
+  },
+
+  /** Find a single message by ID */
+  async findById(messageId: string) {
+    return prisma.message.findUnique({
+      where: { id: messageId },
+      select: messageSelect,
+    })
+  },
+
+  /** Update a message (edit content, set editedAt) */
+  async update(messageId: string, data: { content: string; editedAt: Date }) {
+    return prisma.message.update({
+      where: { id: messageId },
+      data,
+      select: messageSelect,
+    })
+  },
+
+  /** Soft-delete a message */
+  async softDelete(messageId: string) {
+    return prisma.message.update({
+      where: { id: messageId },
+      data: { deletedAt: new Date() },
     })
   },
 
@@ -42,13 +69,14 @@ export const messageRepository = {
 
   /** Count messages in a room */
   async countByRoomId(roomId: string) {
-    return prisma.message.count({ where: { roomId } })
+    return prisma.message.count({ where: { roomId, deletedAt: null } })
   },
 
   /** Search messages in a room by content (case-insensitive) */
   async searchInRoom(roomId: string, query: string, limit: number, offset: number) {
     const where = {
       roomId,
+      deletedAt: null,
       content: { contains: query, mode: 'insensitive' as const },
     }
 
@@ -74,10 +102,26 @@ const messageSelect = {
   content: true,
   type: true,
   fileUrl: true,
+  editedAt: true,
+  deletedAt: true,
   userId: true,
   roomId: true,
+  replyToId: true,
   createdAt: true,
   user: {
     select: { id: true, name: true, avatar: true },
+  },
+  replyTo: {
+    select: {
+      id: true,
+      content: true,
+      user: { select: { id: true, name: true } },
+    },
+  },
+  reactions: {
+    select: {
+      emoji: true,
+      userId: true,
+    },
   },
 } as const

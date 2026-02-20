@@ -112,6 +112,18 @@ export interface ChatUser {
   isOnline?: boolean
 }
 
+export interface ChatReactionData {
+  emoji: string
+  count: number
+  isReactedByMe: boolean
+}
+
+export interface ChatReplyData {
+  id: string
+  content: string
+  userName: string
+}
+
 export interface ChatMessageData {
   id: string
   content: string
@@ -120,6 +132,10 @@ export interface ChatMessageData {
   status?: MessageStatus
   user?: ChatUser
   attachments?: ChatAttachment[]
+  editedAt?: string
+  isDeleted?: boolean
+  replyTo?: ChatReplyData
+  reactions?: ChatReactionData[]
 }
 
 export interface ChatContainerProps
@@ -134,6 +150,9 @@ export interface ChatMessageProps
   showTimestamp?: boolean
   showStatus?: boolean
   onMessageAction?: (action: string, message: ChatMessageData) => void
+  onReactionClick?: (messageId: string, emoji: string) => void
+  onReplyClick?: (messageId: string) => void
+  actionMenuSlot?: React.ReactNode
 }
 
 export interface ChatInputProps
@@ -225,15 +244,57 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
       showTimestamp = true,
       showStatus = true,
       onMessageAction,
+      onReactionClick,
+      onReplyClick,
+      actionMenuSlot,
       ...props
     },
     ref
   ) => {
-    const formattedTime = new Date(message.timestamp).toLocaleTimeString('en-US', {
-      hour: 'numeric',
+    const formattedTime = new Date(message.timestamp).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: true,
     })
+
+    // Deleted message placeholder
+    if (message.isDeleted) {
+      return (
+        <div ref={ref} className={cn(chatMessageVariants({ position }), className)} {...props}>
+          {showAvatar && message.user && position === 'received' && (
+            <Avatar
+              src={message.user.avatar}
+              fallback={message.user.name.charAt(0)}
+              size="sm"
+              alt={message.user.name}
+              className="shrink-0"
+            />
+          )}
+          <div
+            className={cn(
+              'flex max-w-[75%] flex-col gap-1',
+              position === 'sent' ? 'items-end' : 'items-start'
+            )}
+          >
+            {position === 'received' && message.user && (
+              <span className="text-xs font-medium text-[var(--text-muted)]">
+                {message.user.name}
+              </span>
+            )}
+            <div
+              className={cn(
+                'rounded-2xl px-4 py-2.5',
+                position === 'sent' ? 'rounded-br-md' : 'rounded-bl-md',
+                'border border-dashed border-[var(--border-default)] bg-transparent'
+              )}
+            >
+              <p className="text-sm text-[var(--text-muted)] italic">Mensagem excluída</p>
+            </div>
+            <time className="text-xs text-[var(--text-muted)]">{formattedTime}</time>
+          </div>
+          {showAvatar && position === 'sent' && <div className="w-8 shrink-0" />}
+        </div>
+      )
+    }
 
     return (
       <div ref={ref} className={cn(chatMessageVariants({ position }), className)} {...props}>
@@ -262,6 +323,39 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
             </span>
           )}
 
+          {/* Reply Quote */}
+          {message.replyTo && (
+            <button
+              type="button"
+              onClick={() => onReplyClick?.(message.replyTo!.id)}
+              className={cn(
+                'flex w-full flex-col rounded-lg border-l-2 px-3 py-1.5 text-left transition-colors',
+                position === 'sent'
+                  ? 'border-white/40 bg-white/10 hover:bg-white/15'
+                  : 'border-[var(--primary-500)] bg-[var(--bg-muted)] hover:bg-[var(--bg-emphasis)]'
+              )}
+            >
+              <span
+                className={cn(
+                  'text-xs font-semibold',
+                  position === 'sent' ? 'text-white/80' : 'text-[var(--primary-500)]'
+                )}
+              >
+                {message.replyTo.userName}
+              </span>
+              <span
+                className={cn(
+                  'truncate text-xs',
+                  position === 'sent' ? 'text-white/60' : 'text-[var(--text-muted)]'
+                )}
+              >
+                {message.replyTo.content.length > 80
+                  ? `${message.replyTo.content.slice(0, 80)}…`
+                  : message.replyTo.content}
+              </span>
+            </button>
+          )}
+
           {/* Message Bubble */}
           <div className="group relative">
             <div className={cn(messageBubbleVariants({ position }))}>
@@ -287,23 +381,57 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
               <p className="text-sm break-words whitespace-pre-wrap">{message.content}</p>
             </div>
 
-            {/* Actions Menu */}
-            {onMessageAction && (
-              <button
-                onClick={() => onMessageAction('menu', message)}
+            {/* Actions Menu (slot or default) */}
+            {actionMenuSlot ? (
+              <div
                 className={cn(
-                  'absolute top-1/2 -translate-y-1/2 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100',
-                  position === 'sent' ? '-left-8' : '-right-8',
-                  'text-[var(--text-muted)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-secondary)]'
+                  'absolute top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100',
+                  position === 'sent' ? '-left-8' : '-right-8'
                 )}
-                aria-label="Message actions"
               >
-                <MoreVertical size={16} />
-              </button>
+                {actionMenuSlot}
+              </div>
+            ) : (
+              onMessageAction && (
+                <button
+                  onClick={() => onMessageAction('menu', message)}
+                  className={cn(
+                    'absolute top-1/2 -translate-y-1/2 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100',
+                    position === 'sent' ? '-left-8' : '-right-8',
+                    'text-[var(--text-muted)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-secondary)]'
+                  )}
+                  aria-label="Message actions"
+                >
+                  <MoreVertical size={16} />
+                </button>
+              )
             )}
           </div>
 
-          {/* Timestamp and Status */}
+          {/* Reaction Chips */}
+          {message.reactions && message.reactions.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {message.reactions.map((reaction) => (
+                <button
+                  key={reaction.emoji}
+                  type="button"
+                  onClick={() => onReactionClick?.(message.id, reaction.emoji)}
+                  className={cn(
+                    'flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs transition-colors',
+                    reaction.isReactedByMe
+                      ? 'border-[var(--primary-500)]/40 bg-[var(--primary-500)]/10 text-[var(--primary-500)]'
+                      : 'border-[var(--border-default)] bg-[var(--bg-muted)] text-[var(--text-secondary)] hover:bg-[var(--bg-emphasis)]'
+                  )}
+                  aria-label={`${reaction.emoji} ${reaction.count}`}
+                >
+                  <span>{reaction.emoji}</span>
+                  <span>{reaction.count}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Timestamp, Edited label, and Status */}
           <div className="flex items-center gap-1.5">
             {showTimestamp && (
               <time
@@ -312,6 +440,9 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
               >
                 {formattedTime}
               </time>
+            )}
+            {message.editedAt && (
+              <span className="text-xs text-[var(--text-muted)] italic">(editado)</span>
             )}
             {showStatus && position === 'sent' && <MessageStatusIcon status={message.status} />}
           </div>
@@ -498,6 +629,9 @@ interface ChatMessagesListProps extends React.HTMLAttributes<HTMLDivElement> {
   showTimestamp?: boolean
   showStatus?: boolean
   onMessageAction?: (action: string, message: ChatMessageData) => void
+  onReactionClick?: (messageId: string, emoji: string) => void
+  onReplyClick?: (messageId: string) => void
+  renderActionMenu?: (message: ChatMessageData) => React.ReactNode
 }
 
 const ChatMessagesList = React.forwardRef<HTMLDivElement, ChatMessagesListProps>(
@@ -509,6 +643,9 @@ const ChatMessagesList = React.forwardRef<HTMLDivElement, ChatMessagesListProps>
       showTimestamp = true,
       showStatus = true,
       onMessageAction,
+      onReactionClick,
+      onReplyClick,
+      renderActionMenu,
       ...props
     },
     ref
@@ -533,6 +670,9 @@ const ChatMessagesList = React.forwardRef<HTMLDivElement, ChatMessagesListProps>
               showTimestamp={showTimestamp}
               showStatus={showStatus}
               onMessageAction={onMessageAction}
+              onReactionClick={onReactionClick}
+              onReplyClick={onReplyClick}
+              actionMenuSlot={renderActionMenu?.(message)}
             />
           ))}
         </div>
@@ -618,3 +758,5 @@ export {
   chatInputVariants,
   typingIndicatorVariants,
 }
+
+export type { ChatMessagesListProps }

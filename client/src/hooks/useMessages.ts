@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@store/auth.store'
 import type { TypedSocket } from '@services/socket'
-import type { MessagePayload, MessageType, SendMessagePayload } from '@/types/socket'
+import type { MessagePayload, MessageType, ReactionGroup, SendMessagePayload } from '@/types/socket'
 
 interface UseMessagesOptions {
   socket: TypedSocket | null
@@ -13,8 +13,11 @@ interface UseMessagesReturn {
   messages: MessagePayload[]
   hasMore: boolean
   isLoadingHistory: boolean
-  sendMessage: (content: string) => void
-  sendFileMessage: (content: string, fileUrl: string, type: MessageType) => void
+  sendMessage: (content: string, replyToId?: string) => void
+  sendFileMessage: (content: string, fileUrl: string, type: MessageType, replyToId?: string) => void
+  editMessage: (messageId: string, content: string) => void
+  deleteMessage: (messageId: string) => void
+  toggleReaction: (messageId: string, emoji: string) => void
   loadMore: () => void
 }
 
@@ -22,7 +25,7 @@ const HISTORY_LIMIT = 50
 
 /**
  * Manages messages for a specific room via Socket.io.
- * Handles sending, receiving, and loading history.
+ * Handles sending, receiving, editing, deleting, reactions, and loading history.
  */
 export function useMessages({
   socket,
@@ -70,7 +73,6 @@ export function useMessages({
     // Listen for history response
     function onHistory(data: { messages: MessagePayload[]; hasMore: boolean }) {
       setMessages((prev) => {
-        // If loading more (prev has messages), prepend; otherwise set
         if (prev.length > 0) {
           return [...data.messages, ...prev]
         }
@@ -80,12 +82,57 @@ export function useMessages({
       setIsLoadingHistory(false)
     }
 
+    // Listen for edited messages
+    function onEdited(message: MessagePayload) {
+      if (message.roomId === roomId) {
+        setMessages((prev) => prev.map((m) => (m.id === message.id ? message : m)))
+      }
+    }
+
+    // Listen for deleted messages
+    function onDeleted(data: { roomId: string; messageId: string }) {
+      if (data.roomId === roomId) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === data.messageId
+              ? {
+                  ...m,
+                  content: '',
+                  deletedAt: new Date().toISOString(),
+                  fileUrl: null,
+                  reactions: [],
+                }
+              : m
+          )
+        )
+      }
+    }
+
+    // Listen for reaction updates
+    function onReactionUpdated(data: {
+      roomId: string
+      messageId: string
+      reactions: ReactionGroup[]
+    }) {
+      if (data.roomId === roomId) {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === data.messageId ? { ...m, reactions: data.reactions } : m))
+        )
+      }
+    }
+
     socket.on('message:new', onNewMessage)
     socket.on('message:history', onHistory)
+    socket.on('message:edited', onEdited)
+    socket.on('message:deleted', onDeleted)
+    socket.on('message:reaction_updated', onReactionUpdated)
 
     return () => {
       socket.off('message:new', onNewMessage)
       socket.off('message:history', onHistory)
+      socket.off('message:edited', onEdited)
+      socket.off('message:deleted', onDeleted)
+      socket.off('message:reaction_updated', onReactionUpdated)
     }
   }, [socket, isConnected, roomId])
 
@@ -99,15 +146,15 @@ export function useMessages({
     }
   }, [socket])
 
-  // Send message with ACK
   const sendMessage = useCallback(
-    (content: string) => {
+    (content: string, replyToId?: string) => {
       if (!socket || !isConnected || !content.trim() || !userId) return
 
       const payload: SendMessagePayload = {
         roomId,
         content: content.trim(),
         type: 'TEXT',
+        replyToId,
       }
 
       socket.emit('message:send', payload, (ack) => {
@@ -119,9 +166,8 @@ export function useMessages({
     [socket, isConnected, roomId, userId]
   )
 
-  // Send file message with ACK
   const sendFileMessage = useCallback(
-    (content: string, fileUrl: string, type: MessageType) => {
+    (content: string, fileUrl: string, type: MessageType, replyToId?: string) => {
       if (!socket || !isConnected || !userId) return
 
       const payload: SendMessagePayload = {
@@ -129,6 +175,7 @@ export function useMessages({
         content,
         type,
         fileUrl,
+        replyToId,
       }
 
       socket.emit('message:send', payload, (ack) => {
@@ -140,7 +187,45 @@ export function useMessages({
     [socket, isConnected, roomId, userId]
   )
 
-  // Load more (older) messages
+  const editMessage = useCallback(
+    (messageId: string, content: string) => {
+      if (!socket || !isConnected || !content.trim()) return
+
+      socket.emit('message:edit', { roomId, messageId, content: content.trim() }, (ack) => {
+        if (!ack.success) {
+          console.error('[socket] Failed to edit message:', ack.error)
+        }
+      })
+    },
+    [socket, isConnected, roomId]
+  )
+
+  const deleteMessage = useCallback(
+    (messageId: string) => {
+      if (!socket || !isConnected) return
+
+      socket.emit('message:delete', { roomId, messageId }, (ack) => {
+        if (!ack.success) {
+          console.error('[socket] Failed to delete message:', ack.error)
+        }
+      })
+    },
+    [socket, isConnected, roomId]
+  )
+
+  const toggleReaction = useCallback(
+    (messageId: string, emoji: string) => {
+      if (!socket || !isConnected) return
+
+      socket.emit('message:react', { roomId, messageId, emoji }, (ack) => {
+        if (!ack.success) {
+          console.error('[socket] Failed to react:', ack.error)
+        }
+      })
+    },
+    [socket, isConnected, roomId]
+  )
+
   const loadMore = useCallback(() => {
     if (!socket || !isConnected || !hasMore || isLoadingHistory) return
 
@@ -155,5 +240,15 @@ export function useMessages({
     })
   }, [socket, isConnected, hasMore, isLoadingHistory, messages, roomId])
 
-  return { messages, hasMore, isLoadingHistory, sendMessage, sendFileMessage, loadMore }
+  return {
+    messages,
+    hasMore,
+    isLoadingHistory,
+    sendMessage,
+    sendFileMessage,
+    editMessage,
+    deleteMessage,
+    toggleReaction,
+    loadMore,
+  }
 }

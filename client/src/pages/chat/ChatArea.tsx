@@ -1,14 +1,24 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChatInput, ChatMessage, TypingIndicator } from '@core/patterns/ChatUI/ChatUI'
 import { Spinner } from '@core/primitives/Spinner'
+import { Button } from '@core/primitives/Button'
+import { Modal } from '@core/organisms/Modal'
 import { useAuthStore } from '@store/auth.store'
 import { useSocket } from '@hooks/useSocket'
 import { useMessages } from '@hooks/useMessages'
 import { useTyping } from '@hooks/useTyping'
 import { useReadReceipts } from '@hooks/useReadReceipts'
 import { uploadFile } from '@services/upload.service'
+import { MessageActionMenu } from './MessageActionMenu'
+import { ReplyBar } from './ReplyBar'
+import { ReactionPicker } from './ReactionPicker'
 import type { MessagePayload } from '@/types/socket'
-import type { ChatMessageData, ChatUser, MessageStatus } from '@core/patterns/ChatUI/ChatUI'
+import type {
+  ChatMessageData,
+  ChatReactionData,
+  ChatUser,
+  MessageStatus,
+} from '@core/patterns/ChatUI/ChatUI'
 
 interface ChatAreaProps {
   roomId: string
@@ -18,8 +28,17 @@ interface ChatAreaProps {
 export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
   const userId = useAuthStore((s) => s.user?.id)
   const { socket, isConnected, connectError } = useSocket()
-  const { messages, hasMore, isLoadingHistory, sendMessage, sendFileMessage, loadMore } =
-    useMessages({ socket, roomId, isConnected })
+  const {
+    messages,
+    hasMore,
+    isLoadingHistory,
+    sendMessage,
+    sendFileMessage,
+    editMessage,
+    deleteMessage,
+    toggleReaction,
+    loadMore,
+  } = useMessages({ socket, roomId, isConnected })
   const { typingUsers, startTyping, stopTyping } = useTyping({ socket, roomId, isConnected })
   const { isReadByOthers } = useReadReceipts({
     socket,
@@ -28,11 +47,18 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
     userId,
     messageCount: messages.length,
   })
+
   const [isUploading, setIsUploading] = useState(false)
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
+  const [editingContent, setEditingContent] = useState('')
+  const [replyingTo, setReplyingTo] = useState<MessagePayload | null>(null)
+  const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null)
+  const [reactionPickerMessageId, setReactionPickerMessageId] = useState<string | null>(null)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const prevMessagesLengthRef = useRef(0)
+  const editInputRef = useRef<HTMLTextAreaElement>(null)
 
   // Auto-scroll to bottom on new messages (only if already near bottom)
   useEffect(() => {
@@ -65,6 +91,26 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
     }
   }, [highlightedMessageId])
 
+  // Focus edit input when editing starts
+  useEffect(() => {
+    if (editingMessageId && editInputRef.current) {
+      editInputRef.current.focus()
+      editInputRef.current.setSelectionRange(
+        editInputRef.current.value.length,
+        editInputRef.current.value.length
+      )
+    }
+  }, [editingMessageId])
+
+  // Clear interaction state when room changes
+  useEffect(() => {
+    setEditingMessageId(null)
+    setEditingContent('')
+    setReplyingTo(null)
+    setDeletingMessageId(null)
+    setReactionPickerMessageId(null)
+  }, [roomId])
+
   // Infinite scroll: load more when scrolling to top
   function handleScroll() {
     const container = scrollContainerRef.current
@@ -83,6 +129,7 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
 
   async function handleSubmit(value: string, attachments?: File[]) {
     stopTyping()
+    const replyToId = replyingTo?.id
 
     // Upload files first, then send messages
     if (attachments && attachments.length > 0) {
@@ -92,11 +139,7 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
           const result = await uploadFile(file)
           const type = result.isImage ? 'IMAGE' : 'FILE'
           const content = value.trim() || result.originalName
-          sendFileMessage(content, result.url, type)
-        }
-        // If there's also text without files, send it separately
-        if (value.trim() && attachments.length > 0) {
-          // Text was already included with the first file
+          sendFileMessage(content, result.url, type, replyToId)
         }
       } catch (err) {
         console.error('[upload] Failed to upload file:', err)
@@ -104,8 +147,10 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
         setIsUploading(false)
       }
     } else if (value.trim()) {
-      sendMessage(value)
+      sendMessage(value, replyToId)
     }
+
+    setReplyingTo(null)
 
     requestAnimationFrame(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -115,6 +160,92 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
   function handleInputChange() {
     startTyping()
   }
+
+  // ============ ACTION HANDLERS ============
+
+  const handleMessageAction = useCallback(
+    (action: string, chatMsg: ChatMessageData) => {
+      const msg = messages.find((m) => m.id === chatMsg.id)
+      if (!msg) return
+
+      switch (action) {
+        case 'edit':
+          setEditingMessageId(msg.id)
+          setEditingContent(msg.content)
+          break
+        case 'delete':
+          setDeletingMessageId(msg.id)
+          break
+        case 'reply':
+          setReplyingTo(msg)
+          break
+        case 'react':
+          // If chatMsg.content is an emoji from quick reactions, toggle it directly
+          if (
+            chatMsg.content &&
+            /^\p{Emoji}/u.test(chatMsg.content) &&
+            chatMsg.content.length <= 4
+          ) {
+            toggleReaction(msg.id, chatMsg.content)
+          } else {
+            setReactionPickerMessageId(msg.id)
+          }
+          break
+      }
+    },
+    [messages, toggleReaction]
+  )
+
+  function handleEditSave() {
+    if (!editingMessageId || !editingContent.trim()) return
+    editMessage(editingMessageId, editingContent)
+    setEditingMessageId(null)
+    setEditingContent('')
+  }
+
+  function handleEditCancel() {
+    setEditingMessageId(null)
+    setEditingContent('')
+  }
+
+  function handleEditKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleEditSave()
+    }
+    if (e.key === 'Escape') {
+      handleEditCancel()
+    }
+  }
+
+  function handleDeleteConfirm() {
+    if (!deletingMessageId) return
+    deleteMessage(deletingMessageId)
+    setDeletingMessageId(null)
+  }
+
+  function handleReactionSelect(emoji: string) {
+    if (!reactionPickerMessageId) return
+    toggleReaction(reactionPickerMessageId, emoji)
+    setReactionPickerMessageId(null)
+  }
+
+  function handleReactionClick(messageId: string, emoji: string) {
+    toggleReaction(messageId, emoji)
+  }
+
+  function handleReplyClick(messageId: string) {
+    const el = document.getElementById(`msg-${messageId}`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      el.classList.add('animate-pulse', 'bg-[var(--warning-base)]/10')
+      setTimeout(() => {
+        el.classList.remove('animate-pulse', 'bg-[var(--warning-base)]/10')
+      }, 1500)
+    }
+  }
+
+  // ============ RENDERING ============
 
   const chatMessages: ChatMessageData[] = messages.map((msg) =>
     toChatMessage(msg, userId, isReadByOthers)
@@ -167,19 +298,77 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
           </div>
         )}
 
-        {chatMessages.map((msg) => (
-          <div
-            key={msg.id}
-            id={`msg-${msg.id}`}
-            className={
-              highlightedMessageId === msg.id
-                ? 'animate-pulse rounded-lg bg-[var(--warning-base)]/10 transition-colors duration-500'
-                : ''
-            }
-          >
-            <ChatMessage message={msg} showAvatar showTimestamp showStatus />
-          </div>
-        ))}
+        {chatMessages.map((msg) => {
+          const isEditing = editingMessageId === msg.id
+          const showReactionPicker = reactionPickerMessageId === msg.id
+
+          return (
+            <div
+              key={msg.id}
+              id={`msg-${msg.id}`}
+              className={
+                highlightedMessageId === msg.id
+                  ? 'rounded-lg bg-[var(--warning-base)]/10 transition-colors duration-500'
+                  : 'transition-colors duration-300'
+              }
+            >
+              {isEditing ? (
+                // Inline edit mode
+                <div className="flex flex-col gap-2 rounded-lg bg-[var(--bg-muted)] p-3">
+                  <span className="text-xs font-medium text-[var(--text-muted)]">
+                    Editando mensagem
+                  </span>
+                  <textarea
+                    ref={editInputRef}
+                    value={editingContent}
+                    onChange={(e) => setEditingContent(e.target.value)}
+                    onKeyDown={handleEditKeyDown}
+                    className="min-h-[60px] w-full resize-none rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--primary-500)] focus:ring-2 focus:ring-[var(--primary-500)]/20 focus:outline-none"
+                    rows={2}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="sm" onClick={handleEditCancel}>
+                      Cancelar
+                    </Button>
+                    <Button size="sm" onClick={handleEditSave} disabled={!editingContent.trim()}>
+                      Salvar
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative">
+                  <ChatMessage
+                    message={msg}
+                    showAvatar
+                    showTimestamp
+                    showStatus
+                    onReactionClick={handleReactionClick}
+                    onReplyClick={handleReplyClick}
+                    actionMenuSlot={
+                      !msg.isDeleted ? (
+                        <MessageActionMenu
+                          message={msg}
+                          isOwnMessage={msg.position === 'sent'}
+                          onAction={handleMessageAction}
+                        />
+                      ) : undefined
+                    }
+                  />
+
+                  {/* Floating Reaction Picker */}
+                  {showReactionPicker && (
+                    <div className="absolute bottom-full left-0 z-10 mb-2">
+                      <ReactionPicker
+                        onSelect={handleReactionSelect}
+                        onClose={() => setReactionPickerMessageId(null)}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )
+        })}
 
         <div ref={messagesEndRef} />
       </div>
@@ -195,6 +384,9 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
       {/* Typing indicator */}
       <TypingIndicator users={typingChatUsers} />
 
+      {/* Reply bar */}
+      {replyingTo && <ReplyBar replyingTo={replyingTo} onCancel={() => setReplyingTo(null)} />}
+
       {/* Input */}
       <ChatInput
         onSubmit={handleSubmit}
@@ -204,6 +396,29 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
         showEmoji={false}
         showAttach
       />
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        open={!!deletingMessageId}
+        onOpenChange={(open) => !open && setDeletingMessageId(null)}
+      >
+        <Modal.Content size="sm">
+          <Modal.Header>
+            <Modal.Title>Excluir mensagem</Modal.Title>
+            <Modal.Description>
+              Tem certeza que deseja excluir esta mensagem? Esta ação não pode ser desfeita.
+            </Modal.Description>
+          </Modal.Header>
+          <Modal.Footer>
+            <Button variant="ghost" onClick={() => setDeletingMessageId(null)}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleDeleteConfirm}>
+              Excluir
+            </Button>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
     </div>
   )
 }
@@ -216,8 +431,10 @@ function toChatMessage(
   isReadByOthers: (createdAt: string) => boolean
 ): ChatMessageData {
   const isSent = msg.userId === currentUserId
+  const isDeleted = !!msg.deletedAt
+
   const attachments =
-    msg.fileUrl && msg.type !== 'TEXT'
+    !isDeleted && msg.fileUrl && msg.type !== 'TEXT'
       ? [
           {
             id: msg.id,
@@ -233,9 +450,26 @@ function toChatMessage(
     status = 'read'
   }
 
+  const reactions: ChatReactionData[] | undefined =
+    msg.reactions && msg.reactions.length > 0
+      ? msg.reactions.map((r) => ({
+          emoji: r.emoji,
+          count: r.count,
+          isReactedByMe: currentUserId ? r.userIds.includes(currentUserId) : false,
+        }))
+      : undefined
+
+  const replyTo = msg.replyTo
+    ? {
+        id: msg.replyTo.id,
+        content: msg.replyTo.content,
+        userName: msg.replyTo.user.name,
+      }
+    : undefined
+
   return {
     id: msg.id,
-    content: msg.type === 'TEXT' ? msg.content : '',
+    content: msg.type === 'TEXT' || isDeleted ? msg.content : '',
     timestamp: msg.createdAt,
     position: isSent ? 'sent' : 'received',
     status,
@@ -245,5 +479,9 @@ function toChatMessage(
       avatar: msg.user.avatar ?? undefined,
     },
     attachments,
+    editedAt: msg.editedAt ?? undefined,
+    isDeleted,
+    replyTo,
+    reactions,
   }
 }
