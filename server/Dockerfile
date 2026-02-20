@@ -35,9 +35,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Install production dependencies only
+# Install production dependencies (includes tsx for prisma.config.ts)
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 # Copy Prisma schema + migrations + config (for migrate deploy)
 COPY prisma ./prisma
@@ -56,4 +56,4 @@ EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -qO- http://localhost:4000/api/v1/health || exit 1
 
-CMD ["node", "dist/app.js"]
+CMD sh -c "npx prisma migrate deploy && node dist/app.js"
