@@ -17,10 +17,15 @@ COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build
 
-# Fix Prisma CJS compatibility: import.meta.url → CJS equivalent
-# Prisma 7 generates ESM code that tsc passes through to CJS output
+# Fix Prisma CJS compatibility:
+# 1. import.meta.url → CJS equivalent (Prisma 7 ESM in CJS context)
+# 2. .ts extensions → .js in require/import (tsc preserves .ts extensions)
 RUN find dist/generated -name '*.js' -exec sed -i \
-  's/import\.meta\.url/require("url").pathToFileURL(__filename).href/g' {} +
+  's/import\.meta\.url/require("url").pathToFileURL(__filename).href/g' {} + && \
+  find dist/generated -name '*.js' -exec sed -i \
+  "s/\(require(['\"]\..*\)\.ts\(['\"])\)/\1.js\2/g" {} + && \
+  find dist/generated -name '*.js' -exec sed -i \
+  "s/\(from ['\"]\..*\)\.ts\(['\"];\)/\1.js\2/g" {} +
 
 # ============ STAGE 2: Runner ============
 
