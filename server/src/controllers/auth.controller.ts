@@ -33,6 +33,7 @@ export const authController = {
       data: {
         user: result.user,
         accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
       },
     })
   },
@@ -48,12 +49,15 @@ export const authController = {
       data: {
         user: result.user,
         accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
       },
     })
   },
 
   async refreshToken(req: Request, res: Response) {
-    const token = req.cookies?.[REFRESH_TOKEN_COOKIE] as string | undefined
+    // Accept refresh token from cookie OR request body (fallback for proxied environments)
+    const token =
+      req.cookies?.[REFRESH_TOKEN_COOKIE] || (req.body as { refreshToken?: string })?.refreshToken
 
     if (!token) {
       res.status(401).json({
@@ -69,7 +73,10 @@ export const authController = {
 
     res.status(200).json({
       success: true,
-      data: { accessToken: tokens.accessToken },
+      data: {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      },
     })
   },
 

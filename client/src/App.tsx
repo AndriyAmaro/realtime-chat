@@ -12,13 +12,19 @@ export default function App() {
   const setAuth = useAuthStore((s) => s.setAuth)
   const logout = useAuthStore((s) => s.logout)
 
-  // Try restoring session from refresh token cookie on app load
+  // Try restoring session on app load using stored refresh token
   useEffect(() => {
     async function restoreSession() {
       try {
-        const { accessToken } = await authService.refreshToken()
+        const storedRefreshToken = useAuthStore.getState().refreshToken
+        if (!storedRefreshToken) {
+          logout()
+          return
+        }
+
+        const { accessToken, refreshToken } = await authService.refreshToken(storedRefreshToken)
         const user = await authService.getProfile()
-        setAuth(user, accessToken)
+        setAuth(user, accessToken, refreshToken)
       } catch {
         logout()
       }

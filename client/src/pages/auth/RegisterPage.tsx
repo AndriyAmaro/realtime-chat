@@ -45,7 +45,7 @@ export default function RegisterPage() {
     try {
       setServerError(null)
       const data = await authService.register(values)
-      setAuth(data.user, data.accessToken)
+      setAuth(data.user, data.accessToken, data.refreshToken)
       navigate('/chat', { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {

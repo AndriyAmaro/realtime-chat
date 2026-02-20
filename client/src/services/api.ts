@@ -59,16 +59,26 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
 async function tryRefresh(): Promise<boolean> {
   try {
+    const { refreshToken } = useAuthStore.getState()
+
     const response = await fetch(`${BASE_URL}/auth/refresh-token`, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
+      body: refreshToken ? JSON.stringify({ refreshToken }) : undefined,
     })
 
     if (!response.ok) return false
 
-    const json = (await response.json()) as ApiResponse<{ accessToken: string }>
+    const json = (await response.json()) as ApiResponse<{
+      accessToken: string
+      refreshToken: string
+    }>
     if (json.data?.accessToken) {
       useAuthStore.getState().setAccessToken(json.data.accessToken)
+      if (json.data.refreshToken) {
+        useAuthStore.getState().setRefreshToken(json.data.refreshToken)
+      }
       return true
     }
     return false

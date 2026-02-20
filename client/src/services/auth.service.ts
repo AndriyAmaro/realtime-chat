@@ -12,6 +12,7 @@ interface User {
 interface AuthData {
   user: User
   accessToken: string
+  refreshToken: string
 }
 
 interface RegisterPayload {
@@ -44,8 +45,11 @@ export const authService = {
     return api.post<AuthData>('/auth/login', payload)
   },
 
-  refreshToken() {
-    return api.post<{ accessToken: string }>('/auth/refresh-token')
+  refreshToken(refreshToken?: string) {
+    return api.post<{ accessToken: string; refreshToken: string }>(
+      '/auth/refresh-token',
+      refreshToken ? { refreshToken } : undefined
+    )
   },
 
   logout() {

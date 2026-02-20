@@ -41,7 +41,7 @@ export default function LoginPage() {
     try {
       setServerError(null)
       const data = await authService.login(values)
-      setAuth(data.user, data.accessToken)
+      setAuth(data.user, data.accessToken, data.refreshToken)
       navigate('/chat', { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
@@ -59,7 +59,7 @@ export default function LoginPage() {
         email: 'andriy@example.com',
         password: 'password123',
       })
-      setAuth(data.user, data.accessToken)
+      setAuth(data.user, data.accessToken, data.refreshToken)
       navigate('/chat', { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
