@@ -12,6 +12,7 @@ import { uploadFile } from '@services/upload.service'
 import { MessageActionMenu } from './MessageActionMenu'
 import { ReplyBar } from './ReplyBar'
 import { ReactionPicker } from './ReactionPicker'
+import { InputEmojiPicker } from './InputEmojiPicker'
 import type { MessagePayload } from '@/types/socket'
 import type {
   ChatMessageData,
@@ -54,6 +55,7 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
   const [replyingTo, setReplyingTo] = useState<MessagePayload | null>(null)
   const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null)
   const [reactionPickerMessageId, setReactionPickerMessageId] = useState<string | null>(null)
+  const [inputValue, setInputValue] = useState('')
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -157,8 +159,13 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
     })
   }
 
-  function handleInputChange() {
+  function handleInputChange(val: string) {
+    setInputValue(val)
     startTyping()
+  }
+
+  function handleEmojiSelect(emoji: string) {
+    setInputValue((prev) => prev + emoji)
   }
 
   // ============ ACTION HANDLERS ============
@@ -389,12 +396,16 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
 
       {/* Input */}
       <ChatInput
+        value={inputValue}
         onSubmit={handleSubmit}
         onChange={handleInputChange}
         placeholder="Digite uma mensagem..."
         disabled={!isConnected || isUploading}
-        showEmoji={false}
+        showEmoji
         showAttach
+        emojiPickerSlot={
+          <InputEmojiPicker onSelect={handleEmojiSelect} disabled={!isConnected || isUploading} />
+        }
       />
 
       {/* Delete Confirmation Modal */}

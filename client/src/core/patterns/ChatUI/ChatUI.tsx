@@ -167,6 +167,7 @@ export interface ChatInputProps
   showEmoji?: boolean
   showAttach?: boolean
   maxLength?: number
+  emojiPickerSlot?: React.ReactNode
 }
 
 export interface TypingIndicatorProps
@@ -471,6 +472,7 @@ const ChatInput = React.forwardRef<HTMLDivElement, ChatInputProps>(
       showEmoji = true,
       showAttach = true,
       maxLength,
+      emojiPickerSlot,
       ...props
     },
     ref
@@ -557,17 +559,18 @@ const ChatInput = React.forwardRef<HTMLDivElement, ChatInputProps>(
           </div>
         )}
 
-        {/* Emoji Button */}
-        {showEmoji && (
-          <button
-            type="button"
-            className="rounded-lg p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-muted)] hover:text-[var(--text-secondary)]"
-            disabled={disabled}
-            aria-label="Add emoji"
-          >
-            <Smile size={20} />
-          </button>
-        )}
+        {/* Emoji Button / Slot */}
+        {showEmoji &&
+          (emojiPickerSlot || (
+            <button
+              type="button"
+              className="rounded-lg p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-muted)] hover:text-[var(--text-secondary)]"
+              disabled={disabled}
+              aria-label="Add emoji"
+            >
+              <Smile size={20} />
+            </button>
+          ))}
 
         {/* Attach Button */}
         {showAttach && (
