@@ -20,7 +20,7 @@ export function getSocket(): TypedSocket {
   // In dev, Vite proxy handles /socket.io. In prod, VITE_SOCKET_URL points to Railway.
   socket = io(import.meta.env.VITE_SOCKET_URL || '/', {
     auth: { token },
-    transports: ['websocket', 'polling'],
+    transports: ['polling', 'websocket'],
     reconnection: true,
     reconnectionAttempts: 10,
     reconnectionDelay: 500,

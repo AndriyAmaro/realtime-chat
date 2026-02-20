@@ -129,7 +129,7 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
     <div className="flex flex-1 flex-col overflow-hidden">
       {/* Connection status banner */}
       {!isConnected && (
-        <div className="flex items-center justify-center gap-2 bg-[var(--warning-base)]/10 px-4 py-2 text-sm text-[var(--warning-base)]">
+        <div className="bg-primary-500/10 text-primary-500 flex animate-pulse items-center justify-center gap-2 px-4 py-2 text-sm">
           <Spinner size="xs" />
           {connectError ? `Erro: ${connectError}` : 'Conectando...'}
         </div>
