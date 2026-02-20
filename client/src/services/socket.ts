@@ -23,7 +23,7 @@ export function getSocket(): TypedSocket {
     transports: ['websocket', 'polling'],
     reconnection: true,
     reconnectionAttempts: 10,
-    reconnectionDelay: 1000,
+    reconnectionDelay: 500,
     reconnectionDelayMax: 5000,
   })
 

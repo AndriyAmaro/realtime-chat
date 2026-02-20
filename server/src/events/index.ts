@@ -34,9 +34,7 @@ export function registerSocketHandlers(io: TypedServer, socket: TypedSocket): vo
 async function autoJoinUserRooms(socket: TypedSocket): Promise<void> {
   try {
     const roomIds = await roomMemberRepository.findRoomIdsByUserId(socket.data.userId)
-    for (const roomId of roomIds) {
-      await socket.join(roomId)
-    }
+    await Promise.all(roomIds.map((roomId) => socket.join(roomId)))
   } catch (err) {
     console.error('[socket] Failed to auto-join rooms:', err)
   }

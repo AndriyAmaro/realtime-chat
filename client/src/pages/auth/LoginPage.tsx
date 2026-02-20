@@ -18,6 +18,7 @@ import { PasswordInput } from '@core/patterns/PasswordInput'
 import { authService } from '@services/auth.service'
 import { useAuthStore } from '@store/auth.store'
 import { ApiError } from '@services/api'
+import { getSocket } from '@services/socket'
 import { Mail } from 'lucide-react'
 
 const loginSchema = z.object({
@@ -42,6 +43,7 @@ export default function LoginPage() {
       setServerError(null)
       const data = await authService.login(values)
       setAuth(data.user, data.accessToken, data.refreshToken)
+      getSocket() // Start connecting before navigation
       navigate('/chat', { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
@@ -60,6 +62,7 @@ export default function LoginPage() {
         password: 'password123',
       })
       setAuth(data.user, data.accessToken, data.refreshToken)
+      getSocket() // Start connecting before navigation
       navigate('/chat', { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {

@@ -21,22 +21,21 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
         return
       }
 
-      // Join the Socket.io room
-      await socket.join(roomId)
+      // Join socket room + fetch all supplementary data in parallel
+      const [, user, onlineUserIds, readReceipts] = await Promise.all([
+        socket.join(roomId),
+        userRepository.findById(userId),
+        getOnlineUserIds(io, roomId),
+        roomMemberRepository.getReadReceipts(roomId),
+      ])
 
-      // Get user info for the notification
-      const user = await userRepository.findById(userId)
       const userName = user?.name ?? 'Unknown'
 
       // Notify others in the room
       socket.to(roomId).emit('room:joined', { roomId, userId, userName })
 
-      // Send list of online members in this room
-      const onlineUserIds = await getOnlineUserIds(io, roomId)
+      // Send list of online members + read receipts
       socket.emit('room:members_online', { roomId, userIds: onlineUserIds })
-
-      // Send read receipts for this room
-      const readReceipts = await roomMemberRepository.getReadReceipts(roomId)
       socket.emit('messages:read_receipts', {
         roomId,
         receipts: readReceipts.map((r) => ({
