@@ -26,6 +26,12 @@ export function useSocket() {
     }
   }
 
+  // Sync connected state during render — handles race condition when the
+  // socket was preloaded at login and connected before this hook mounted.
+  if (socket?.connected && !isConnected) {
+    setIsConnected(true)
+  }
+
   // Subscribe to connection events
   useEffect(() => {
     if (!socket) return
