@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 import { ChevronLeft, ChevronDown, Menu, X } from 'lucide-react'
 import { cn } from '@shared/utils/cn'
 import { Drawer } from '@core/organisms/Drawer'

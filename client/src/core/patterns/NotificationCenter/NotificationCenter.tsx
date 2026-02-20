@@ -4,7 +4,6 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@shared/utils/cn'
 import {
   Bell,
-  Check,
   CheckCheck,
   X,
   Info,

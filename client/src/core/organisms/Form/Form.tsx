@@ -1,24 +1,23 @@
 import * as React from 'react'
 import {
   useForm,
-  UseFormReturn,
-  FieldValues,
-  DefaultValues,
-  SubmitHandler,
-  SubmitErrorHandler,
-  Path,
-  FieldError,
   Controller,
-  ControllerProps,
-  ControllerRenderProps,
-  ControllerFieldState,
-  UseFormProps,
-  UseFormStateReturn,
-  Resolver,
+  type UseFormReturn,
+  type FieldValues,
+  type SubmitHandler,
+  type SubmitErrorHandler,
+  type Path,
+  type FieldError,
+  type ControllerProps,
+  type ControllerRenderProps,
+  type ControllerFieldState,
+  type UseFormProps,
+  type UseFormStateReturn,
+  type Resolver,
 } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z, ZodType } from 'zod'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type ZodType } from 'zod'
+import { cva } from 'class-variance-authority'
 import { cn } from '@shared/utils/cn'
 import { Button } from '@core/primitives/Button'
 import { Spinner } from '@core/primitives/Spinner'
@@ -280,7 +279,7 @@ interface FormItemProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const FormItem = React.forwardRef<HTMLDivElement, FormItemProps>(
   ({ className, children, ...props }, ref) => {
-    const { layout, size } = useFormContext()
+    const { layout } = useFormContext()
 
     return (
       <div

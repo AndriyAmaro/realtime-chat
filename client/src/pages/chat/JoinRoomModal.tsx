@@ -51,71 +51,68 @@ export function JoinRoomModal({ open, onOpenChange }: JoinRoomModalProps) {
   }
 
   return (
-    <Modal.Root open={open} onOpenChange={handleClose}>
-      <Modal.Portal>
-        <Modal.Overlay />
-        <Modal.Content size="sm">
-          <Modal.Header>
-            <Modal.Title>Entrar em uma sala</Modal.Title>
-            <Modal.Description>
-              Insira o ID da sala e o código de convite (se for privada)
-            </Modal.Description>
-          </Modal.Header>
+    <Modal open={open} onOpenChange={handleClose}>
+      <Modal.Content size="sm">
+        <Modal.Header>
+          <Modal.Title>Entrar em uma sala</Modal.Title>
+          <Modal.Description>
+            Insira o ID da sala e o código de convite (se for privada)
+          </Modal.Description>
+        </Modal.Header>
 
-          <Modal.Body className="space-y-4">
-            {error && (
-              <div className="border-error-base/20 bg-error-base/5 text-error-base rounded-lg border px-4 py-3 text-sm">
-                {error}
-              </div>
+        <Modal.Body className="space-y-4">
+          {error && (
+            <div className="border-error-base/20 bg-error-base/5 text-error-base rounded-lg border px-4 py-3 text-sm">
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-[var(--text-primary)]">
+              ID da sala <span className="text-error-base">*</span>
+            </label>
+            <Input
+              value={roomId}
+              onChange={(e) => setRoomId(e.target.value)}
+              placeholder="Cole o ID da sala aqui"
+              leftIcon={<Link2 className="h-4 w-4" />}
+              autoFocus
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-[var(--text-primary)]">
+              Código de convite <span className="text-[var(--text-muted)]">(opcional)</span>
+            </label>
+            <Input
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value)}
+              placeholder="Ex: 3db79d8e"
+            />
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Modal.Close asChild>
+            <button
+              type="button"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-subtle)]"
+            >
+              Cancelar
+            </button>
+          </Modal.Close>
+          <Button variant="primary" size="md" onClick={handleJoin} disabled={joinRoom.isPending}>
+            {joinRoom.isPending ? (
+              <>
+                <Spinner size="xs" variant="white" />
+                Entrando...
+              </>
+            ) : (
+              'Entrar'
             )}
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[var(--text-primary)]">
-                ID da sala <span className="text-error-base">*</span>
-              </label>
-              <Input
-                value={roomId}
-                onChange={(e) => setRoomId(e.target.value)}
-                placeholder="Cole o ID da sala aqui"
-                leftIcon={<Link2 className="h-4 w-4" />}
-                autoFocus
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[var(--text-primary)]">
-                Código de convite <span className="text-[var(--text-muted)]">(opcional)</span>
-              </label>
-              <Input
-                value={inviteCode}
-                onChange={(e) => setInviteCode(e.target.value)}
-                placeholder="Ex: 3db79d8e"
-              />
-            </div>
-          </Modal.Body>
-
-          <Modal.Footer>
-            <Modal.Close asChild>
-              <button
-                type="button"
-                className="rounded-lg px-4 py-2 text-sm font-medium text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-subtle)]"
-              >
-                Cancelar
-              </button>
-            </Modal.Close>
-            <Button variant="primary" size="md" onClick={handleJoin} disabled={joinRoom.isPending}>
-              {joinRoom.isPending ? (
-                <>
-                  <Spinner size="xs" variant="white" />
-                  Entrando...
-                </>
-              ) : (
-                'Entrar'
-              )}
-            </Button>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal.Portal>
-    </Modal.Root>
+          </Button>
+        </Modal.Footer>
+      </Modal.Content>
+    </Modal>
   )
 }

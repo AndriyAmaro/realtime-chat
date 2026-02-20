@@ -59,7 +59,7 @@ const SearchBar = React.forwardRef<HTMLInputElement, SearchBarProps>(
     ref
   ) => {
     const [internalValue, setInternalValue] = React.useState(value || '')
-    const debounceRef = React.useRef<NodeJS.Timeout | null>(null)
+    const debounceRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
     React.useEffect(() => {
       if (value !== undefined) {
