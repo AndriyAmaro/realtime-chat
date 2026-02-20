@@ -31,14 +31,14 @@
 | 21 | CI/CD (GitHub Actions) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 22 | Deploy (Vercel + Railway) | ✅ Concluída | 19/02/2026 | 20/02/2026 |
 | 23 | Perfil de Usuário + Configurações | ✅ Concluída | 20/02/2026 | 20/02/2026 |
-| 24 | Message Enhancements (Edit, Delete, Replies, Reactions) | ⬚ Pendente | — | — |
+| 24 | Message Enhancements (Edit, Delete, Replies, Reactions) | ✅ Concluída | 20/02/2026 | 20/02/2026 |
 | 25 | Resilience Engineering (Offline Queue, Reconnexão, Anti-Spam) | ⬚ Pendente | — | — |
 | 26 | Observability & Production Hardening | ⬚ Pendente | — | — |
 | 27 | Performance Optimization (Code Splitting, Lighthouse 95+) | ⬚ Pendente | — | — |
 | 28 | Architecture Documentation (/docs/) | ✅ Concluída | 20/02/2026 | 20/02/2026 |
 | 29 | README Profissional + Landing Page Senior | ⬚ Pendente | — | — |
 
-**Progresso global: 24/29 fases concluídas (~83%)**
+**Progresso global: 25/29 fases concluídas (~86%)**
 
 ---
 
@@ -439,43 +439,40 @@
 
 ---
 
-### Fase 24 — Message Enhancements ⬚
+### Fase 24 — Message Enhancements ✅
 
 > Features que todo chat moderno tem. Sem isso, parece incompleto para um recrutador.
 
 **24a — Editar Mensagens:**
-- [ ] Backend: `PATCH /api/v1/rooms/:roomId/messages/:messageId` — update content
-- [ ] Backend: Campo `editedAt DateTime?` no Message (migration)
-- [ ] Backend: Socket event `message:edit` (emit) → `message:edited` (broadcast)
-- [ ] Backend: Validação — só o autor pode editar, apenas mensagens TEXT
-- [ ] Frontend: Menu de contexto (DropdownMenu) com "Editar" nas mensagens próprias
-- [ ] Frontend: Inline editing — input substitui o texto, Enter salva, Escape cancela
-- [ ] Frontend: Label "(editado)" sutil nas mensagens editadas
+- [x] Backend: Socket event `message:edit` (emit) → `message:edited` (broadcast)
+- [x] Backend: Campo `editedAt DateTime?` no Message (migration)
+- [x] Backend: Validação — só o autor pode editar, apenas mensagens TEXT
+- [x] Frontend: Menu de contexto (DropdownMenu) com "Editar" nas mensagens próprias
+- [x] Frontend: Inline editing — textarea substitui o texto, Enter salva, Escape cancela
+- [x] Frontend: Label "(editado)" sutil nas mensagens editadas
 
 **24b — Deletar Mensagens (Soft Delete):**
-- [ ] Backend: Campo `deletedAt DateTime?` no Message (migration)
-- [ ] Backend: `DELETE /api/v1/rooms/:roomId/messages/:messageId` — soft delete
-- [ ] Backend: Socket event `message:delete` → `message:deleted` (broadcast)
-- [ ] Backend: Filtrar deletadas no histórico e busca (`WHERE deletedAt IS NULL`)
-- [ ] Frontend: "Excluir" no menu de contexto + confirmação
-- [ ] Frontend: Placeholder "Mensagem excluída" no lugar (como WhatsApp)
+- [x] Backend: Campo `deletedAt DateTime?` no Message (migration)
+- [x] Backend: Socket event `message:delete` → `message:deleted` (broadcast com soft delete)
+- [x] Backend: Autor ou admin pode deletar, filtrar deletadas na busca
+- [x] Frontend: "Excluir" no menu de contexto + modal de confirmação (Modal do Pulse)
+- [x] Frontend: Placeholder "Mensagem excluída" em itálico com borda dashed (como WhatsApp)
 
 **24c — Respostas (Reply):**
-- [ ] Backend: Campo `replyToId String?` no Message + relação self-referencing (migration)
-- [ ] Backend: Incluir `replyTo { id, content, user { name } }` no select de mensagens
-- [ ] Backend: Socket payload incluir dados do reply
-- [ ] Frontend: Botão "Responder" no hover/menu da mensagem
-- [ ] Frontend: Barra de reply acima do input (nome + preview, botão X para cancelar)
-- [ ] Frontend: Mensagem com reply mostra preview clicável acima (scroll-to on click)
+- [x] Backend: Campo `replyToId String?` no Message + relação self-referencing (migration)
+- [x] Backend: Incluir `replyTo { id, content, user { name } }` no select de mensagens
+- [x] Backend: Validação — reply target deve existir na mesma sala
+- [x] Frontend: Botão "Responder" no DropdownMenu da mensagem
+- [x] Frontend: `ReplyBar` acima do input (nome + preview, botão X para cancelar)
+- [x] Frontend: Mensagem com reply mostra quote clicável acima (scroll-to + highlight on click)
 
 **24d — Reações com Emoji:**
-- [ ] Backend: Model `MessageReaction { id, messageId, userId, emoji, createdAt }` + migration
-- [ ] Backend: `POST /api/v1/rooms/:roomId/messages/:messageId/reactions` (toggle)
-- [ ] Backend: Socket event `message:react` → `message:reaction` (broadcast)
-- [ ] Backend: Incluir contagem de reactions agrupadas por emoji no select de mensagens
-- [ ] Frontend: Botão de smile no hover da mensagem → picker com 6 emojis rápidos
-- [ ] Frontend: Mostrar reactions abaixo da mensagem (emoji + contagem, clicável para toggle)
-- [ ] Frontend: Tooltip mostrando quem reagiu ao hover
+- [x] Backend: Model `MessageReaction { id, messageId, userId, emoji, createdAt }` + unique constraint `[userId, messageId, emoji]`
+- [x] Backend: Socket event `message:react` → `message:reaction_updated` (broadcast com aggregação)
+- [x] Backend: Toggle pattern (create if not exists, delete if exists) + reactions agrupadas por emoji
+- [x] Frontend: Quick reactions (6 emojis) no topo do DropdownMenu + `ReactionPicker` completo (12 emojis)
+- [x] Frontend: Reaction chips abaixo da mensagem (emoji + contagem, highlight quando own, clicável para toggle)
+- [x] Frontend: `MessageActionMenu` com DropdownMenu do Pulse (Responder, Reagir, Editar, Excluir)
 
 ---
 
