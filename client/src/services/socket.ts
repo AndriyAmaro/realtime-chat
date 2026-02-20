@@ -5,16 +5,29 @@ import type { ServerToClientEvents, ClientToServerEvents } from '@/types/socket'
 export type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>
 
 let socket: TypedSocket | null = null
+let currentToken: string | null = null
 
 /**
  * Get or create the singleton Socket.io connection.
  * Authenticates with the current JWT access token.
+ *
+ * Reuses the existing socket if the token hasn't changed (safe during
+ * preload — avoids duplicates). Recreates when the token changes
+ * (e.g. after session restore refreshes an expired token).
  */
 export function getSocket(): TypedSocket {
-  // Return existing socket even if still connecting — avoid creating duplicates
-  if (socket) return socket
-
   const token = useAuthStore.getState().accessToken
+
+  // Reuse existing socket if token unchanged (even if still connecting)
+  if (socket && currentToken === token) return socket
+
+  // Token changed — tear down old socket before creating a new one
+  if (socket) {
+    socket.disconnect()
+    socket = null
+  }
+
+  currentToken = token
 
   // Socket.io connects directly to the backend (not through Vercel proxy)
   // because Vercel serverless doesn't support persistent WebSocket connections.
@@ -38,6 +51,7 @@ export function disconnectSocket(): void {
   if (socket) {
     socket.disconnect()
     socket = null
+    currentToken = null
   }
 }
 

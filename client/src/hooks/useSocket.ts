@@ -9,9 +9,12 @@ import { useAuthStore } from '@store/auth.store'
  */
 export function useSocket() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  // Subscribe to accessToken so we re-render when session restore refreshes it.
+  // getSocket() will detect the token mismatch and create a new socket.
+  const accessToken = useAuthStore((s) => s.accessToken)
 
-  // Derive socket — getSocket() is idempotent (returns existing singleton)
-  const socket = isAuthenticated ? getSocket() : null
+  // Derive socket — getSocket() reuses or recreates based on current token
+  const socket = isAuthenticated && accessToken ? getSocket() : null
 
   // Derive initial connected state from socket
   const [isConnected, setIsConnected] = useState(() => isSocketConnected())
@@ -30,6 +33,11 @@ export function useSocket() {
   // socket was preloaded at login and connected before this hook mounted.
   if (socket?.connected && !isConnected) {
     setIsConnected(true)
+  }
+
+  // Reset connected state when socket instance changes (new token)
+  if (!socket?.connected && isConnected) {
+    setIsConnected(false)
   }
 
   // Subscribe to connection events
