@@ -10,7 +10,7 @@
 ```
 ┌─────────┐     ┌──────────────┐     ┌────────────┐
 │  Vercel │────►│  1x Express  │────►│ PostgreSQL │
-│  (CDN)  │     │  Server      │     │ (1 instance)│
+│  (CDN)  │     │  Server      │     │(1 instance)│
 └─────────┘     └──────────────┘     └────────────┘
 ```
 
@@ -138,10 +138,10 @@ const url = await getSignedUrl(s3, new PutObjectCommand({
 ┌──────────┐     ┌──────────────┐     ┌────────────┐
 │  Server  │────►│   BullMQ     │────►│  Workers   │
 │ (API)    │     │   Queue      │     │            │
-└──────────┘     └──────────────┘     │ • Emails   │
-                                      │ • Push     │
-                                      │ • Analytics│
-                                      │ • Thumbnails│
+└──────────┘     └──────────────┘     │• Emails    │
+                                      │• Push      │
+                                      │• Analytics │
+                                      │• Thumbnails│
                                       └────────────┘
 ```
 
@@ -173,21 +173,21 @@ Queries recentes (últimos 30 dias) = fast. Histórico antigo = slower, mas aces
 
 ```
 ┌─ API Gateway ──────────────────────────────────┐
-│                                                 │
-│  ┌──────────┐  ┌──────────┐  ┌──────────────┐ │
-│  │   Auth   │  │   Chat   │  │ Notification │ │
-│  │ Service  │  │ Service  │  │   Service    │ │
-│  │          │  │          │  │              │ │
-│  │ • Login  │  │ • Rooms  │  │ • Push       │ │
-│  │ • JWT    │  │ • Msgs   │  │ • Email      │ │
-│  │ • Profile│  │ • Socket │  │ • In-App     │ │
-│  └────┬─────┘  └────┬─────┘  └──────┬───────┘ │
-│       │              │               │          │
-│  ┌────┴──┐     ┌────┴──┐      ┌────┴──┐      │
-│  │ Users │     │ Msgs  │      │ Redis │      │
-│  │  DB   │     │  DB   │      │ Queue │      │
-│  └───────┘     └───────┘      └───────┘      │
-└─────────────────────────────────────────────────┘
+│                                                │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────┐  │
+│  │   Auth   │  │   Chat   │  │ Notification │  │
+│  │ Service  │  │ Service  │  │   Service    │  │
+│  │          │  │          │  │              │  │
+│  │ • Login  │  │ • Rooms  │  │ • Push       │  │
+│  │ • JWT    │  │ • Msgs   │  │ • Email      │  │
+│  │ • Profile│  │ • Socket │  │ • In-App     │  │
+│  └────┬─────┘  └────┬─────┘  └──────┬───────┘  │
+│       │              │               │         │
+│  ┌────┴──┐     ┌────┴──┐      ┌────┴──┐        │
+│  │ Users │     │ Msgs  │      │ Redis │        │
+│  │  DB   │     │  DB   │      │ Queue │        │
+│  └───────┘     └───────┘      └───────┘        │
+└────────────────────────────────────────────────┘
 ```
 
 **Quando migrar para microservices:**
@@ -210,6 +210,24 @@ Queries recentes (últimos 30 dias) = fast. Histórico antigo = slower, mas aces
 | DB size > 50GB | 50 GB | Table partitioning |
 | Upload storage > 100GB | 100 GB | Migrar para S3/R2 |
 | Read queries > 80% total | 80% | Adicionar read replica |
+
+---
+
+## Current Feature Set (implemented)
+
+| Feature | Stack | Notes |
+|---|---|---|
+| **Auth** | JWT + refresh token | Cookie-free (Vercel proxy compat) |
+| **Rooms** | CRUD + members | Join/leave + admin role |
+| **Messages** | Socket.io realtime | TEXT, IMAGE, FILE types |
+| **Read receipts** | Socket.io events | Per-room last-read tracking |
+| **Typing indicators** | Socket.io events | Debounced, per-room |
+| **Search** | Prisma `contains` | In-room full-text search |
+| **Edit messages** | Socket.io + soft update | Author-only, TEXT-only, shows "(editado)" |
+| **Delete messages** | Socket.io + soft delete | Author or admin, shows placeholder |
+| **Replies** | Self-referencing FK | Quote preview above bubble |
+| **Reactions** | Toggle pattern + aggregation | Emoji chips with count, unique per user+message+emoji |
+| **File uploads** | Multer + static serve | Image preview + file download |
 
 ---
 
