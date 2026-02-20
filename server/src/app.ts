@@ -20,6 +20,10 @@ import routes from './routes/index.js'
 const app = express()
 const httpServer = createServer(app)
 
+// ============ TRUST PROXY (Railway, Vercel, etc.) ============
+
+app.set('trust proxy', 1)
+
 // ============ GLOBAL MIDDLEWARE ============
 
 app.use(helmet())
