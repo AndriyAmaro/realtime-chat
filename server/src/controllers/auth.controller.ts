@@ -2,7 +2,12 @@ import type { Request, Response } from 'express'
 import { authService } from '../services/auth.service.js'
 import { env } from '../config/env.js'
 import type { AuthenticatedRequest } from '../types/api.js'
-import type { RegisterInput, LoginInput } from '../types/auth.js'
+import type {
+  RegisterInput,
+  LoginInput,
+  UpdateProfileInput,
+  ChangePasswordInput,
+} from '../types/auth.js'
 
 const REFRESH_TOKEN_COOKIE = 'refresh_token'
 
@@ -82,6 +87,28 @@ export const authController = {
     res.status(200).json({
       success: true,
       data: { message: 'Logged out successfully' },
+    })
+  },
+
+  async updateProfile(req: Request, res: Response) {
+    const { userId } = (req as AuthenticatedRequest).user
+    const input = req.body as UpdateProfileInput
+    const user = await authService.updateProfile(userId, input)
+
+    res.status(200).json({
+      success: true,
+      data: user,
+    })
+  },
+
+  async changePassword(req: Request, res: Response) {
+    const { userId } = (req as AuthenticatedRequest).user
+    const input = req.body as ChangePasswordInput
+    await authService.changePassword(userId, input)
+
+    res.status(200).json({
+      success: true,
+      data: { message: 'Password changed successfully' },
     })
   },
 }

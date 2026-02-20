@@ -282,6 +282,99 @@ export const swaggerSpec: JsonObject = {
       },
     },
 
+    '/auth/profile': {
+      patch: {
+        tags: ['Auth'],
+        summary: 'Atualizar perfil do usuário',
+        description:
+          'Atualiza o nome e/ou avatar do usuário autenticado. Use o endpoint de upload para obter a URL do avatar.',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/UpdateProfileInput' },
+              example: {
+                name: 'João Silva Atualizado',
+                avatar: '/uploads/a1b2c3d4.jpg',
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: 'Perfil atualizado com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    { $ref: '#/components/schemas/ApiResponse' },
+                    {
+                      type: 'object',
+                      properties: {
+                        data: { $ref: '#/components/schemas/UserProfile' },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          401: { $ref: '#/components/responses/Unauthorized' },
+          422: { $ref: '#/components/responses/ValidationError' },
+        },
+      },
+    },
+
+    '/auth/password': {
+      patch: {
+        tags: ['Auth'],
+        summary: 'Alterar senha',
+        description:
+          'Altera a senha do usuário autenticado. Requer a senha atual para confirmação.',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ChangePasswordInput' },
+              example: {
+                currentPassword: 'senha123',
+                newPassword: 'novaSenha456',
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: 'Senha alterada com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    { $ref: '#/components/schemas/ApiResponse' },
+                    {
+                      type: 'object',
+                      properties: {
+                        data: {
+                          type: 'object',
+                          properties: {
+                            message: { type: 'string', example: 'Password changed successfully' },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          401: { $ref: '#/components/responses/Unauthorized' },
+          422: { $ref: '#/components/responses/ValidationError' },
+        },
+      },
+    },
+
     // ---- Rooms ----
 
     '/rooms': {
@@ -982,6 +1075,38 @@ export const swaggerSpec: JsonObject = {
           name: { type: 'string', example: 'João Silva' },
           email: { type: 'string', format: 'email', example: 'joao@example.com' },
           avatar: { type: 'string', nullable: true, example: null },
+          status: { type: 'string', enum: ['ONLINE', 'OFFLINE', 'AWAY'], example: 'ONLINE' },
+          createdAt: { type: 'string', format: 'date-time' },
+        },
+      },
+
+      UpdateProfileInput: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', minLength: 2, maxLength: 50, example: 'João Silva Atualizado' },
+          avatar: {
+            type: 'string',
+            nullable: true,
+            maxLength: 500,
+            example: '/uploads/a1b2c3d4.jpg',
+            description:
+              'URL do avatar (use /uploads para fazer upload primeiro). Envie null para remover.',
+          },
+        },
+      },
+
+      ChangePasswordInput: {
+        type: 'object',
+        required: ['currentPassword', 'newPassword'],
+        properties: {
+          currentPassword: { type: 'string', format: 'password', example: 'senha123' },
+          newPassword: {
+            type: 'string',
+            format: 'password',
+            minLength: 6,
+            maxLength: 128,
+            example: 'novaSenha456',
+          },
         },
       },
 

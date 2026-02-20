@@ -2,7 +2,14 @@ import bcrypt from 'bcryptjs'
 import { userRepository } from '../repositories/user.repository.js'
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt.js'
 import { AuthError, ConflictError } from '../errors/index.js'
-import type { RegisterInput, LoginInput, AuthTokens, AuthResponse } from '../types/auth.js'
+import type {
+  RegisterInput,
+  LoginInput,
+  AuthTokens,
+  AuthResponse,
+  UpdateProfileInput,
+  ChangePasswordInput,
+} from '../types/auth.js'
 import type { AuthPayload } from '../types/api.js'
 
 const SALT_ROUNDS = 12
@@ -86,6 +93,34 @@ export const authService = {
       throw new AuthError('User not found')
     }
     return user
+  },
+
+  async updateProfile(userId: string, input: UpdateProfileInput) {
+    const user = await userRepository.findById(userId)
+    if (!user) {
+      throw new AuthError('User not found')
+    }
+
+    const data: { name?: string; avatar?: string | null } = {}
+    if (input.name !== undefined) data.name = input.name
+    if (input.avatar !== undefined) data.avatar = input.avatar
+
+    return userRepository.updateProfile(userId, data)
+  },
+
+  async changePassword(userId: string, input: ChangePasswordInput) {
+    const user = await userRepository.findByIdWithPassword(userId)
+    if (!user) {
+      throw new AuthError('User not found')
+    }
+
+    const validPassword = await bcrypt.compare(input.currentPassword, user.password)
+    if (!validPassword) {
+      throw new AuthError('Current password is incorrect')
+    }
+
+    const hashedPassword = await bcrypt.hash(input.newPassword, SALT_ROUNDS)
+    await userRepository.updatePassword(userId, hashedPassword)
   },
 }
 

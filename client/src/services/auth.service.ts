@@ -25,6 +25,16 @@ interface LoginPayload {
   password: string
 }
 
+interface UpdateProfilePayload {
+  name?: string
+  avatar?: string | null
+}
+
+interface ChangePasswordPayload {
+  currentPassword: string
+  newPassword: string
+}
+
 export const authService = {
   register(payload: RegisterPayload) {
     return api.post<AuthData>('/auth/register', payload)
@@ -45,6 +55,21 @@ export const authService = {
   getProfile() {
     return api.get<User>('/auth/me')
   },
+
+  updateProfile(payload: UpdateProfilePayload) {
+    return api.patch<User>('/auth/profile', payload)
+  },
+
+  changePassword(payload: ChangePasswordPayload) {
+    return api.patch<{ message: string }>('/auth/password', payload)
+  },
 }
 
-export type { User, AuthData, RegisterPayload, LoginPayload }
+export type {
+  User,
+  AuthData,
+  RegisterPayload,
+  LoginPayload,
+  UpdateProfilePayload,
+  ChangePasswordPayload,
+}

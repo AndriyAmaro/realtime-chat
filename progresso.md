@@ -30,9 +30,15 @@
 | 20 | Docker Compose (tudo funciona com 1 comando) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 21 | CI/CD (GitHub Actions) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 22 | Deploy (Vercel + Railway) | ✅ Concluída | 19/02/2026 | 20/02/2026 |
-| 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
+| 23 | Perfil de Usuário + Configurações | ⬚ Pendente | — | — |
+| 24 | Message Enhancements (Edit, Delete, Replies, Reactions) | ⬚ Pendente | — | — |
+| 25 | Resilience Engineering (Offline Queue, Reconnexão, Anti-Spam) | ⬚ Pendente | — | — |
+| 26 | Observability & Production Hardening | ⬚ Pendente | — | — |
+| 27 | Performance Optimization (Code Splitting, Lighthouse 95+) | ⬚ Pendente | — | — |
+| 28 | Architecture Documentation (/docs/) | ⬚ Pendente | — | — |
+| 29 | README Profissional + Landing Page Senior | ⬚ Pendente | — | — |
 
-**Progresso global: 22/23 fases concluídas (~96%)**
+**Progresso global: 22/29 fases concluídas (~76%)**
 
 ---
 
@@ -410,15 +416,253 @@
   - Health: https://server-production-f308.up.railway.app/api/v1/health
   - Swagger: https://server-production-f308.up.railway.app/api/docs
 
-### Fase 23 — README Profissional ⬚
+### Fase 23 — Perfil de Usuário + Configurações ⬚
 
-- [ ] Descrição impactante
-- [ ] Screenshots e GIFs do app funcionando
-- [ ] Badges (CI, license, tech stack)
-- [ ] Secção "Built with Pulse Design System" com link
-- [ ] Instruções de como rodar (1 comando)
-- [ ] Link para Swagger docs
-- [ ] Link para demo live
+> Feature básica que falta. Todo chat tem. Recrutador vai testar e espera poder mudar foto/nome.
+
+**Backend:**
+- [ ] `PATCH /api/v1/auth/profile` — Atualizar nome e avatar (Zod validation)
+- [ ] `PATCH /api/v1/auth/password` — Trocar senha (confirmar senha atual + nova senha)
+- [ ] `userRepository.updateProfile()` — Update name, avatar
+- [ ] `userRepository.updatePassword()` — Hash + update password
+- [ ] `authService.updateProfile()` + `authService.changePassword()` — Lógica de negócio
+- [ ] Reutilizar upload existente (`/api/v1/uploads`) para foto de perfil
+- [ ] Swagger: documentar novos endpoints
+
+**Frontend:**
+- [ ] `ProfileModal` — Modal acessível clicando no avatar no header
+- [ ] Seções: Foto de perfil (upload com preview circular), Nome, Email (read-only), Trocar senha
+- [ ] Upload de avatar: preview antes de salvar, crop circular, fallback para iniciais
+- [ ] `useUpdateProfile` hook (React Query mutation + invalidate /me)
+- [ ] `useChangePassword` hook (React Query mutation)
+- [ ] Toast de sucesso/erro nas operações
+- [ ] Atualizar `auth.store` com novos dados após save
+
+---
+
+### Fase 24 — Message Enhancements ⬚
+
+> Features que todo chat moderno tem. Sem isso, parece incompleto para um recrutador.
+
+**24a — Editar Mensagens:**
+- [ ] Backend: `PATCH /api/v1/rooms/:roomId/messages/:messageId` — update content
+- [ ] Backend: Campo `editedAt DateTime?` no Message (migration)
+- [ ] Backend: Socket event `message:edit` (emit) → `message:edited` (broadcast)
+- [ ] Backend: Validação — só o autor pode editar, apenas mensagens TEXT
+- [ ] Frontend: Menu de contexto (DropdownMenu) com "Editar" nas mensagens próprias
+- [ ] Frontend: Inline editing — input substitui o texto, Enter salva, Escape cancela
+- [ ] Frontend: Label "(editado)" sutil nas mensagens editadas
+
+**24b — Deletar Mensagens (Soft Delete):**
+- [ ] Backend: Campo `deletedAt DateTime?` no Message (migration)
+- [ ] Backend: `DELETE /api/v1/rooms/:roomId/messages/:messageId` — soft delete
+- [ ] Backend: Socket event `message:delete` → `message:deleted` (broadcast)
+- [ ] Backend: Filtrar deletadas no histórico e busca (`WHERE deletedAt IS NULL`)
+- [ ] Frontend: "Excluir" no menu de contexto + confirmação
+- [ ] Frontend: Placeholder "Mensagem excluída" no lugar (como WhatsApp)
+
+**24c — Respostas (Reply):**
+- [ ] Backend: Campo `replyToId String?` no Message + relação self-referencing (migration)
+- [ ] Backend: Incluir `replyTo { id, content, user { name } }` no select de mensagens
+- [ ] Backend: Socket payload incluir dados do reply
+- [ ] Frontend: Botão "Responder" no hover/menu da mensagem
+- [ ] Frontend: Barra de reply acima do input (nome + preview, botão X para cancelar)
+- [ ] Frontend: Mensagem com reply mostra preview clicável acima (scroll-to on click)
+
+**24d — Reações com Emoji:**
+- [ ] Backend: Model `MessageReaction { id, messageId, userId, emoji, createdAt }` + migration
+- [ ] Backend: `POST /api/v1/rooms/:roomId/messages/:messageId/reactions` (toggle)
+- [ ] Backend: Socket event `message:react` → `message:reaction` (broadcast)
+- [ ] Backend: Incluir contagem de reactions agrupadas por emoji no select de mensagens
+- [ ] Frontend: Botão de smile no hover da mensagem → picker com 6 emojis rápidos
+- [ ] Frontend: Mostrar reactions abaixo da mensagem (emoji + contagem, clicável para toggle)
+- [ ] Frontend: Tooltip mostrando quem reagiu ao hover
+
+---
+
+### Fase 25 — Resilience Engineering ⬚
+
+> Isso é o que separa junior de senior. Mostra que você pensa em produção real, não só "funciona no localhost".
+
+**25a — Offline Message Queue:**
+- [ ] `OfflineQueue` class — armazena mensagens em memória quando socket desconectado
+- [ ] Ao enviar mensagem offline → salva na queue + mostra na UI com status "pendente" (ícone relógio)
+- [ ] Ao reconectar → flush queue automaticamente (enviar todas as mensagens pendentes em ordem)
+- [ ] Retry com exponential backoff por mensagem individual se falhar
+- [ ] UI: mensagem pendente com opacidade reduzida + ícone de clock
+- [ ] UI: mensagem falhada com ícone de erro + botão "Reenviar"
+- [ ] Idempotency key (UUID gerado no client) para evitar duplicatas
+
+**25b — Reconexão Inteligente:**
+- [ ] Exponential backoff configurável (1s → 2s → 4s → 8s → 16s → 30s max)
+- [ ] Banner de conexão melhorado: "Conectando..." → "Reconectando (tentativa 3/10)..." → "Sem conexão"
+- [ ] Heartbeat monitor — detecta perda de conexão antes do socket timeout
+- [ ] Auto-rejoin rooms após reconexão (re-emit `room:join` para todas as salas)
+- [ ] Sync de mensagens perdidas — ao reconectar, pedir mensagens desde o último timestamp
+
+**25c — Rate Limiting Anti-Spam (Socket-Level):**
+- [ ] `socketRateLimiter` middleware — limitar mensagens por socket (ex: 10 msg/5s)
+- [ ] Emit `error` com mensagem "Muitas mensagens, aguarde" quando limite excedido
+- [ ] Rate limit por evento: `message:send` (10/5s), `typing:start` (3/2s), `message:react` (5/3s)
+- [ ] Frontend: desabilitar botão "Enviar" temporariamente quando rate limited
+- [ ] Frontend: feedback visual "Aguarde antes de enviar novamente"
+
+**25d — Persistência de Socket por Usuário:**
+- [ ] Map `userId → Set<socketId>` no servidor (suportar múltiplas abas/dispositivos)
+- [ ] Status online baseado em `userSockets.size > 0` (não por socket individual)
+- [ ] Ao desconectar um socket, só marcar OFFLINE se `userSockets.size === 0`
+- [ ] Evento `user:devices` para informar quantas sessões ativas
+
+---
+
+### Fase 26 — Observability & Production Hardening ⬚
+
+> Nível empresa. Recrutador técnico que lê o código vai ver isso e pensar "esse cara sabe o que faz em produção".
+
+**26a — Structured Logging (Pino):**
+- [ ] Substituir Morgan por Pino (JSON structured logs)
+- [ ] Log levels: `debug`, `info`, `warn`, `error` — controlados por `LOG_LEVEL` env var
+- [ ] Context em todo log: `{ requestId, userId, method, path, statusCode, duration }`
+- [ ] Pretty printing em dev (`pino-pretty`), JSON em production
+- [ ] Sanitização: nunca logar passwords, tokens, dados sensíveis
+
+**26b — Request ID (Correlation ID):**
+- [ ] Middleware `requestId.ts` — gera UUID e seta no `req.id` + header `X-Request-Id`
+- [ ] Propagar para todos os logs: `logger.child({ requestId: req.id })`
+- [ ] Propagar para error responses: `{ error, requestId }` — facilita debugging em produção
+- [ ] Socket events: propagar requestId nos payloads
+
+**26c — Métricas de Performance:**
+- [ ] Middleware de response time — header `X-Response-Time` em toda resposta
+- [ ] Endpoint `GET /api/v1/metrics` — retornar métricas básicas:
+  - Uptime do servidor
+  - Total de requests por rota
+  - Tempo médio de resposta (p50, p95, p99)
+  - Conexões WebSocket ativas
+  - Mensagens por minuto
+- [ ] In-memory metrics collector (sem dependência externa)
+
+**26d — Error Tracking Middleware:**
+- [ ] `errorTracker.ts` — captura todas exceções não tratadas
+- [ ] Enriquece com contexto: requestId, userId, stack trace, request body (sanitized)
+- [ ] Agrupa erros similares (por mensagem + stack fingerprint)
+- [ ] Endpoint `GET /api/v1/admin/errors` — últimos 100 erros (protegido)
+- [ ] Preparado para integrar com Sentry (interface compatível)
+
+**26e — Graceful Shutdown Melhorado:**
+- [ ] SIGTERM/SIGINT → parar aceitar conexões
+- [ ] Notificar sockets: `server:shutdown` com countdown
+- [ ] Drain conexões HTTP existentes (max 10s timeout)
+- [ ] Fechar pool do banco de dados
+- [ ] Log: "Server shut down gracefully in Xms"
+
+---
+
+### Fase 27 — Performance Optimization ⬚
+
+> Lighthouse 95+ impressiona VISUALMENTE. Recrutador vê o score e pensa "esse cara se importa com performance".
+
+**27a — Code Splitting & Lazy Loading:**
+- [ ] `React.lazy()` para todas as rotas: LoginPage, RegisterPage, ChatLayout
+- [ ] `Suspense` com fallback Spinner centralizado
+- [ ] Lazy load de componentes pesados: MessageSearch, MembersPanel, modais
+- [ ] Vite `manualChunks` — separar vendor (react, radix) de app code
+- [ ] Bundle size target: main chunk < 200KB (gzip)
+
+**27b — React Performance:**
+- [ ] `React.memo` nos componentes de lista: RoomItem, ChatMessage
+- [ ] `useCallback` para handlers passados a componentes memoizados
+- [ ] `useMemo` para filtragem de salas e formatação de mensagens
+- [ ] Virtualização de mensagens com `@tanstack/react-virtual` (para salas com 1000+ msgs)
+
+**27c — Network Performance:**
+- [ ] Prefetch de dados: ao hover numa sala, prefetch mensagens
+- [ ] Stale time configurado por tipo: rooms (60s), messages (30s), profile (300s)
+- [ ] Debounce search: 300ms (já existe)
+- [ ] Image lazy loading com `loading="lazy"` em todas as imagens de mensagens
+- [ ] Compression: `Content-Encoding: gzip` no server (já tem via helmet?)
+
+**27d — Lighthouse Audit & Fixes:**
+- [ ] Audit com Lighthouse CI
+- [ ] Fixes: preload fonts, defer scripts, cache static assets
+- [ ] Meta tags: description, og:image, viewport
+- [ ] Target: Performance 95+, Accessibility 95+, Best Practices 95+, SEO 90+
+- [ ] Documentar scores no README com screenshot
+
+---
+
+### Fase 28 — Architecture Documentation ⬚
+
+> Isso mostra maturidade técnica ABSURDA. Recrutador técnico abre /docs/ e pensa "esse cara pensa em sistema, não só em código".
+
+**28a — `/docs/architecture.md`:**
+- [ ] Diagrama de arquitetura (ASCII art): Client (Vercel) → API (Railway) → PostgreSQL → Redis (futuro)
+- [ ] Diagrama de comunicação: HTTP REST + WebSocket
+- [ ] Estrutura de pastas explicada (frontend + backend)
+- [ ] Fluxo de autenticação (JWT access + refresh + httpOnly cookie)
+- [ ] Fluxo de mensagem em tempo real (client → socket → server → DB → broadcast)
+- [ ] Fluxo de reconexão e offline queue
+
+**28b — `/docs/decisions.md` (Architecture Decision Records):**
+- [ ] ADR-001: Por que Vite e não Next.js (chat não precisa de SSR)
+- [ ] ADR-002: Por que Express 5 e não Fastify (ecosystem maturity)
+- [ ] ADR-003: Por que Prisma 7 com adapter pattern (type safety + flexibility)
+- [ ] ADR-004: Por que cursor-based pagination para mensagens (performance em dados append-only)
+- [ ] ADR-005: Por que Zustand e não Redux (simplicidade, zero boilerplate)
+- [ ] ADR-006: Por que Socket.io e não raw WebSocket (auto-reconnect, rooms, fallback polling)
+- [ ] ADR-007: Por que Pino e não Winston (performance, structured JSON, Node.js native)
+- [ ] ADR-008: Por que monorepo simples e não Turborepo (complexidade desnecessária para 2 packages)
+- [ ] Cada ADR segue template: Context → Decision → Consequences → Alternatives Considered
+
+**28c — `/docs/scaling.md`:**
+- [ ] Como escalar para 10K usuários simultâneos (horizontal scaling)
+- [ ] Como escalar para 100K (Redis pub/sub para Socket.io, connection pooling)
+- [ ] Estratégia de cache: Redis (sessions, online status, hot messages, rate limiting)
+- [ ] Estratégia de filas: BullMQ (email notifications, image processing, analytics)
+- [ ] Estratégia de CDN: S3/R2 para uploads, CDN para assets estáticos
+- [ ] Database scaling: read replicas, partitioning de messages por data
+- [ ] Estratégia de microservices (se crescer): Auth Service, Chat Service, Notification Service, Upload Service
+- [ ] Estimativas de custo por tier (10K, 50K, 100K users)
+
+**28d — `/docs/why-i-built-this.md`:**
+- [ ] Problema real: comunicação em tempo real é complexa e poucos devs dominam
+- [ ] Objetivo: demonstrar competência full-stack com WebSocket, não apenas CRUD
+- [ ] Arquitetura escolhida e porquê (3 camadas, event-driven, typed sockets)
+- [ ] Trade-offs aceitos (sem E2E encryption, sem microservices — over-engineering para escala atual)
+- [ ] O que faria diferente com mais tempo (Redis caching, message queues, E2E tests com Playwright)
+- [ ] Métricas do projeto: 29 fases, 77 componentes de design system, 20 endpoints, 14 socket events, 37+ testes
+- [ ] Lições aprendidas: Prisma 7 CJS compatibility, Express 5 read-only params, React 19 patterns
+
+---
+
+### Fase 29 — README Profissional + Landing Page ⬚
+
+> Primeira coisa que o recrutador vê. TEM que impressionar em 5 segundos.
+
+**29a — README.md Profissional:**
+- [ ] Badges: CI status, license MIT, TypeScript, deploy status
+- [ ] Descrição impactante (2 linhas) — "Full-stack realtime chat with rooms, typing indicators, read receipts, and more."
+- [ ] Hero screenshot (dark mode, com mensagens, typing, unread badges)
+- [ ] GIF demonstrando o fluxo: register → create room → send message → real-time update
+- [ ] Feature list visual com categorias: Core, Real-time, UX, Infrastructure
+- [ ] Tech stack com logos/badges
+- [ ] Architecture overview (diagrama simplificado)
+- [ ] Quick start: `docker compose up -d` → acesse localhost:3000
+- [ ] Performance: Lighthouse scores com screenshot
+- [ ] Links: Live Demo, Swagger Docs, Architecture Docs
+- [ ] Contributing guide básico
+- [ ] License MIT
+
+**29b — Landing Page (nível senior):**
+- [ ] Rota `/` — Landing page antes do login (redirect se autenticado)
+- [ ] Hero section: título grande + subtítulo + CTA "Comece agora" + screenshot do app
+- [ ] Features section: grid de features com ícones e descrições curtas
+- [ ] Tech stack section: logos das tecnologias usadas
+- [ ] Architecture section: diagrama simplificado
+- [ ] CTA final: "Teste agora — sem precisar de conta" (link para demo)
+- [ ] Footer com links para GitHub, Swagger, docs
+- [ ] Animações: scroll reveal, glassmorphism, gradient text (reutilizar do globals.css)
+- [ ] 100% responsiva, dark mode, Lighthouse 95+
 
 ---
 

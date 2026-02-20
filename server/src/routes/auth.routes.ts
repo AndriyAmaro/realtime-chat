@@ -3,7 +3,12 @@ import { authController } from '../controllers/auth.controller.js'
 import { authenticate } from '../middleware/auth.js'
 import { validate } from '../middleware/validate.js'
 import { authLimiter } from '../middleware/rateLimiter.js'
-import { registerSchema, loginSchema } from '../types/auth.js'
+import {
+  registerSchema,
+  loginSchema,
+  updateProfileSchema,
+  changePasswordSchema,
+} from '../types/auth.js'
 
 const router = Router()
 
@@ -24,5 +29,21 @@ router.post('/logout', authController.logout)
 
 // GET /api/v1/auth/me (protected)
 router.get('/me', authenticate, authController.getProfile)
+
+// PATCH /api/v1/auth/profile (protected)
+router.patch(
+  '/profile',
+  authenticate,
+  validate({ body: updateProfileSchema }),
+  authController.updateProfile
+)
+
+// PATCH /api/v1/auth/password (protected)
+router.patch(
+  '/password',
+  authenticate,
+  validate({ body: changePasswordSchema }),
+  authController.changePassword
+)
 
 export default router

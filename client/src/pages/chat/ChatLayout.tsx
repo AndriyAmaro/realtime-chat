@@ -14,6 +14,7 @@ import { useMediaQuery } from '@hooks/useMediaQuery'
 import { LogOut, MessageSquare, PanelLeftClose, PanelLeft, Volume2, VolumeX } from 'lucide-react'
 import { RoomSidebar } from './RoomSidebar'
 import { RoomView } from './RoomView'
+import { ProfileModal } from './ProfileModal'
 import { useRoomStore } from '@store/room.store'
 
 export default function ChatLayout() {
@@ -24,6 +25,7 @@ export default function ChatLayout() {
   const soundEnabled = useNotificationStore((s) => s.soundEnabled)
   const toggleSound = useNotificationStore((s) => s.toggleSound)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [profileOpen, setProfileOpen] = useState(false)
 
   const isMobile = !useMediaQuery('(min-width: 768px)')
 
@@ -81,7 +83,12 @@ export default function ChatLayout() {
               )}
             </Button>
             <ThemeToggle />
-            <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setProfileOpen(true)}
+              className="flex cursor-pointer items-center gap-2 rounded-lg px-1.5 py-1 transition-colors hover:bg-[var(--bg-subtle)]"
+              aria-label="Abrir configurações do perfil"
+            >
               <Avatar
                 fallback={user?.name?.slice(0, 2).toUpperCase() ?? 'U'}
                 src={user?.avatar ?? undefined}
@@ -90,7 +97,7 @@ export default function ChatLayout() {
               <span className="hidden text-sm font-medium text-[var(--text-primary)] sm:block">
                 {user?.name}
               </span>
-            </div>
+            </button>
             <Button variant="ghost" size="icon-sm" onClick={handleLogout} aria-label="Sair">
               <LogOut className="h-4 w-4" />
             </Button>
@@ -141,6 +148,14 @@ export default function ChatLayout() {
           </>
         )}
       </div>
+
+      {/* Profile Modal */}
+      <ProfileModal
+        open={profileOpen}
+        onOpenChange={setProfileOpen}
+        onSuccess={(message) => addToast({ variant: 'success', title: message })}
+        onError={(message) => addToast({ variant: 'error', title: message })}
+      />
 
       {/* Toast notifications */}
       {toasts.map((toast) => (
