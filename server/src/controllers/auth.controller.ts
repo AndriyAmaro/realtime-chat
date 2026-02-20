@@ -11,12 +11,12 @@ import type {
 
 const REFRESH_TOKEN_COOKIE = 'refresh_token'
 
-const isProduction = env.NODE_ENV === 'production'
-
+// API calls always arrive same-origin (Vite proxy in dev, Vercel rewrite in prod),
+// so cookies are first-party. SameSite=Lax is the safest cross-browser default.
 const cookieOptions = {
   httpOnly: true,
-  secure: isProduction,
-  sameSite: isProduction ? ('none' as const) : ('strict' as const),
+  secure: env.NODE_ENV === 'production',
+  sameSite: 'lax' as const,
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   path: '/',
 }

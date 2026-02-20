@@ -19,9 +19,7 @@ export async function uploadFile(file: File): Promise<UploadResult> {
   const formData = new FormData()
   formData.append('file', file)
 
-  const baseUrl = import.meta.env.VITE_API_URL
-    ? `${import.meta.env.VITE_API_URL}/api/v1`
-    : '/api/v1'
+  const baseUrl = '/api/v1'
 
   const response = await fetch(`${baseUrl}/uploads`, {
     method: 'POST',

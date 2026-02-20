@@ -15,7 +15,10 @@ export function getSocket(): TypedSocket {
 
   const token = useAuthStore.getState().accessToken
 
-  socket = io(import.meta.env.VITE_API_URL || '/', {
+  // Socket.io connects directly to the backend (not through Vercel proxy)
+  // because Vercel serverless doesn't support persistent WebSocket connections.
+  // In dev, Vite proxy handles /socket.io. In prod, VITE_SOCKET_URL points to Railway.
+  socket = io(import.meta.env.VITE_SOCKET_URL || '/', {
     auth: { token },
     transports: ['websocket', 'polling'],
     reconnection: true,
