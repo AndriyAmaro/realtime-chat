@@ -12,16 +12,18 @@ export default function App() {
   const setAuth = useAuthStore((s) => s.setAuth)
   const logout = useAuthStore((s) => s.logout)
 
-  // Try restoring session on app load using stored refresh token
+  // Try restoring session on app load using stored refresh token.
+  // Must wait for Zustand persist to hydrate from localStorage first,
+  // otherwise refreshToken is null and we'd incorrectly call logout().
   useEffect(() => {
     async function restoreSession() {
-      try {
-        const storedRefreshToken = useAuthStore.getState().refreshToken
-        if (!storedRefreshToken) {
-          logout()
-          return
-        }
+      const storedRefreshToken = useAuthStore.getState().refreshToken
+      if (!storedRefreshToken) {
+        logout()
+        return
+      }
 
+      try {
         const { accessToken, refreshToken } = await authService.refreshToken(storedRefreshToken)
         const user = await authService.getProfile()
         setAuth(user, accessToken, refreshToken)
@@ -29,7 +31,19 @@ export default function App() {
         logout()
       }
     }
-    restoreSession()
+
+    // If already hydrated from localStorage, restore now
+    if (useAuthStore.persist.hasHydrated()) {
+      restoreSession()
+      return
+    }
+
+    // Otherwise wait for hydration to complete, then restore
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      restoreSession()
+    })
+
+    return unsub
   }, [setAuth, logout])
 
   return (
