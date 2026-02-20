@@ -29,10 +29,10 @@
 | 19 | Documentação Swagger da API | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 20 | Docker Compose (tudo funciona com 1 comando) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
 | 21 | CI/CD (GitHub Actions) | ✅ Concluída | 19/02/2026 | 19/02/2026 |
-| 22 | Deploy (Vercel + Railway) | ⬚ Pendente | — | — |
+| 22 | Deploy (Vercel + Railway) | ✅ Concluída | 19/02/2026 | 20/02/2026 |
 | 23 | README profissional + Screenshots/GIFs | ⬚ Pendente | — | — |
 
-**Progresso global: 21/23 fases concluídas (~91%)**
+**Progresso global: 22/23 fases concluídas (~96%)**
 
 ---
 
@@ -386,13 +386,29 @@
 - [x] **Node.js 22** em todas as jobs
 - [x] Pipeline: lint + typecheck + test (paralelos) → build (sequencial, depende dos 3)
 
-### Fase 22 — Deploy ⬚
+### Fase 22 — Deploy ✅
 
-- [ ] Frontend no Vercel
-- [ ] Backend no Railway ou Render
-- [ ] PostgreSQL managed (Railway/Neon)
-- [ ] Variáveis de ambiente configuradas
-- [ ] Link live no README
+- [x] **Frontend no Vercel** — `https://realtime-chat-eight-beryl.vercel.app`
+  - Root directory: `client`, Framework: Vite, auto-deploy on push to `main`
+  - `vercel.json` com SPA rewrite (`/(.*) → /index.html`)
+  - Env var: `VITE_API_URL` apontando para Railway
+- [x] **Backend no Railway** — `https://server-production-f308.up.railway.app`
+  - Dockerfile multi-stage, root directory: `server`
+  - Health check: `/api/v1/health` (server ok + database ok)
+  - Pre-deploy command: `npx prisma migrate deploy`
+  - Auto-deploy trigger: push to `main` branch
+  - Restart policy: on failure (max 3 retries)
+- [x] **PostgreSQL managed (Railway)** — `postgres:16-alpine` com volume persistente
+  - Private networking: `postgres.railway.internal:5432`
+  - Database: `realtime_chat`, user: `chat_user`
+- [x] **Variáveis de ambiente configuradas:**
+  - Server: NODE_ENV, DATABASE_URL, JWT_SECRET, JWT_REFRESH_SECRET, CLIENT_URL, PORT, etc.
+  - Client: VITE_API_URL
+- [x] **Links live:**
+  - Client: https://realtime-chat-eight-beryl.vercel.app
+  - Server: https://server-production-f308.up.railway.app
+  - Health: https://server-production-f308.up.railway.app/api/v1/health
+  - Swagger: https://server-production-f308.up.railway.app/api/docs
 
 ### Fase 23 — README Profissional ⬚
 
