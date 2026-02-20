@@ -2,7 +2,8 @@
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://server-production-f308.up.railway.app/api/:path*" },
     { "source": "/uploads/:path*", "destination": "https://server-production-f308.up.railway.app/uploads/:path*" },
-    { "source": "/socket.io/:path*", "destination": "https://server-production-f308.up.railway.app/socket.io/:path*" },
+    { "source": "/socket.io", "destination": "https://server-production-f308.up.railway.app/socket.io" },
+    { "source": "/socket.io/:path(.*)", "destination": "https://server-production-f308.up.railway.app/socket.io/:path" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
