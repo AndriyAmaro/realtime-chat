@@ -18,7 +18,6 @@ import { PasswordInput } from '@core/patterns/PasswordInput'
 import { authService } from '@services/auth.service'
 import { useAuthStore } from '@store/auth.store'
 import { ApiError } from '@services/api'
-import { getSocket } from '@services/socket'
 import { Mail, User } from 'lucide-react'
 
 const registerSchema = z.object({
@@ -47,7 +46,6 @@ export default function RegisterPage() {
       setServerError(null)
       const data = await authService.register(values)
       setAuth(data.user, data.accessToken, data.refreshToken)
-      getSocket() // Start connecting before navigation
       navigate('/chat', { replace: true })
     } catch (err) {
       if (err instanceof ApiError) {
