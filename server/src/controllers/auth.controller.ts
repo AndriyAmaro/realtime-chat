@@ -11,10 +11,12 @@ import type {
 
 const REFRESH_TOKEN_COOKIE = 'refresh_token'
 
+const isProduction = env.NODE_ENV === 'production'
+
 const cookieOptions = {
   httpOnly: true,
-  secure: env.NODE_ENV === 'production',
-  sameSite: 'strict' as const,
+  secure: isProduction,
+  sameSite: isProduction ? ('none' as const) : ('strict' as const),
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   path: '/',
 }
