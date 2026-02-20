@@ -11,7 +11,8 @@ let socket: TypedSocket | null = null
  * Authenticates with the current JWT access token.
  */
 export function getSocket(): TypedSocket {
-  if (socket?.connected) return socket
+  // Return existing socket even if still connecting — avoid creating duplicates
+  if (socket) return socket
 
   const token = useAuthStore.getState().accessToken
 
