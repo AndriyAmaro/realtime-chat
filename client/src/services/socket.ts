@@ -15,7 +15,7 @@ export function getSocket(): TypedSocket {
 
   const token = useAuthStore.getState().accessToken
 
-  socket = io('/', {
+  socket = io(import.meta.env.VITE_API_URL || '/', {
     auth: { token },
     transports: ['websocket', 'polling'],
     reconnection: true,
