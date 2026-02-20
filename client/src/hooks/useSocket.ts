@@ -15,6 +15,7 @@ export function useSocket() {
 
   // Derive initial connected state from socket
   const [isConnected, setIsConnected] = useState(() => isSocketConnected())
+  const [connectError, setConnectError] = useState<string | null>(null)
 
   // Disconnect when auth changes to false (render-time adjustment)
   const [prevAuth, setPrevAuth] = useState(isAuthenticated)
@@ -23,6 +24,7 @@ export function useSocket() {
     if (!isAuthenticated) {
       disconnectSocket()
       setIsConnected(false)
+      setConnectError(null)
     }
   }
 
@@ -32,20 +34,28 @@ export function useSocket() {
 
     function onConnect() {
       setIsConnected(true)
+      setConnectError(null)
     }
 
     function onDisconnect() {
       setIsConnected(false)
     }
 
+    function onConnectError(err: Error) {
+      console.error('[socket] connect_error:', err.message)
+      setConnectError(err.message)
+    }
+
     socket.on('connect', onConnect)
     socket.on('disconnect', onDisconnect)
+    socket.on('connect_error', onConnectError)
 
     return () => {
       socket.off('connect', onConnect)
       socket.off('disconnect', onDisconnect)
+      socket.off('connect_error', onConnectError)
     }
   }, [socket])
 
-  return { socket, isConnected }
+  return { socket, isConnected, connectError }
 }

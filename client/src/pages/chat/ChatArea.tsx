@@ -17,7 +17,7 @@ interface ChatAreaProps {
 
 export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
   const userId = useAuthStore((s) => s.user?.id)
-  const { socket, isConnected } = useSocket()
+  const { socket, isConnected, connectError } = useSocket()
   const { messages, hasMore, isLoadingHistory, sendMessage, sendFileMessage, loadMore } =
     useMessages({ socket, roomId, isConnected })
   const { typingUsers, startTyping, stopTyping } = useTyping({ socket, roomId, isConnected })
@@ -131,7 +131,7 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
       {!isConnected && (
         <div className="flex items-center justify-center gap-2 bg-[var(--warning-base)]/10 px-4 py-2 text-sm text-[var(--warning-base)]">
           <Spinner size="xs" />
-          Conectando...
+          {connectError ? `Erro: ${connectError}` : 'Conectando...'}
         </div>
       )}
 
