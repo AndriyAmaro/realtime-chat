@@ -48,7 +48,7 @@ const chatMessageVariants = cva('flex gap-3', {
   },
 })
 
-const messageBubbleVariants = cva('max-w-[75%] rounded-2xl px-4 py-2.5 transition-colors', {
+const messageBubbleVariants = cva('rounded-2xl px-4 py-2.5 transition-colors', {
   variants: {
     position: {
       sent: 'rounded-br-md bg-[var(--primary-500)] text-white',
@@ -250,7 +250,10 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
 
         {/* Message Content */}
         <div
-          className={cn('flex flex-col gap-1', position === 'sent' ? 'items-end' : 'items-start')}
+          className={cn(
+            'flex max-w-[75%] flex-col gap-1',
+            position === 'sent' ? 'items-end' : 'items-start'
+          )}
         >
           {/* User Name for received messages */}
           {position === 'received' && message.user && (
