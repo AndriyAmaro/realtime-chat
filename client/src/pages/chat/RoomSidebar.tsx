@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { SearchBar } from '@core/patterns/SearchBar'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@core/patterns/Tabs'
 import { Button } from '@core/primitives/Button'
@@ -149,7 +149,13 @@ function PublicRoomsList({ search }: { search: string }) {
 
 // ============ ROOM ITEM ============
 
-function RoomItem({ room, showJoinHint }: { room: Room; showJoinHint?: boolean }) {
+const RoomItem = memo(function RoomItem({
+  room,
+  showJoinHint,
+}: {
+  room: Room
+  showJoinHint?: boolean
+}) {
   const selectedRoomId = useRoomStore((s) => s.selectedRoomId)
   const selectRoom = useRoomStore((s) => s.selectRoom)
   const userId = useAuthStore((s) => s.user?.id)
@@ -212,7 +218,7 @@ function RoomItem({ room, showJoinHint }: { room: Room; showJoinHint?: boolean }
       )}
     </button>
   )
-}
+})
 
 // ============ HELPERS ============
 

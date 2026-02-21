@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { Avatar } from '@core/primitives/Avatar'
 import { Badge } from '@core/primitives/Badge'
 import { Button } from '@core/primitives/Button'
@@ -250,7 +250,11 @@ interface MembersListProps {
   getUserStatus: (userId: string, fallback: string) => string
 }
 
-function MembersList({ members, ownerId, getUserStatus }: MembersListProps) {
+const MembersList = memo(function MembersList({
+  members,
+  ownerId,
+  getUserStatus,
+}: MembersListProps) {
   return (
     <div className="space-y-1">
       {members?.map((member) => (
@@ -276,7 +280,7 @@ function MembersList({ members, ownerId, getUserStatus }: MembersListProps) {
       ))}
     </div>
   )
-}
+})
 
 // ============ HELPERS ============
 

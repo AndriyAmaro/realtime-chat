@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ChatInput, ChatMessage, TypingIndicator } from '@core/patterns/ChatUI/ChatUI'
 import { Spinner } from '@core/primitives/Spinner'
 import { Button } from '@core/primitives/Button'
@@ -260,14 +260,15 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
 
   // ============ RENDERING ============
 
-  const chatMessages: ChatMessageData[] = messages.map((msg) =>
-    toChatMessage(msg, userId, isReadByOthers)
+  const chatMessages: ChatMessageData[] = useMemo(
+    () => messages.map((msg) => toChatMessage(msg, userId, isReadByOthers)),
+    [messages, userId, isReadByOthers]
   )
 
-  const typingChatUsers: ChatUser[] = typingUsers.map((u) => ({
-    id: u.userId,
-    name: u.userName,
-  }))
+  const typingChatUsers: ChatUser[] = useMemo(
+    () => typingUsers.map((u) => ({ id: u.userId, name: u.userName })),
+    [typingUsers]
+  )
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">

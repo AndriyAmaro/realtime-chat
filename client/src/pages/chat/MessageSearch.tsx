@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { SearchBar } from '@core/patterns/SearchBar'
 import { Spinner } from '@core/primitives/Spinner'
 import { Avatar } from '@core/primitives/Avatar'
@@ -90,7 +90,7 @@ export function MessageSearch({ roomId, onClose, onNavigate }: MessageSearchProp
 
 // ============ SEARCH RESULT ITEM ============
 
-function SearchResultItem({
+const SearchResultItem = memo(function SearchResultItem({
   message,
   query,
   onClick,
@@ -130,7 +130,7 @@ function SearchResultItem({
       </div>
     </button>
   )
-}
+})
 
 // ============ TEXT HIGHLIGHT ============
 
