@@ -5,6 +5,7 @@ import { useAuthStore } from '@store/auth.store'
 import { authService } from '@services/auth.service'
 import ProtectedRoute from '@components/ProtectedRoute'
 
+const LandingPage = lazy(() => import('@pages/LandingPage'))
 const AuthLayout = lazy(() => import('@pages/auth/AuthLayout'))
 const LoginPage = lazy(() => import('@pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@pages/auth/RegisterPage'))
@@ -56,9 +57,17 @@ export default function App() {
     return unsub
   }, [setAuth, logout])
 
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+
   return (
     <Suspense fallback={<PageSpinner />}>
       <Routes>
+        {/* Landing page (redirect to /chat if authenticated) */}
+        <Route
+          path="/"
+          element={isAuthenticated ? <Navigate to="/chat" replace /> : <LandingPage />}
+        />
+
         {/* Auth pages (public) */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
@@ -71,7 +80,7 @@ export default function App() {
         </Route>
 
         {/* Catch-all redirect */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
   )
