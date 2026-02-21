@@ -18,7 +18,12 @@
 - 1 server Node.js = ~10K WebSocket connections (limitado por RAM)
 - PostgreSQL sem connection pooling = ~100 concurrent connections
 - Uploads no disco local = limitado pelo storage do container
-- Rate limiting in-memory = não compartilhado entre instâncias
+- Rate limiting in-memory (HTTP + Socket) = não compartilhado entre instâncias
+- Socket registry in-memory (`Map<userId, Set<socketId>>`) = O(1) online check
+- Offline message queue (client-side) + idempotency dedup (clientId) para resiliência
+- Structured logging (Pino) com request ID correlation + JSON em prod
+- In-memory metrics (HTTP + socket) + error tracking por fingerprint
+- Graceful shutdown com Prisma disconnect + health check 503
 
 **Custo:** ~$10/mês (Railway Hobby + Vercel Free)
 
@@ -228,6 +233,15 @@ Queries recentes (últimos 30 dias) = fast. Histórico antigo = slower, mas aces
 | **Replies** | Self-referencing FK | Quote preview above bubble |
 | **Reactions** | Toggle pattern + aggregation | Emoji chips with count, unique per user+message+emoji |
 | **File uploads** | Multer + static serve | Image preview + file download |
+| **Offline queue** | Client-side queue + idempotency | Exponential backoff retry, clientId dedup |
+| **Reconnection sync** | `message:sync` socket event | Fetches missed messages since last timestamp |
+| **Socket rate limiting** | Per-event in-memory counters | 10 msg/5s, 5 edit/5s, 3 typing/2s |
+| **Socket registry** | In-memory `Map<userId, Set<socketId>>` | O(1) online check, multi-device support |
+| **Structured logging** | Pino + pino-http | JSON in prod, pretty in dev, redact sensitive fields |
+| **Request ID** | UUID middleware + X-Request-ID header | Correlation across logs and error responses |
+| **Performance metrics** | In-memory collector + `/admin/metrics` | HTTP, socket, memory, uptime stats |
+| **Error tracking** | In-memory store + `/admin/errors` | Grouped by fingerprint, max 100 entries |
+| **Graceful shutdown** | Ordered task registry | Socket.io → HTTP → Prisma → metrics log |
 
 ---
 

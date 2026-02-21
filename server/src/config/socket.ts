@@ -1,6 +1,8 @@
 import { Server } from 'socket.io'
 import type { Server as HttpServer } from 'http'
 import { env } from './env.js'
+import { createChildLogger } from './logger.js'
+import { metricsService } from '../services/metrics.service.js'
 import { socketAuth } from '../middleware/socketAuth.js'
 import { registerSocketHandlers } from '../events/index.js'
 import type {
@@ -11,6 +13,8 @@ import type {
   TypedServer,
   TypedSocket,
 } from '../types/socket.js'
+
+const log = createChildLogger('socket')
 
 /**
  * Initialize Socket.io on the existing HTTP server.
@@ -38,17 +42,19 @@ export function initializeSocket(httpServer: HttpServer): TypedServer {
 
   // ---- Connection handler ----
   io.on('connection', (socket: TypedSocket) => {
-    console.log(`[socket] Connected: ${socket.data.userId} (${socket.id})`)
+    log.info({ userId: socket.data.userId, socketId: socket.id }, 'Socket connected')
+    metricsService.recordSocketConnection()
 
     // Register all event handlers
     registerSocketHandlers(io, socket)
 
     socket.on('disconnect', (reason) => {
-      console.log(`[socket] Disconnected: ${socket.data.userId} (${reason})`)
+      log.info({ userId: socket.data.userId, socketId: socket.id, reason }, 'Socket disconnected')
+      metricsService.recordSocketDisconnection()
     })
   })
 
-  console.log('[socket] Socket.io initialized')
+  log.info('Socket.io initialized')
 
   return io
 }

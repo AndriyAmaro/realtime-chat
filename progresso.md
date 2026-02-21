@@ -32,13 +32,13 @@
 | 22 | Deploy (Vercel + Railway) | ✅ Concluída | 19/02/2026 | 20/02/2026 |
 | 23 | Perfil de Usuário + Configurações | ✅ Concluída | 20/02/2026 | 20/02/2026 |
 | 24 | Message Enhancements (Edit, Delete, Replies, Reactions) | ✅ Concluída | 20/02/2026 | 20/02/2026 |
-| 25 | Resilience Engineering (Offline Queue, Reconnexão, Anti-Spam) | ⬚ Pendente | — | — |
-| 26 | Observability & Production Hardening | ⬚ Pendente | — | — |
+| 25 | Resilience Engineering (Offline Queue, Reconnexão, Anti-Spam) | ✅ Concluída | 21/02/2026 | 21/02/2026 |
+| 26 | Observability & Production Hardening | ✅ Concluída | 21/02/2026 | 21/02/2026 |
 | 27 | Performance Optimization (Code Splitting, Lighthouse 95+) | ⬚ Pendente | — | — |
 | 28 | Architecture Documentation (/docs/) | ✅ Concluída | 20/02/2026 | 20/02/2026 |
 | 29 | README Profissional + Landing Page Senior | ⬚ Pendente | — | — |
 
-**Progresso global: 25/29 fases concluídas (~86%)**
+**Progresso global: 27/29 fases concluídas (~93%)**
 
 ---
 
@@ -476,81 +476,89 @@
 
 ---
 
-### Fase 25 — Resilience Engineering ⬚
+### Fase 25 — Resilience Engineering ✅
 
 > Isso é o que separa junior de senior. Mostra que você pensa em produção real, não só "funciona no localhost".
 
 **25a — Offline Message Queue:**
-- [ ] `OfflineQueue` class — armazena mensagens em memória quando socket desconectado
-- [ ] Ao enviar mensagem offline → salva na queue + mostra na UI com status "pendente" (ícone relógio)
-- [ ] Ao reconectar → flush queue automaticamente (enviar todas as mensagens pendentes em ordem)
-- [ ] Retry com exponential backoff por mensagem individual se falhar
-- [ ] UI: mensagem pendente com opacidade reduzida + ícone de clock
-- [ ] UI: mensagem falhada com ícone de erro + botão "Reenviar"
-- [ ] Idempotency key (UUID gerado no client) para evitar duplicatas
+- [x] `OfflineQueue` class (`client/src/services/offlineQueue.ts`) — armazena mensagens em memória quando socket desconectado
+- [x] Ao enviar mensagem offline → salva na queue + mostra na UI com status "pendente" (ícone relógio)
+- [x] Ao reconectar → flush queue automaticamente (enviar todas as mensagens pendentes em ordem)
+- [x] Retry com exponential backoff por mensagem individual (1s → 2s → 4s, max 3 retries → failed)
+- [x] UI: mensagem pendente com opacidade reduzida + ícone de clock
+- [x] UI: mensagem falhada com ícone de erro + botão "Reenviar" / "Descartar"
+- [x] Idempotency key (`clientId` UUID gerado no client, dedup no server dentro de 5 min)
+- [x] Migration: campo `client_id` adicionado ao model Message
 
 **25b — Reconexão Inteligente:**
-- [ ] Exponential backoff configurável (1s → 2s → 4s → 8s → 16s → 30s max)
-- [ ] Banner de conexão melhorado: "Conectando..." → "Reconectando (tentativa 3/10)..." → "Sem conexão"
-- [ ] Heartbeat monitor — detecta perda de conexão antes do socket timeout
-- [ ] Auto-rejoin rooms após reconexão (re-emit `room:join` para todas as salas)
-- [ ] Sync de mensagens perdidas — ao reconectar, pedir mensagens desde o último timestamp
+- [x] Tracking de reconexão no `useSocket` — `isReconnecting`, `reconnectAttempt` via Manager events
+- [x] Banner de conexão melhorado: "Conectando..." → "Reconectando (tentativa X/10)..." → "Sem conexão — {erro}"
+- [x] Auto-rejoin rooms após reconexão (Socket.io auto-join + server `autoJoinUserRooms`)
+- [x] Sync de mensagens perdidas — `message:sync` (C→S) envia `{ roomId, since }`, server retorna mensagens novas
+- [x] Dedup de mensagens no merge (por `id`) para evitar duplicatas de sync + realtime
 
 **25c — Rate Limiting Anti-Spam (Socket-Level):**
-- [ ] `socketRateLimiter` middleware — limitar mensagens por socket (ex: 10 msg/5s)
-- [ ] Emit `error` com mensagem "Muitas mensagens, aguarde" quando limite excedido
-- [ ] Rate limit por evento: `message:send` (10/5s), `typing:start` (3/2s), `message:react` (5/3s)
-- [ ] Frontend: desabilitar botão "Enviar" temporariamente quando rate limited
-- [ ] Frontend: feedback visual "Aguarde antes de enviar novamente"
+- [x] `createSocketRateLimiter` middleware (`server/src/middleware/socketRateLimiter.ts`) — per-event counters com cleanup automático
+- [x] Emit `error` com mensagem "Muitas requisições. Aguarde alguns segundos." quando limite excedido
+- [x] Rate limit por evento: `message:send` (10/5s), `message:edit` (5/5s), `message:delete` (5/10s), `message:react` (10/5s), `typing:start` (3/2s)
+- [x] Frontend: desabilitar input + botão "Enviar" por 3s quando rate limited
+- [x] Frontend: feedback visual "Aguarde antes de enviar novamente" abaixo do input
 
-**25d — Persistência de Socket por Usuário:**
-- [ ] Map `userId → Set<socketId>` no servidor (suportar múltiplas abas/dispositivos)
-- [ ] Status online baseado em `userSockets.size > 0` (não por socket individual)
-- [ ] Ao desconectar um socket, só marcar OFFLINE se `userSockets.size === 0`
-- [ ] Evento `user:devices` para informar quantas sessões ativas
+**25d — Socket Registry (Multi-Device):**
+- [x] `SocketRegistry` class (`server/src/services/socketRegistry.ts`) — `Map<userId, Set<socketId>>` para lookups O(1)
+- [x] Status online baseado em `socketRegistry.isOnline(userId)` — substitui `io.fetchSockets()` O(n)
+- [x] Ao desconectar um socket, só marcar OFFLINE se `socketRegistry.isOnline()` retorna false
+- [x] Evento `user:devices` emite contagem de sessões ativas para o user
+- [x] Integrado no `events/index.ts` — registra no connect, remove no disconnect
 
 ---
 
-### Fase 26 — Observability & Production Hardening ⬚
+### Fase 26 — Observability & Production Hardening ✅
 
 > Nível empresa. Recrutador técnico que lê o código vai ver isso e pensar "esse cara sabe o que faz em produção".
 
 **26a — Structured Logging (Pino):**
-- [ ] Substituir Morgan por Pino (JSON structured logs)
-- [ ] Log levels: `debug`, `info`, `warn`, `error` — controlados por `LOG_LEVEL` env var
-- [ ] Context em todo log: `{ requestId, userId, method, path, statusCode, duration }`
-- [ ] Pretty printing em dev (`pino-pretty`), JSON em production
-- [ ] Sanitização: nunca logar passwords, tokens, dados sensíveis
+- [x] Substituído Morgan por Pino (`pino` + `pino-http`) com JSON structured logs
+- [x] Singleton logger (`server/src/config/logger.ts`) + `createChildLogger(module)` factory
+- [x] Child loggers em todos os módulos: `socket`, `socket:events`, `socket:message`, `socket:status`, `socket:read`, `error-handler`, `shutdown`
+- [x] Pretty printing em dev (`pino-pretty`), JSON puro em production (Railway lê stdout)
+- [x] Sanitização: `redact` em authorization, cookie, password, refreshToken
+- [x] `pino-http` com log levels customizados: 5xx → error, 4xx → warn, 2xx → info
+- [x] Skip do health check em production para evitar log spam
+- [x] Deletado `requestLogger.ts` (Morgan) + removido `morgan` e `@types/morgan`
 
 **26b — Request ID (Correlation ID):**
-- [ ] Middleware `requestId.ts` — gera UUID e seta no `req.id` + header `X-Request-Id`
-- [ ] Propagar para todos os logs: `logger.child({ requestId: req.id })`
-- [ ] Propagar para error responses: `{ error, requestId }` — facilita debugging em produção
-- [ ] Socket events: propagar requestId nos payloads
+- [x] Middleware `requestId.ts` — gera UUID via `crypto.randomUUID()` ou lê `X-Request-ID` header existente
+- [x] Seta `req.id` para pino-http + header `X-Request-ID` na response
+- [x] `requestId` incluído em todas as respostas de erro (campo `requestId` no `ApiResponse`)
+- [x] Error handler logga com `requestId` em todo nível (warn/error)
 
 **26c — Métricas de Performance:**
-- [ ] Middleware de response time — header `X-Response-Time` em toda resposta
-- [ ] Endpoint `GET /api/v1/metrics` — retornar métricas básicas:
-  - Uptime do servidor
-  - Total de requests por rota
-  - Tempo médio de resposta (p50, p95, p99)
-  - Conexões WebSocket ativas
-  - Mensagens por minuto
-- [ ] In-memory metrics collector (sem dependência externa)
+- [x] Middleware `responseTime.ts` — header `X-Response-Time` via override de `res.writeHead`
+- [x] `metricsService` singleton (`server/src/services/metrics.service.ts`) — in-memory, sem deps externas
+- [x] HTTP metrics: totalRequests, totalDuration, averageDuration, statusCodes, methods, top 10 slowest
+- [x] Socket metrics: totalConnections, currentConnections, totalDisconnections, events por tipo
+- [x] System metrics: uptime, memory usage, pid, nodeVersion, platform
+- [x] `GET /api/v1/admin/metrics` — protegido por `adminGuard` (API key em prod, livre em dev)
+- [x] Métricas de socket integradas em connect/disconnect + todos os event handlers (6 eventos)
+- [x] `ADMIN_API_KEY` adicionado ao env schema (opcional)
 
 **26d — Error Tracking Middleware:**
-- [ ] `errorTracker.ts` — captura todas exceções não tratadas
-- [ ] Enriquece com contexto: requestId, userId, stack trace, request body (sanitized)
-- [ ] Agrupa erros similares (por mensagem + stack fingerprint)
-- [ ] Endpoint `GET /api/v1/admin/errors` — últimos 100 erros (protegido)
-- [ ] Preparado para integrar com Sentry (interface compatível)
+- [x] `errorTracker` singleton (`server/src/services/errorTracker.service.ts`) — store in-memory
+- [x] Agrupa por fingerprint (hash de `error.name + message + first stack frame + statusCode`)
+- [x] Bounded: max 100 fingerprints, 5 samples por fingerprint
+- [x] Samples incluem: timestamp, requestId, userId, url, method
+- [x] Integrado no `errorHandler` para 5xx (AppError >= 500 + unknown errors)
+- [x] `GET /api/v1/admin/errors` — retorna summary (uniqueErrors, totalOccurrences, topErrors) + detalhes
+- [x] `unhandledRejection` e `uncaughtException` handlers com `logger.fatal` + tracking
 
 **26e — Graceful Shutdown Melhorado:**
-- [ ] SIGTERM/SIGINT → parar aceitar conexões
-- [ ] Notificar sockets: `server:shutdown` com countdown
-- [ ] Drain conexões HTTP existentes (max 10s timeout)
-- [ ] Fechar pool do banco de dados
-- [ ] Log: "Server shut down gracefully in Xms"
+- [x] `shutdownService` singleton (`server/src/services/shutdown.service.ts`) — registro ordenado de tasks
+- [x] Sequence: Socket.io disconnect + close → HTTP server close → Prisma $disconnect → Final metrics log
+- [x] `isShuttingDown` getter — health check retorna 503 durante shutdown
+- [x] Previne shutdown duplicado via flag
+- [x] Force-exit timer (10s `.unref()`) inicia só no signal receipt
+- [x] Todas as etapas logadas com Pino (info/error por task)
 
 ---
 

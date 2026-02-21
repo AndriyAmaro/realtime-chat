@@ -7,6 +7,7 @@ export interface ApiResponse<T = unknown> {
   data?: T
   error?: string
   meta?: PaginationMeta
+  requestId?: string
 }
 
 export interface PaginationMeta {

@@ -5,7 +5,10 @@ import { registerReadHandlers } from './read.handler.js'
 import { roomMemberRepository } from '../repositories/room.repository.js'
 import { socketRegistry } from '../services/socketRegistry.js'
 import { rateLimiters } from '../middleware/socketRateLimiter.js'
+import { createChildLogger } from '../config/logger.js'
 import type { TypedServer, TypedSocket } from '../types/socket.js'
+
+const log = createChildLogger('socket:events')
 
 /**
  * Register all socket event handlers for a connected socket.
@@ -50,7 +53,7 @@ async function autoJoinUserRooms(socket: TypedSocket): Promise<void> {
     const roomIds = await roomMemberRepository.findRoomIdsByUserId(socket.data.userId)
     await Promise.all(roomIds.map((roomId) => socket.join(roomId)))
   } catch (err) {
-    console.error('[socket] Failed to auto-join rooms:', err)
+    log.error({ err, userId: socket.data.userId }, 'Failed to auto-join rooms')
   }
 }
 

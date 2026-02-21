@@ -1,7 +1,10 @@
 import { userRepository } from '../repositories/user.repository.js'
 import { socketRegistry } from '../services/socketRegistry.js'
 import { getOnlineUserIds } from './room.handler.js'
+import { createChildLogger } from '../config/logger.js'
 import type { TypedServer, TypedSocket } from '../types/socket.js'
+
+const log = createChildLogger('socket:status')
 
 /**
  * Handles user online/offline status.
@@ -32,7 +35,7 @@ export function registerStatusHandlers(io: TypedServer, socket: TypedSocket): vo
         }
       }
     } catch (err) {
-      console.error('[socket] Failed to handle disconnect status:', err)
+      log.error({ err, userId }, 'Failed to handle disconnect status')
     }
   })
 }
@@ -48,6 +51,6 @@ async function setUserOnline(socket: TypedSocket): Promise<void> {
     // Notify all rooms this socket is in
     socket.broadcast.emit('user:status', { userId, status: 'ONLINE' })
   } catch (err) {
-    console.error('[socket] Failed to set user online:', err)
+    log.error({ err, userId }, 'Failed to set user online')
   }
 }

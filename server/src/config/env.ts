@@ -25,13 +25,16 @@ const envSchema = z.object({
   // File Upload
   MAX_FILE_SIZE: z.coerce.number().default(5_242_880), // 5MB
   UPLOAD_DIR: z.string().default('uploads'),
+
+  // Admin
+  ADMIN_API_KEY: z.string().optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)
 
 if (!parsed.success) {
-  console.error('❌ Invalid environment variables:')
-  console.error(parsed.error.flatten().fieldErrors)
+  process.stderr.write('Invalid environment variables:\n')
+  process.stderr.write(JSON.stringify(parsed.error.flatten().fieldErrors, null, 2) + '\n')
   process.exit(1)
 }
 
