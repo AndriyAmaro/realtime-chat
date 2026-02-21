@@ -33,6 +33,7 @@ export interface ServerToClientEvents {
 
   // Status
   'user:status': (data: { userId: string; status: 'ONLINE' | 'OFFLINE' | 'AWAY' }) => void
+  'user:devices': (data: { count: number }) => void
 
   // Typing
   'typing:start': (data: { roomId: string; userId: string; userName: string }) => void
@@ -70,6 +71,12 @@ export interface ClientToServerEvents {
   'message:react': (
     data: { roomId: string; messageId: string; emoji: string },
     callback: (response: MessageAck) => void
+  ) => void
+
+  // Sync (reconnection)
+  'message:sync': (
+    data: { roomId: string; since: string },
+    callback: (response: { messages: MessagePayload[] }) => void
   ) => void
 
   // Typing
@@ -124,6 +131,7 @@ export interface SendMessagePayload {
   type?: MessageType
   fileUrl?: string
   replyToId?: string
+  clientId?: string
 }
 
 export interface MessageAck {

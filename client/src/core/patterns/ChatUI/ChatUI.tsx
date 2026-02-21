@@ -94,7 +94,14 @@ const typingIndicatorVariants = cva(
 // Types
 // ============================================================================
 
-export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'error'
+export type MessageStatus =
+  | 'sending'
+  | 'sent'
+  | 'delivered'
+  | 'read'
+  | 'error'
+  | 'pending'
+  | 'failed'
 export type MessagePosition = 'sent' | 'received'
 
 export interface ChatAttachment {
@@ -220,6 +227,7 @@ TypingIndicator.displayName = 'TypingIndicator'
 const MessageStatusIcon: React.FC<{ status?: MessageStatus }> = ({ status }) => {
   switch (status) {
     case 'sending':
+    case 'pending':
       return <Clock size={14} className="text-white/70" />
     case 'sent':
       return <Check size={14} className="text-white/70" />
@@ -228,6 +236,7 @@ const MessageStatusIcon: React.FC<{ status?: MessageStatus }> = ({ status }) => 
     case 'read':
       return <CheckCheck size={14} className="text-[var(--primary-300)]" />
     case 'error':
+    case 'failed':
       return <X size={14} className="text-error-light" />
     default:
       return null

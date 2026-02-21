@@ -11,7 +11,7 @@ const DEFAULT_HISTORY_LIMIT = 50
 const MAX_HISTORY_LIMIT = 100
 
 export const messageService = {
-  /** Send a message to a room (validates membership) */
+  /** Send a message to a room (validates membership, dedup by clientId) */
   async send(data: {
     content: string
     type?: MessageType
@@ -19,11 +19,20 @@ export const messageService = {
     userId: string
     roomId: string
     replyToId?: string
+    clientId?: string
   }): Promise<MessagePayload> {
     // Verify user is a member of the room
     const membership = await roomMemberRepository.findMembership(data.userId, data.roomId)
     if (!membership) {
       throw new ForbiddenError('You are not a member of this room')
+    }
+
+    // Idempotency: if clientId provided, check for recent duplicate
+    if (data.clientId) {
+      const existing = await messageRepository.findByClientId(data.clientId, data.userId)
+      if (existing) {
+        return formatMessage(existing)
+      }
     }
 
     // If replying, verify the target message exists and is in the same room
@@ -41,6 +50,7 @@ export const messageService = {
       userId: data.userId,
       roomId: data.roomId,
       replyToId: data.replyToId,
+      clientId: data.clientId,
     })
 
     return formatMessage(message)
@@ -148,6 +158,17 @@ export const messageService = {
       hasMore: result.hasMore,
     }
   },
+  /** Get messages created after a given timestamp (for reconnection sync) */
+  async getMessagesSince(userId: string, roomId: string, since: string): Promise<MessagePayload[]> {
+    const membership = await roomMemberRepository.findMembership(userId, roomId)
+    if (!membership) {
+      throw new ForbiddenError('You are not a member of this room')
+    }
+
+    const messages = await messageRepository.findSince(roomId, new Date(since))
+    return messages.map(formatMessage)
+  },
+
   /** Search messages in a room (validates membership) */
   async search(
     userId: string,

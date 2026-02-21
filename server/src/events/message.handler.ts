@@ -1,4 +1,5 @@
 import { messageService } from '../services/message.service.js'
+import { rateLimiters } from '../middleware/socketRateLimiter.js'
 import type { TypedServer, TypedSocket } from '../types/socket.js'
 
 /**
@@ -8,12 +9,15 @@ import type { TypedServer, TypedSocket } from '../types/socket.js'
  * - message:edit    — edit content + broadcast
  * - message:delete  — soft delete + broadcast
  * - message:react   — toggle reaction + broadcast
+ * - message:sync    — return messages since timestamp (reconnection)
  */
 export function registerMessageHandlers(io: TypedServer, socket: TypedSocket): void {
   const { userId } = socket.data
 
   // ---- message:send ----
   socket.on('message:send', async (data, callback) => {
+    if (!rateLimiters.messageSend(socket)) return
+
     try {
       const message = await messageService.send({
         content: data.content,
@@ -22,6 +26,7 @@ export function registerMessageHandlers(io: TypedServer, socket: TypedSocket): v
         userId,
         roomId: data.roomId,
         replyToId: data.replyToId,
+        clientId: data.clientId,
       })
 
       io.to(data.roomId).emit('message:new', message)
@@ -45,6 +50,8 @@ export function registerMessageHandlers(io: TypedServer, socket: TypedSocket): v
 
   // ---- message:edit ----
   socket.on('message:edit', async (data, callback) => {
+    if (!rateLimiters.messageEdit(socket)) return
+
     try {
       const message = await messageService.editMessage(
         userId,
@@ -63,6 +70,8 @@ export function registerMessageHandlers(io: TypedServer, socket: TypedSocket): v
 
   // ---- message:delete ----
   socket.on('message:delete', async (data, callback) => {
+    if (!rateLimiters.messageDelete(socket)) return
+
     try {
       await messageService.deleteMessage(userId, data.roomId, data.messageId)
 
@@ -79,6 +88,8 @@ export function registerMessageHandlers(io: TypedServer, socket: TypedSocket): v
 
   // ---- message:react ----
   socket.on('message:react', async (data, callback) => {
+    if (!rateLimiters.messageReact(socket)) return
+
     try {
       const reactions = await messageService.toggleReaction(
         userId,
@@ -96,6 +107,17 @@ export function registerMessageHandlers(io: TypedServer, socket: TypedSocket): v
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to react'
       callback({ success: false, error: errorMessage })
+    }
+  })
+
+  // ---- message:sync (reconnection) ----
+  socket.on('message:sync', async (data, callback) => {
+    try {
+      const messages = await messageService.getMessagesSince(userId, data.roomId, data.since)
+      callback({ messages })
+    } catch (err) {
+      console.error('[socket] message:sync failed:', err)
+      callback({ messages: [] })
     }
   })
 }

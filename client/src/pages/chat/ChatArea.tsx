@@ -13,6 +13,7 @@ import { MessageActionMenu } from './MessageActionMenu'
 import { ReplyBar } from './ReplyBar'
 import { ReactionPicker } from './ReactionPicker'
 import { InputEmojiPicker } from './InputEmojiPicker'
+import { RefreshCw, WifiOff } from 'lucide-react'
 import type { MessagePayload } from '@/types/socket'
 import type {
   ChatMessageData,
@@ -28,17 +29,22 @@ interface ChatAreaProps {
 
 export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
   const userId = useAuthStore((s) => s.user?.id)
-  const { socket, isConnected, connectError } = useSocket()
+  const { socket, isConnected, connectError, isReconnecting, reconnectAttempt, reconnectMax } =
+    useSocket()
   const {
     messages,
+    pendingMessages,
     hasMore,
     isLoadingHistory,
+    isRateLimited,
     sendMessage,
     sendFileMessage,
     editMessage,
     deleteMessage,
     toggleReaction,
     loadMore,
+    retryMessage,
+    discardMessage,
   } = useMessages({ socket, roomId, isConnected })
   const { typingUsers, startTyping, stopTyping } = useTyping({ socket, roomId, isConnected })
   const { isReadByOthers } = useReadReceipts({
@@ -267,9 +273,23 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
     <div className="flex flex-1 flex-col overflow-hidden">
       {/* Connection status banner */}
       {!isConnected && (
-        <div className="bg-primary-500/10 text-primary-500 flex animate-pulse items-center justify-center gap-2 px-4 py-2 text-sm">
-          <Spinner size="xs" />
-          {connectError ? `Erro: ${connectError}` : 'Conectando...'}
+        <div className="flex animate-pulse items-center justify-center gap-2 bg-[var(--warning-base)]/10 px-4 py-2 text-sm text-[var(--warning-base)]">
+          {isReconnecting ? (
+            <>
+              <Spinner size="xs" />
+              Reconectando (tentativa {reconnectAttempt}/{reconnectMax})...
+            </>
+          ) : connectError ? (
+            <>
+              <WifiOff size={16} />
+              Sem conexão — {connectError}
+            </>
+          ) : (
+            <>
+              <Spinner size="xs" />
+              Conectando...
+            </>
+          )}
         </div>
       )}
 
@@ -297,7 +317,7 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
           </div>
         )}
 
-        {messages.length === 0 && !isLoadingHistory && (
+        {messages.length === 0 && pendingMessages.length === 0 && !isLoadingHistory && (
           <div className="flex flex-1 items-center justify-center py-12">
             <p className="text-sm text-[var(--text-muted)]">
               Nenhuma mensagem ainda. Seja o primeiro a enviar!
@@ -377,6 +397,47 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
           )
         })}
 
+        {/* Pending / Failed messages from offline queue */}
+        {pendingMessages.map((pm) => (
+          <div key={pm.clientId} className={pm.status === 'failed' ? 'opacity-70' : 'opacity-50'}>
+            <ChatMessage
+              message={{
+                id: pm.clientId,
+                content: pm.payload.content,
+                timestamp: pm.createdAt,
+                position: 'sent',
+                status: pm.status,
+                user: {
+                  id: pm.userId,
+                  name: pm.userName,
+                },
+              }}
+              showAvatar
+              showTimestamp
+              showStatus
+            />
+            {pm.status === 'failed' && (
+              <div className="mt-1 flex justify-end gap-2 pr-10">
+                <button
+                  type="button"
+                  onClick={() => retryMessage(pm.clientId)}
+                  className="flex items-center gap-1 text-xs text-[var(--primary-500)] hover:underline"
+                >
+                  <RefreshCw size={12} />
+                  Reenviar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => discardMessage(pm.clientId)}
+                  className="text-xs text-[var(--text-muted)] hover:underline"
+                >
+                  Descartar
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -385,6 +446,13 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
         <div className="flex items-center gap-2 border-t border-[var(--border-default)] px-4 py-2 text-sm text-[var(--text-muted)]">
           <Spinner size="xs" />
           Enviando arquivo...
+        </div>
+      )}
+
+      {/* Rate limit warning */}
+      {isRateLimited && (
+        <div className="px-4 py-1.5 text-center text-xs text-[var(--warning-base)]">
+          Aguarde antes de enviar novamente
         </div>
       )}
 
@@ -400,11 +468,11 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
         onSubmit={handleSubmit}
         onChange={handleInputChange}
         placeholder="Digite uma mensagem..."
-        disabled={!isConnected || isUploading}
+        disabled={isUploading || isRateLimited}
         showEmoji
         showAttach
         emojiPickerSlot={
-          <InputEmojiPicker onSelect={handleEmojiSelect} disabled={!isConnected || isUploading} />
+          <InputEmojiPicker onSelect={handleEmojiSelect} disabled={isUploading || isRateLimited} />
         }
       />
 

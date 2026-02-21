@@ -12,6 +12,7 @@ export const messageRepository = {
     userId: string
     roomId: string
     replyToId?: string
+    clientId?: string
   }) {
     return prisma.message.create({
       data: {
@@ -21,8 +22,35 @@ export const messageRepository = {
         userId: data.userId,
         roomId: data.roomId,
         replyToId: data.replyToId,
+        clientId: data.clientId,
       },
       select: messageSelect,
+    })
+  },
+
+  /** Find a message by clientId for idempotency dedup (within last 5 min) */
+  async findByClientId(clientId: string, userId: string) {
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000)
+    return prisma.message.findFirst({
+      where: {
+        clientId,
+        userId,
+        createdAt: { gte: fiveMinAgo },
+      },
+      select: messageSelect,
+    })
+  },
+
+  /** Find messages in a room created after a given timestamp (for sync) */
+  async findSince(roomId: string, since: Date) {
+    return prisma.message.findMany({
+      where: {
+        roomId,
+        createdAt: { gt: since },
+      },
+      select: messageSelect,
+      orderBy: { createdAt: 'asc' },
+      take: 200, // safety cap
     })
   },
 

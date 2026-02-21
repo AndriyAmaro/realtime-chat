@@ -20,6 +20,7 @@ export interface ServerToClientEvents {
   'room:members_online': (data: { roomId: string; userIds: string[] }) => void
 
   'user:status': (data: { userId: string; status: 'ONLINE' | 'OFFLINE' | 'AWAY' }) => void
+  'user:devices': (data: { count: number }) => void
 
   'typing:start': (data: { roomId: string; userId: string; userName: string }) => void
   'typing:stop': (data: { roomId: string; userId: string }) => void
@@ -52,6 +53,11 @@ export interface ClientToServerEvents {
   'message:react': (
     data: { roomId: string; messageId: string; emoji: string },
     callback: (response: MessageAck) => void
+  ) => void
+
+  'message:sync': (
+    data: { roomId: string; since: string },
+    callback: (response: { messages: MessagePayload[] }) => void
   ) => void
 
   'typing:start': (roomId: string) => void
@@ -98,6 +104,7 @@ export interface SendMessagePayload {
   type?: MessageType
   fileUrl?: string
   replyToId?: string
+  clientId?: string
 }
 
 export interface MessageAck {

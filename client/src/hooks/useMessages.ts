@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { useAuthStore } from '@store/auth.store'
+import { offlineQueue, type PendingMessage } from '@services/offlineQueue'
 import type { TypedSocket } from '@services/socket'
 import type { MessagePayload, MessageType, ReactionGroup, SendMessagePayload } from '@/types/socket'
 
@@ -11,21 +12,27 @@ interface UseMessagesOptions {
 
 interface UseMessagesReturn {
   messages: MessagePayload[]
+  pendingMessages: PendingMessage[]
   hasMore: boolean
   isLoadingHistory: boolean
+  isRateLimited: boolean
   sendMessage: (content: string, replyToId?: string) => void
   sendFileMessage: (content: string, fileUrl: string, type: MessageType, replyToId?: string) => void
   editMessage: (messageId: string, content: string) => void
   deleteMessage: (messageId: string) => void
   toggleReaction: (messageId: string, emoji: string) => void
   loadMore: () => void
+  retryMessage: (clientId: string) => void
+  discardMessage: (clientId: string) => void
 }
 
 const HISTORY_LIMIT = 50
+const RATE_LIMIT_COOLDOWN = 3000
 
 /**
  * Manages messages for a specific room via Socket.io.
- * Handles sending, receiving, editing, deleting, reactions, and loading history.
+ * Handles sending, receiving, editing, deleting, reactions, loading history,
+ * offline queue, message sync on reconnect, and rate limit feedback.
  */
 export function useMessages({
   socket,
@@ -35,8 +42,17 @@ export function useMessages({
   const [messages, setMessages] = useState<MessagePayload[]>([])
   const [hasMore, setHasMore] = useState(false)
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+  const [isRateLimited, setIsRateLimited] = useState(false)
   const joinedRoomRef = useRef<string | null>(null)
+  const wasConnectedRef = useRef(isConnected)
   const userId = useAuthStore((s) => s.user?.id)
+  const userName = useAuthStore((s) => s.user?.name) ?? 'Unknown'
+
+  // Subscribe to offline queue changes via useSyncExternalStore
+  const pendingMessages = useSyncExternalStore(
+    (cb) => offlineQueue.subscribe(cb),
+    () => offlineQueue.getAll().filter((m) => m.payload.roomId === roomId)
+  )
 
   // Reset state when roomId changes (React pattern: adjust state during render)
   const [prevRoomId, setPrevRoomId] = useState(roomId)
@@ -66,7 +82,11 @@ export function useMessages({
     // Listen for new messages
     function onNewMessage(message: MessagePayload) {
       if (message.roomId === roomId) {
-        setMessages((prev) => [...prev, message])
+        setMessages((prev) => {
+          // Dedup by id (e.g. from sync + realtime)
+          if (prev.some((m) => m.id === message.id)) return prev
+          return [...prev, message]
+        })
       }
     }
 
@@ -121,11 +141,20 @@ export function useMessages({
       }
     }
 
+    // Listen for rate limit error
+    function onError(data: { message: string }) {
+      if (data.message.includes('Muitas requisições')) {
+        setIsRateLimited(true)
+        setTimeout(() => setIsRateLimited(false), RATE_LIMIT_COOLDOWN)
+      }
+    }
+
     socket.on('message:new', onNewMessage)
     socket.on('message:history', onHistory)
     socket.on('message:edited', onEdited)
     socket.on('message:deleted', onDeleted)
     socket.on('message:reaction_updated', onReactionUpdated)
+    socket.on('error', onError)
 
     return () => {
       socket.off('message:new', onNewMessage)
@@ -133,8 +162,36 @@ export function useMessages({
       socket.off('message:edited', onEdited)
       socket.off('message:deleted', onDeleted)
       socket.off('message:reaction_updated', onReactionUpdated)
+      socket.off('error', onError)
     }
   }, [socket, isConnected, roomId])
+
+  // Reconnection: sync missed messages + flush offline queue
+  useEffect(() => {
+    if (!socket || !roomId) return
+
+    const wasDisconnected = !wasConnectedRef.current
+    wasConnectedRef.current = isConnected
+
+    if (isConnected && wasDisconnected && messages.length > 0) {
+      // Get the most recent message timestamp for sync
+      const lastMessage = messages[messages.length - 1]
+      if (lastMessage) {
+        socket.emit('message:sync', { roomId, since: lastMessage.createdAt }, (response) => {
+          if (response.messages.length > 0) {
+            setMessages((prev) => {
+              const existingIds = new Set(prev.map((m) => m.id))
+              const newMessages = response.messages.filter((m) => !existingIds.has(m.id))
+              return newMessages.length > 0 ? [...prev, ...newMessages] : prev
+            })
+          }
+        })
+      }
+
+      // Flush offline queue
+      offlineQueue.flush(socket)
+    }
+  }, [socket, isConnected, roomId, messages])
 
   // Cleanup: leave room on unmount
   useEffect(() => {
@@ -148,13 +205,21 @@ export function useMessages({
 
   const sendMessage = useCallback(
     (content: string, replyToId?: string) => {
-      if (!socket || !isConnected || !content.trim() || !userId) return
+      if (!content.trim() || !userId) return
 
+      // If offline, queue the message
+      if (!socket?.connected) {
+        offlineQueue.enqueue(content, roomId, userId, userName, { replyToId })
+        return
+      }
+
+      const clientId = crypto.randomUUID()
       const payload: SendMessagePayload = {
         roomId,
         content: content.trim(),
         type: 'TEXT',
         replyToId,
+        clientId,
       }
 
       socket.emit('message:send', payload, (ack) => {
@@ -163,19 +228,21 @@ export function useMessages({
         }
       })
     },
-    [socket, isConnected, roomId, userId]
+    [socket, roomId, userId, userName]
   )
 
   const sendFileMessage = useCallback(
     (content: string, fileUrl: string, type: MessageType, replyToId?: string) => {
-      if (!socket || !isConnected || !userId) return
+      if (!socket?.connected || !userId) return
 
+      const clientId = crypto.randomUUID()
       const payload: SendMessagePayload = {
         roomId,
         content,
         type,
         fileUrl,
         replyToId,
+        clientId,
       }
 
       socket.emit('message:send', payload, (ack) => {
@@ -184,7 +251,7 @@ export function useMessages({
         }
       })
     },
-    [socket, isConnected, roomId, userId]
+    [socket, roomId, userId]
   )
 
   const editMessage = useCallback(
@@ -240,15 +307,31 @@ export function useMessages({
     })
   }, [socket, isConnected, hasMore, isLoadingHistory, messages, roomId])
 
+  const retryMessage = useCallback(
+    (clientId: string) => {
+      if (!socket) return
+      offlineQueue.retry(clientId, socket)
+    },
+    [socket]
+  )
+
+  const discardMessage = useCallback((clientId: string) => {
+    offlineQueue.remove(clientId)
+  }, [])
+
   return {
     messages,
+    pendingMessages,
     hasMore,
     isLoadingHistory,
+    isRateLimited,
     sendMessage,
     sendFileMessage,
     editMessage,
     deleteMessage,
     toggleReaction,
     loadMore,
+    retryMessage,
+    discardMessage,
   }
 }
