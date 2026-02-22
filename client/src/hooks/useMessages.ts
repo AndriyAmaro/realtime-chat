@@ -78,12 +78,30 @@ export function useMessages({
       socket.emit('room:leave', joinedRoomRef.current)
     }
 
-    // Join room with acknowledgment — retry up to 3 times on failure
+    // Join room with acknowledgment — retry up to 3 times on failure.
+    // Includes a 5s timeout per attempt in case the server never responds.
     let retries = 0
+    let cancelled = false
     const maxRetries = 3
+    const JOIN_TIMEOUT = 5000
 
     function joinRoom() {
+      if (cancelled) return
+
+      let timedOut = false
+      const timeout = setTimeout(() => {
+        timedOut = true
+        console.warn(`[socket] room:join timed out (attempt ${retries + 1})`)
+        if (!cancelled && retries < maxRetries) {
+          retries++
+          joinRoom()
+        }
+      }, JOIN_TIMEOUT)
+
       socket!.emit('room:join', roomId, (response) => {
+        if (timedOut || cancelled) return
+        clearTimeout(timeout)
+
         if (response.success) {
           joinedRoomRef.current = roomId
           // Only request history after confirmed join
@@ -178,6 +196,7 @@ export function useMessages({
     socket.on('error', onError)
 
     return () => {
+      cancelled = true
       socket.off('message:new', onNewMessage)
       socket.off('message:history', onHistory)
       socket.off('message:edited', onEdited)

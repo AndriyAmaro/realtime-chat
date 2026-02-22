@@ -35,6 +35,9 @@ export function useTyping({ socket, roomId, isConnected }: UseTypingOptions): Us
   useEffect(() => {
     if (!socket || !isConnected) return
 
+    // Track auto-remove timeouts so we can cancel them on cleanup
+    const autoRemoveTimers = new Set<ReturnType<typeof setTimeout>>()
+
     function onTypingStart(data: { roomId: string; userId: string; userName: string }) {
       if (data.roomId !== roomId || data.userId === userId) return
 
@@ -44,9 +47,11 @@ export function useTyping({ socket, roomId, isConnected }: UseTypingOptions): Us
       })
 
       // Auto-remove after timeout (in case stop event is missed)
-      setTimeout(() => {
+      const timer = setTimeout(() => {
+        autoRemoveTimers.delete(timer)
         setTypingUsers((prev) => prev.filter((u) => u.userId !== data.userId))
       }, TYPING_TIMEOUT_MS + 1000)
+      autoRemoveTimers.add(timer)
     }
 
     function onTypingStop(data: { roomId: string; userId: string }) {
@@ -60,6 +65,8 @@ export function useTyping({ socket, roomId, isConnected }: UseTypingOptions): Us
     return () => {
       socket.off('typing:start', onTypingStart)
       socket.off('typing:stop', onTypingStop)
+      autoRemoveTimers.forEach(clearTimeout)
+      autoRemoveTimers.clear()
       setTypingUsers([])
     }
   }, [socket, isConnected, roomId, userId])

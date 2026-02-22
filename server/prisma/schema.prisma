@@ -75,6 +75,7 @@ model RoomMember {
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roomId])
+  @@index([roomId])
   @@map("room_members")
 }
 

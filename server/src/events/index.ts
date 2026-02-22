@@ -21,6 +21,14 @@ export function registerSocketHandlers(io: TypedServer, socket: TypedSocket): vo
   socketRegistry.add(userId, socket.id)
   emitDeviceCount(io, userId)
 
+  // IMPORTANT: Register disconnect handler FIRST (before status handler)
+  // so the socket is removed from registry BEFORE status handler checks
+  // isOnline(). Otherwise users stay ONLINE permanently in the DB.
+  socket.on('disconnect', () => {
+    socketRegistry.remove(userId, socket.id)
+    emitDeviceCount(io, userId)
+  })
+
   // Auto-join all user's rooms so they receive message:new for every room
   autoJoinUserRooms(socket)
 
@@ -33,17 +41,11 @@ export function registerSocketHandlers(io: TypedServer, socket: TypedSocket): vo
   // Messages (send/history)
   registerMessageHandlers(io, socket)
 
-  // Online/offline status
+  // Online/offline status (disconnect handler runs AFTER registry removal above)
   registerStatusHandlers(io, socket)
 
   // Read receipts
   registerReadHandlers(io, socket)
-
-  // Unregister socket on disconnect
-  socket.on('disconnect', () => {
-    socketRegistry.remove(userId, socket.id)
-    emitDeviceCount(io, userId)
-  })
 }
 
 // ============ AUTO-JOIN ============

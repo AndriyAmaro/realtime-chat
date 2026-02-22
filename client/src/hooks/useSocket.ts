@@ -101,11 +101,12 @@ export function useSocket() {
         refreshAccessToken()
           .then((ok) => {
             if (!ok) {
-              // Refresh failed — force logout
               useAuthStore.getState().logout()
             }
-            // If refresh succeeded, the auth callback in socket.ts will
-            // provide the fresh token on the next reconnection attempt.
+          })
+          .catch((err) => {
+            console.error('[socket] Token refresh failed:', err)
+            useAuthStore.getState().logout()
           })
           .finally(() => {
             isRefreshingRef.current = false
@@ -132,6 +133,10 @@ export function useSocket() {
             } else {
               useAuthStore.getState().logout()
             }
+          })
+          .catch((err) => {
+            console.error('[socket] Token refresh failed on reconnect_failed:', err)
+            useAuthStore.getState().logout()
           })
           .finally(() => {
             isRefreshingRef.current = false
