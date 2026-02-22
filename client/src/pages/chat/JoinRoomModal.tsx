@@ -3,8 +3,8 @@ import { Modal } from '@core/organisms/Modal'
 import { Input } from '@core/primitives/Input'
 import { Button } from '@core/primitives/Button'
 import { Spinner } from '@core/primitives/Spinner'
+import { useNavigate } from 'react-router-dom'
 import { useJoinRoom } from '@hooks/useRooms'
-import { useRoomStore } from '@store/room.store'
 import { ApiError } from '@services/api'
 import { Link2 } from 'lucide-react'
 
@@ -17,8 +17,8 @@ export function JoinRoomModal({ open, onOpenChange }: JoinRoomModalProps) {
   const [roomId, setRoomId] = useState('')
   const [inviteCode, setInviteCode] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
   const joinRoom = useJoinRoom()
-  const selectRoom = useRoomStore((s) => s.selectRoom)
 
   function handleClose() {
     setRoomId('')
@@ -39,7 +39,7 @@ export function JoinRoomModal({ open, onOpenChange }: JoinRoomModalProps) {
         roomId: roomId.trim(),
         inviteCode: inviteCode.trim() || undefined,
       })
-      selectRoom(member.roomId)
+      navigate(`/chat/${member.roomId}`)
       handleClose()
     } catch (err) {
       if (err instanceof ApiError) {

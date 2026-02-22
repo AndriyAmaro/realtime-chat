@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ThemeToggle } from '@core/primitives/ThemeToggle'
 import { Avatar } from '@core/primitives/Avatar'
 import { Button } from '@core/primitives/Button'
@@ -15,19 +15,25 @@ import { LogOut, MessageSquare, PanelLeftClose, PanelLeft, Volume2, VolumeX } fr
 import { RoomSidebar } from './RoomSidebar'
 import { RoomView } from './RoomView'
 import { ProfileModal } from './ProfileModal'
-import { useRoomStore } from '@store/room.store'
+import { setActiveRoomId } from '@hooks/useActiveRoomId'
 
 export default function ChatLayout() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
-  const selectedRoomId = useRoomStore((s) => s.selectedRoomId)
+  const { roomId: selectedRoomId } = useParams<{ roomId?: string }>()
   const soundEnabled = useNotificationStore((s) => s.soundEnabled)
   const toggleSound = useNotificationStore((s) => s.toggleSound)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [profileOpen, setProfileOpen] = useState(false)
 
   const isMobile = !useMediaQuery('(min-width: 768px)')
+
+  // Keep module-level ref in sync for useNotifications event handlers
+  setActiveRoomId(selectedRoomId ?? null)
+  useEffect(() => {
+    return () => setActiveRoomId(null)
+  }, [])
 
   // Socket + notifications
   const { socket, isConnected } = useSocket()

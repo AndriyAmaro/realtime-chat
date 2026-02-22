@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useAuthStore } from '@store/auth.store'
-import { useRoomStore } from '@store/room.store'
 import { useNotificationStore } from '@store/notification.store'
+import { getActiveRoomId } from './useActiveRoomId'
 import type { TypedSocket } from '@services/socket'
 import type { MessagePayload } from '@/types/socket'
 import type { ToastData } from './useToast'
@@ -57,8 +57,8 @@ export function useNotifications({ socket, isConnected, addToast }: UseNotificat
       if (message.userId === userId) return
 
       // Don't notify for the currently active room
-      const selectedRoomId = useRoomStore.getState().selectedRoomId
-      if (message.roomId === selectedRoomId) return
+      const activeRoomId = getActiveRoomId()
+      if (message.roomId === activeRoomId) return
 
       // Increment unread count
       useNotificationStore.getState().incrementUnread(message.roomId)

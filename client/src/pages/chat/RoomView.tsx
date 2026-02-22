@@ -7,9 +7,9 @@ import { EmptyState } from '@core/patterns/EmptyState'
 import { Drawer } from '@core/organisms/Drawer/Drawer'
 import { useRoom, useRoomMembers, useLeaveRoom, useDeleteRoom } from '@hooks/useRooms'
 import { useAuthStore } from '@store/auth.store'
-import { useRoomStore } from '@store/room.store'
 import { useMediaQuery } from '@hooks/useMediaQuery'
 import { Hash, Lock, Users, Crown, LogOut, Trash2, Circle, Search, ArrowLeft } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useSocket } from '@hooks/useSocket'
 import { useOnlineStatus } from '@hooks/useOnlineStatus'
 import { ChatArea } from './ChatArea'
@@ -24,7 +24,8 @@ export function RoomView({ roomId }: RoomViewProps) {
   const { data: room, isLoading, error } = useRoom(roomId)
   const { data: members } = useRoomMembers(roomId)
   const userId = useAuthStore((s) => s.user?.id)
-  const clearRoom = useRoomStore((s) => s.clearRoom)
+  const navigate = useNavigate()
+  const goBack = () => navigate('/chat')
   const leaveRoom = useLeaveRoom()
   const deleteRoom = useDeleteRoom()
   const { socket, isConnected } = useSocket()
@@ -51,7 +52,7 @@ export function RoomView({ roomId }: RoomViewProps) {
           title="Sala não encontrada"
           description="A sala pode ter sido excluída ou você não tem acesso"
           action={
-            <Button variant="outline" size="sm" onClick={clearRoom}>
+            <Button variant="outline" size="sm" onClick={goBack}>
               Voltar
             </Button>
           }
@@ -65,12 +66,12 @@ export function RoomView({ roomId }: RoomViewProps) {
 
   async function handleLeave() {
     await leaveRoom.mutateAsync(roomId)
-    clearRoom()
+    goBack()
   }
 
   async function handleDelete() {
     await deleteRoom.mutateAsync(roomId)
-    clearRoom()
+    goBack()
   }
 
   function handleSearchNavigate(messageId: string) {
@@ -102,7 +103,7 @@ export function RoomView({ roomId }: RoomViewProps) {
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           {/* Mobile back button */}
           {isMobile && (
-            <Button variant="ghost" size="icon-sm" onClick={clearRoom} aria-label="Voltar">
+            <Button variant="ghost" size="icon-sm" onClick={goBack} aria-label="Voltar">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           )}

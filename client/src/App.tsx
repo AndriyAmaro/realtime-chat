@@ -77,6 +77,7 @@ export default function App() {
         {/* Protected pages */}
         <Route element={<ProtectedRoute />}>
           <Route path="/chat" element={<ChatLayout />} />
+          <Route path="/chat/:roomId" element={<ChatLayout />} />
         </Route>
 
         {/* Catch-all redirect */}

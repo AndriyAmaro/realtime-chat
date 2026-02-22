@@ -12,8 +12,8 @@ import {
 } from '@core/organisms/Form'
 import { Input } from '@core/primitives/Input'
 import { Switch } from '@core/primitives/Switch'
+import { useNavigate } from 'react-router-dom'
 import { useCreateRoom } from '@hooks/useRooms'
-import { useRoomStore } from '@store/room.store'
 import { Hash, Lock } from 'lucide-react'
 
 const createRoomSchema = z.object({
@@ -37,8 +37,8 @@ interface CreateRoomModalProps {
 }
 
 export function CreateRoomModal({ open, onOpenChange }: CreateRoomModalProps) {
+  const navigate = useNavigate()
   const createRoom = useCreateRoom()
-  const selectRoom = useRoomStore((s) => s.selectRoom)
 
   const form = useFormWithSchema({
     schema: createRoomSchema,
@@ -51,7 +51,7 @@ export function CreateRoomModal({ open, onOpenChange }: CreateRoomModalProps) {
       description: values.description || undefined,
       isPrivate: values.isPrivate,
     })
-    selectRoom(room.id)
+    navigate(`/chat/${room.id}`)
     form.reset()
     onOpenChange(false)
   }

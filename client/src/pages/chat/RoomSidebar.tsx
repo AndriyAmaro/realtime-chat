@@ -1,4 +1,5 @@
 import { memo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { SearchBar } from '@core/patterns/SearchBar'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@core/patterns/Tabs'
 import { Button } from '@core/primitives/Button'
@@ -6,7 +7,6 @@ import { Spinner } from '@core/primitives/Spinner'
 import { EmptyState } from '@core/patterns/EmptyState'
 import { Plus, Link2, Hash, Lock } from 'lucide-react'
 import { useMyRooms, usePublicRooms } from '@hooks/useRooms'
-import { useRoomStore } from '@store/room.store'
 import { useAuthStore } from '@store/auth.store'
 import { useNotificationStore } from '@store/notification.store'
 import { Avatar } from '@core/primitives/Avatar'
@@ -16,6 +16,7 @@ import { JoinRoomModal } from './JoinRoomModal'
 import type { Room } from '@/types/room'
 
 export function RoomSidebar() {
+  const { roomId: selectedRoomId } = useParams<{ roomId?: string }>()
   const [search, setSearch] = useState('')
   const [createOpen, setCreateOpen] = useState(false)
   const [joinOpen, setJoinOpen] = useState(false)
@@ -62,11 +63,11 @@ export function RoomSidebar() {
         </TabsList>
 
         <TabsContent value="my" className="flex-1 overflow-y-auto px-2 py-2">
-          <MyRoomsList search={search} />
+          <MyRoomsList search={search} selectedRoomId={selectedRoomId} />
         </TabsContent>
 
         <TabsContent value="public" className="flex-1 overflow-y-auto px-2 py-2">
-          <PublicRoomsList search={search} />
+          <PublicRoomsList search={search} selectedRoomId={selectedRoomId} />
         </TabsContent>
       </Tabs>
 
@@ -79,7 +80,7 @@ export function RoomSidebar() {
 
 // ============ MY ROOMS LIST ============
 
-function MyRoomsList({ search }: { search: string }) {
+function MyRoomsList({ search, selectedRoomId }: { search: string; selectedRoomId?: string }) {
   const { data: rooms, isLoading } = useMyRooms()
 
   if (isLoading) {
@@ -107,7 +108,7 @@ function MyRoomsList({ search }: { search: string }) {
   return (
     <div className="space-y-0.5">
       {filtered.map((room) => (
-        <RoomItem key={room.id} room={room} />
+        <RoomItem key={room.id} room={room} selectedRoomId={selectedRoomId} />
       ))}
     </div>
   )
@@ -115,7 +116,7 @@ function MyRoomsList({ search }: { search: string }) {
 
 // ============ PUBLIC ROOMS LIST ============
 
-function PublicRoomsList({ search }: { search: string }) {
+function PublicRoomsList({ search, selectedRoomId }: { search: string; selectedRoomId?: string }) {
   const { data: rooms, isLoading } = usePublicRooms(search || undefined)
 
   if (isLoading) {
@@ -141,7 +142,7 @@ function PublicRoomsList({ search }: { search: string }) {
   return (
     <div className="space-y-0.5">
       {filtered.map((room) => (
-        <RoomItem key={room.id} room={room} showJoinHint />
+        <RoomItem key={room.id} room={room} showJoinHint selectedRoomId={selectedRoomId} />
       ))}
     </div>
   )
@@ -152,12 +153,13 @@ function PublicRoomsList({ search }: { search: string }) {
 const RoomItem = memo(function RoomItem({
   room,
   showJoinHint,
+  selectedRoomId,
 }: {
   room: Room
   showJoinHint?: boolean
+  selectedRoomId?: string
 }) {
-  const selectedRoomId = useRoomStore((s) => s.selectedRoomId)
-  const selectRoom = useRoomStore((s) => s.selectRoom)
+  const navigate = useNavigate()
   const userId = useAuthStore((s) => s.user?.id)
   const unreadCount = useNotificationStore((s) => s.unreadCounts[room.id] ?? 0)
   const clearUnread = useNotificationStore((s) => s.clearUnread)
@@ -165,7 +167,7 @@ const RoomItem = memo(function RoomItem({
   const isOwner = room.ownerId === userId
 
   function handleSelect() {
-    selectRoom(room.id)
+    navigate(`/chat/${room.id}`)
     if (unreadCount > 0) {
       clearUnread(room.id)
     }
