@@ -12,12 +12,12 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
   const { userId } = socket.data
 
   // ---- room:join ----
-  socket.on('room:join', async (roomId) => {
+  socket.on('room:join', async (roomId, callback) => {
     try {
       // Verify the user is actually a member
       const membership = await roomMemberRepository.findMembership(userId, roomId)
       if (!membership) {
-        socket.emit('error', { message: 'You are not a member of this room' })
+        callback({ success: false, error: 'You are not a member of this room' })
         return
       }
 
@@ -43,8 +43,10 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
           readAt: r.lastReadAt?.toISOString() ?? null,
         })),
       })
+
+      callback({ success: true })
     } catch {
-      socket.emit('error', { message: 'Failed to join room' })
+      callback({ success: false, error: 'Failed to join room' })
     }
   })
 

@@ -78,12 +78,27 @@ export function useMessages({
       socket.emit('room:leave', joinedRoomRef.current)
     }
 
-    // Join room
-    socket.emit('room:join', roomId)
-    joinedRoomRef.current = roomId
+    // Join room with acknowledgment — retry up to 3 times on failure
+    let retries = 0
+    const maxRetries = 3
 
-    // Request initial history
-    socket.emit('message:history', { roomId, limit: HISTORY_LIMIT })
+    function joinRoom() {
+      socket!.emit('room:join', roomId, (response) => {
+        if (response.success) {
+          joinedRoomRef.current = roomId
+          // Only request history after confirmed join
+          socket!.emit('message:history', { roomId, limit: HISTORY_LIMIT })
+        } else {
+          console.error(`[socket] room:join failed (attempt ${retries + 1}):`, response.error)
+          if (retries < maxRetries) {
+            retries++
+            setTimeout(joinRoom, 1000 * retries)
+          }
+        }
+      })
+    }
+
+    joinRoom()
 
     // Listen for new messages
     function onNewMessage(message: MessagePayload) {

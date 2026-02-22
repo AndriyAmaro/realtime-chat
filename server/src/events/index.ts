@@ -52,6 +52,10 @@ async function autoJoinUserRooms(socket: TypedSocket): Promise<void> {
   try {
     const roomIds = await roomMemberRepository.findRoomIdsByUserId(socket.data.userId)
     await Promise.all(roomIds.map((roomId) => socket.join(roomId)))
+    log.info(
+      { userId: socket.data.userId, socketId: socket.id, rooms: roomIds.length },
+      'Auto-joined rooms'
+    )
   } catch (err) {
     log.error({ err, userId: socket.data.userId }, 'Failed to auto-join rooms')
   }

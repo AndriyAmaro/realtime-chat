@@ -1,11 +1,46 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getSocket, disconnectSocket, isSocketConnected } from '@services/socket'
 import { useAuthStore } from '@store/auth.store'
+
+const REFRESH_URL = '/api/v1/auth/refresh-token'
+
+/**
+ * Attempt to refresh the access token using the stored refresh token.
+ * Returns true if successful (store is updated), false otherwise.
+ */
+async function refreshAccessToken(): Promise<boolean> {
+  try {
+    const { refreshToken } = useAuthStore.getState()
+    const res = await fetch(REFRESH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: refreshToken ? JSON.stringify({ refreshToken }) : undefined,
+    })
+    if (!res.ok) return false
+
+    const json = (await res.json()) as {
+      success: boolean
+      data?: { accessToken: string; refreshToken: string }
+    }
+    if (json.data?.accessToken) {
+      useAuthStore.getState().setAccessToken(json.data.accessToken)
+      if (json.data.refreshToken) {
+        useAuthStore.getState().setRefreshToken(json.data.refreshToken)
+      }
+      return true
+    }
+    return false
+  } catch {
+    return false
+  }
+}
 
 /**
  * Manages the Socket.io connection lifecycle.
  * Connects when authenticated, disconnects on logout.
- * Tracks reconnection state for UI feedback.
+ * Automatically refreshes the JWT on auth-related connect errors
+ * so reconnection uses a fresh token (via the auth callback in socket.ts).
  */
 export function useSocket() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -18,6 +53,9 @@ export function useSocket() {
   const [connectError, setConnectError] = useState<string | null>(null)
   const [isReconnecting, setIsReconnecting] = useState(false)
   const [reconnectAttempt, setReconnectAttempt] = useState(0)
+
+  // Guard against concurrent token refreshes
+  const isRefreshingRef = useRef(false)
 
   // Disconnect when auth changes to false (render-time adjustment)
   const [prevAuth, setPrevAuth] = useState(isAuthenticated)
@@ -50,6 +88,29 @@ export function useSocket() {
     function onConnectError(err: Error) {
       console.error('[socket] connect_error:', err.message)
       setConnectError(err.message)
+
+      // If the error is auth-related, refresh the token so the next
+      // reconnection attempt (via the auth callback) uses a fresh one.
+      const isAuthError =
+        err.message.includes('expired') ||
+        err.message.includes('Invalid') ||
+        err.message.includes('Authentication')
+
+      if (isAuthError && !isRefreshingRef.current) {
+        isRefreshingRef.current = true
+        refreshAccessToken()
+          .then((ok) => {
+            if (!ok) {
+              // Refresh failed — force logout
+              useAuthStore.getState().logout()
+            }
+            // If refresh succeeded, the auth callback in socket.ts will
+            // provide the fresh token on the next reconnection attempt.
+          })
+          .finally(() => {
+            isRefreshingRef.current = false
+          })
+      }
     }
 
     function onReconnectAttempt(attempt: number) {
@@ -59,6 +120,23 @@ export function useSocket() {
 
     function onReconnectFailed() {
       setIsReconnecting(false)
+
+      // All reconnection attempts exhausted — try one last time
+      // after refreshing the token, then manually reconnect.
+      if (!isRefreshingRef.current) {
+        isRefreshingRef.current = true
+        refreshAccessToken()
+          .then((ok) => {
+            if (ok && socket) {
+              socket.connect()
+            } else {
+              useAuthStore.getState().logout()
+            }
+          })
+          .finally(() => {
+            isRefreshingRef.current = false
+          })
+      }
     }
 
     socket.on('connect', onConnect)

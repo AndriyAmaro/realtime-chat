@@ -54,7 +54,10 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
   // Room
-  'room:join': (roomId: string) => void
+  'room:join': (
+    roomId: string,
+    callback: (response: { success: boolean; error?: string }) => void
+  ) => void
   'room:leave': (roomId: string) => void
 
   // Messages
