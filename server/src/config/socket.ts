@@ -16,6 +16,13 @@ import type {
 
 const log = createChildLogger('socket')
 
+let ioInstance: TypedServer | null = null
+
+/** Get the Socket.io server instance (available after initializeSocket) */
+export function getIO(): TypedServer | null {
+  return ioInstance
+}
+
 /**
  * Initialize Socket.io on the existing HTTP server.
  * - CORS configured from env
@@ -54,6 +61,7 @@ export function initializeSocket(httpServer: HttpServer): TypedServer {
     })
   })
 
+  ioInstance = io
   log.info('Socket.io initialized')
 
   return io
