@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { prisma } from '../config/index.js'
+import { getIO } from '../config/socket.js'
 import { shutdownService } from '../services/shutdown.service.js'
 import type { ApiResponse } from '../types/api.js'
 
@@ -35,6 +36,27 @@ router.get('/health', async (_req, res) => {
   }
 
   res.status(allHealthy ? 200 : 503).json(response)
+})
+
+// GET /debug/sockets — temporary diagnostic for cross-device debugging
+router.get('/debug/sockets', async (_req, res) => {
+  const io = getIO()
+  if (!io) {
+    res.json({ success: true, data: { error: 'Socket.io not initialized' } })
+    return
+  }
+
+  const sockets = await io.fetchSockets()
+  const connections = sockets.map((s) => ({
+    socketId: s.id,
+    userId: s.data.userId,
+    rooms: [...s.rooms].filter((r) => r !== s.id),
+  }))
+
+  res.json({
+    success: true,
+    data: { totalConnections: sockets.length, connections },
+  })
 })
 
 export default router
