@@ -34,6 +34,20 @@ export function registerMessageHandlers(io: TypedServer, socket: TypedSocket): v
         clientId: data.clientId,
       })
 
+      // Diagnostic: log how many sockets will receive this broadcast
+      const socketsInRoom = await io.in(data.roomId).fetchSockets()
+      log.info(
+        {
+          roomId: data.roomId,
+          messageId: message.id,
+          senderId: userId,
+          senderSocketId: socket.id,
+          recipientCount: socketsInRoom.length,
+          recipientUsers: socketsInRoom.map((s) => s.data.userId),
+        },
+        'Broadcasting message:new'
+      )
+
       io.to(data.roomId).emit('message:new', message)
       callback({ success: true, messageId: message.id })
     } catch (err) {
