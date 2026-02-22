@@ -24,6 +24,7 @@ const RETRY_DELAYS = [1000, 2000, 4000] // exponential backoff
  */
 export class OfflineQueue {
   private queue: PendingMessage[] = []
+  private snapshot: PendingMessage[] = []
   private listeners = new Set<() => void>()
 
   enqueue(
@@ -108,6 +109,11 @@ export class OfflineQueue {
     return [...this.queue]
   }
 
+  /** Stable snapshot for useSyncExternalStore (same reference between calls) */
+  getSnapshot(): PendingMessage[] {
+    return this.snapshot
+  }
+
   clear(): void {
     this.queue = []
     this.notify()
@@ -124,6 +130,7 @@ export class OfflineQueue {
   }
 
   private notify(): void {
+    this.snapshot = [...this.queue]
     for (const listener of this.listeners) {
       listener()
     }

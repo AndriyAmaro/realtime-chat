@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { useAuthStore } from '@store/auth.store'
 import { offlineQueue, type PendingMessage } from '@services/offlineQueue'
 import type { TypedSocket } from '@services/socket'
@@ -48,10 +48,16 @@ export function useMessages({
   const userId = useAuthStore((s) => s.user?.id)
   const userName = useAuthStore((s) => s.user?.name) ?? 'Unknown'
 
-  // Subscribe to offline queue changes via useSyncExternalStore
-  const pendingMessages = useSyncExternalStore(
+  // Subscribe to offline queue changes via useSyncExternalStore.
+  // getSnapshot() must return a stable reference (same object between calls)
+  // to avoid infinite re-render loops. Filtering is done in useMemo.
+  const allPendingMessages = useSyncExternalStore(
     (cb) => offlineQueue.subscribe(cb),
-    () => offlineQueue.getAll().filter((m) => m.payload.roomId === roomId)
+    () => offlineQueue.getSnapshot()
+  )
+  const pendingMessages = useMemo(
+    () => allPendingMessages.filter((m) => m.payload.roomId === roomId),
+    [allPendingMessages, roomId]
   )
 
   // Reset state when roomId changes (React pattern: adjust state during render)
