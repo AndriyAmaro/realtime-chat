@@ -67,6 +67,23 @@ export const authService = {
   changePassword(payload: ChangePasswordPayload) {
     return api.patch<{ message: string }>('/auth/password', payload)
   },
+
+  forgotPassword(payload: ForgotPasswordPayload) {
+    return api.post<{ message: string }>('/auth/forgot-password', payload)
+  },
+
+  resetPassword(payload: ResetPasswordPayload) {
+    return api.post<{ message: string }>('/auth/reset-password', payload)
+  },
+}
+
+interface ForgotPasswordPayload {
+  email: string
+}
+
+interface ResetPasswordPayload {
+  token: string
+  password: string
 }
 
 export type {
@@ -76,4 +93,6 @@ export type {
   LoginPayload,
   UpdateProfilePayload,
   ChangePasswordPayload,
+  ForgotPasswordPayload,
+  ResetPasswordPayload,
 }

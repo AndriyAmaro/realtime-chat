@@ -19,6 +19,8 @@ const LandingPage = lazyWithReload(() => import('@pages/LandingPage'))
 const AuthLayout = lazyWithReload(() => import('@pages/auth/AuthLayout'))
 const LoginPage = lazyWithReload(() => import('@pages/auth/LoginPage'))
 const RegisterPage = lazyWithReload(() => import('@pages/auth/RegisterPage'))
+const ForgotPasswordPage = lazyWithReload(() => import('@pages/auth/ForgotPasswordPage'))
+const ResetPasswordPage = lazyWithReload(() => import('@pages/auth/ResetPasswordPage'))
 const ChatLayout = lazyWithReload(() => import('@pages/chat/ChatLayout'))
 
 function PageSpinner() {
@@ -82,6 +84,8 @@ export default function App() {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Route>
 
         {/* Protected pages */}

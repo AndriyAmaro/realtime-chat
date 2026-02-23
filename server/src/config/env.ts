@@ -26,6 +26,9 @@ const envSchema = z.object({
   MAX_FILE_SIZE: z.coerce.number().default(5_242_880), // 5MB
   UPLOAD_DIR: z.string().default('uploads'),
 
+  // Email (optional — if unset, reset links are logged to console)
+  RESEND_API_KEY: z.string().optional(),
+
   // Admin
   ADMIN_API_KEY: z.string().optional(),
 })

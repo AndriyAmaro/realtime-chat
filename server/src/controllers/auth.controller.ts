@@ -7,6 +7,8 @@ import type {
   LoginInput,
   UpdateProfileInput,
   ChangePasswordInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
 } from '../types/auth.js'
 
 const REFRESH_TOKEN_COOKIE = 'refresh_token'
@@ -118,6 +120,27 @@ export const authController = {
     res.status(200).json({
       success: true,
       data: { message: 'Password changed successfully' },
+    })
+  },
+
+  async forgotPassword(req: Request, res: Response) {
+    const input = req.body as ForgotPasswordInput
+    await authService.forgotPassword(input)
+
+    // Always return 200 to prevent email enumeration
+    res.status(200).json({
+      success: true,
+      data: { message: 'If this email is registered, you will receive a reset link' },
+    })
+  },
+
+  async resetPassword(req: Request, res: Response) {
+    const input = req.body as ResetPasswordInput
+    await authService.resetPassword(input)
+
+    res.status(200).json({
+      success: true,
+      data: { message: 'Password reset successfully' },
     })
   },
 }

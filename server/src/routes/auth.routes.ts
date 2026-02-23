@@ -2,12 +2,14 @@ import { Router } from 'express'
 import { authController } from '../controllers/auth.controller.js'
 import { authenticate } from '../middleware/auth.js'
 import { validate } from '../middleware/validate.js'
-import { authLimiter } from '../middleware/rateLimiter.js'
+import { authLimiter, resetPasswordLimiter } from '../middleware/rateLimiter.js'
 import {
   registerSchema,
   loginSchema,
   updateProfileSchema,
   changePasswordSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 } from '../types/auth.js'
 
 const router = Router()
@@ -44,6 +46,21 @@ router.patch(
   authenticate,
   validate({ body: changePasswordSchema }),
   authController.changePassword
+)
+
+// POST /api/v1/auth/forgot-password
+router.post(
+  '/forgot-password',
+  resetPasswordLimiter,
+  validate({ body: forgotPasswordSchema }),
+  authController.forgotPassword
+)
+
+// POST /api/v1/auth/reset-password
+router.post(
+  '/reset-password',
+  validate({ body: resetPasswordSchema }),
+  authController.resetPassword
 )
 
 export default router

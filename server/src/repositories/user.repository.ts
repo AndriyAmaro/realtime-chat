@@ -69,4 +69,11 @@ export const userRepository = {
       select: { id: true, password: true },
     })
   },
+
+  findByEmailWithPassword(email: string) {
+    return prisma.user.findUnique({
+      where: { email },
+      select: { id: true, name: true, email: true, password: true },
+    })
+  },
 }

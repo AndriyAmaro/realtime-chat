@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { z } from 'zod'
 import { AuthCard, AuthDivider, AuthLink } from '@core/patterns/AuthCard'
 import { SocialLoginButtons } from '@core/patterns/SocialLoginButtons'
@@ -120,6 +120,15 @@ export default function LoginPage() {
               </FormItem>
             )}
           </ControlledField>
+        </div>
+
+        <div className="flex justify-end">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-[var(--primary-500)] transition-colors hover:text-[var(--primary-600)]"
+          >
+            Esqueceu a senha?
+          </Link>
         </div>
 
         <SubmitButton

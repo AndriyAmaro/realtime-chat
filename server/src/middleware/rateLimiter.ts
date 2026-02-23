@@ -23,3 +23,15 @@ export const authLimiter = rateLimit({
     error: 'Too many authentication attempts, please try again later',
   },
 })
+
+// Password reset: 3 requests per 15 minutes (stricter brute force protection)
+export const resetPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 3,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many password reset attempts, please try again later',
+  },
+})
