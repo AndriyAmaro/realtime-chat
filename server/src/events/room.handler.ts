@@ -1,4 +1,4 @@
-import { roomMemberRepository } from '../repositories/room.repository.js'
+import { roomRepository, roomMemberRepository } from '../repositories/room.repository.js'
 import { userRepository } from '../repositories/user.repository.js'
 import { createChildLogger } from '../config/logger.js'
 import type { TypedServer, TypedSocket } from '../types/socket.js'
@@ -18,11 +18,19 @@ export function registerRoomHandlers(io: TypedServer, socket: TypedSocket): void
   socket.on('room:join', async (roomId, callback) => {
     try {
       // Verify the user is actually a member
-      const membership = await roomMemberRepository.findMembership(userId, roomId)
+      let membership = await roomMemberRepository.findMembership(userId, roomId)
       if (!membership) {
-        log.warn({ userId, roomId, socketId: socket.id }, 'room:join denied — not a member')
-        callback({ success: false, error: 'You are not a member of this room' })
-        return
+        // Auto-join public rooms — user clicked from Discover tab or deep link
+        const room = await roomRepository.findById(roomId)
+        if (room && !room.isPrivate) {
+          await roomMemberRepository.addMember(userId, roomId)
+          membership = await roomMemberRepository.findMembership(userId, roomId)
+          log.info({ userId, roomId, socketId: socket.id }, 'Auto-added to public room')
+        } else {
+          log.warn({ userId, roomId, socketId: socket.id }, 'room:join denied — not a member')
+          callback({ success: false, error: 'You are not a member of this room' })
+          return
+        }
       }
 
       // Join socket room + fetch all supplementary data in parallel

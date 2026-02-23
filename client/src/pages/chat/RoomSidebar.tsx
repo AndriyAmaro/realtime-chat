@@ -6,9 +6,11 @@ import { Button } from '@core/primitives/Button'
 import { Spinner } from '@core/primitives/Spinner'
 import { EmptyState } from '@core/patterns/EmptyState'
 import { Plus, Link2, Hash, Lock } from 'lucide-react'
-import { useMyRooms, usePublicRooms } from '@hooks/useRooms'
+import { useMyRooms, usePublicRooms, roomKeys } from '@hooks/useRooms'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@store/auth.store'
 import { useNotificationStore } from '@store/notification.store'
+import { roomService } from '@services/room.service'
 import { Avatar } from '@core/primitives/Avatar'
 import { Badge } from '@core/primitives/Badge'
 import { CreateRoomModal } from './CreateRoomModal'
@@ -160,6 +162,7 @@ const RoomItem = memo(function RoomItem({
   selectedRoomId?: string
 }) {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const userId = useAuthStore((s) => s.user?.id)
   const unreadCount = useNotificationStore((s) => s.unreadCounts[room.id] ?? 0)
   const clearUnread = useNotificationStore((s) => s.clearUnread)
@@ -167,6 +170,11 @@ const RoomItem = memo(function RoomItem({
   const isOwner = room.ownerId === userId
 
   function handleSelect() {
+    if (showJoinHint) {
+      // Discover tab: join as member before navigating, then refresh sidebar
+      roomService.joinRoom(room.id).catch(() => {})
+      void queryClient.invalidateQueries({ queryKey: roomKeys.myRooms() })
+    }
     navigate(`/chat/${room.id}`)
     if (unreadCount > 0) {
       clearUnread(room.id)
