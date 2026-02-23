@@ -11,7 +11,8 @@ import { useSocket } from '@hooks/useSocket'
 import { useToast } from '@hooks/useToast'
 import { useNotifications } from '@hooks/useNotifications'
 import { useMediaQuery } from '@hooks/useMediaQuery'
-import { LogOut, MessageSquare, PanelLeftClose, PanelLeft, Volume2, VolumeX } from 'lucide-react'
+import { LogOut, PanelLeftClose, PanelLeft, Volume2, VolumeX } from 'lucide-react'
+import { Logo } from '@components/Logo'
 import { RoomSidebar } from './RoomSidebar'
 import { RoomView } from './RoomView'
 import { ProfileModal } from './ProfileModal'
@@ -71,7 +72,7 @@ export default function ChatLayout() {
                 )}
               </Button>
             )}
-            <MessageSquare className="text-primary-500 h-5 w-5" />
+            <Logo size={20} />
             <h1 className="text-sm font-semibold text-[var(--text-primary)]">Realtime Chat</h1>
           </div>
 
@@ -138,8 +139,8 @@ export default function ChatLayout() {
               ) : (
                 <div className="flex flex-1 items-center justify-center p-8">
                   <div className="text-center">
-                    <div className="bg-primary-500/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
-                      <MessageSquare className="text-primary-500 h-8 w-8" />
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
+                      <Logo size={48} />
                     </div>
                     <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                       Selecione uma sala

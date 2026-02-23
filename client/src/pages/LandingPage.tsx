@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@core/primitives/Button'
 import { ThemeToggle } from '@core/primitives/ThemeToggle'
+import { Logo } from '@components/Logo'
 import {
-  MessageSquare,
   Zap,
   Hash,
   Keyboard,
@@ -104,7 +104,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 right-0 left-0 z-50 border-b border-[var(--border-default)] bg-[var(--bg-base)]/80 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-2">
-            <MessageSquare className="text-primary-500 h-5 w-5" />
+            <Logo size={20} />
             <span className="text-sm font-semibold text-[var(--text-primary)]">Realtime Chat</span>
           </div>
           <div className="flex items-center gap-2">
@@ -134,8 +134,8 @@ export default function LandingPage() {
 
         <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-4xl flex-col items-center justify-center px-4 text-center sm:px-6">
           <div className="scroll-reveal">
-            <div className="bg-primary-500/10 text-primary-500 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl">
-              <MessageSquare className="h-8 w-8" />
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl">
+              <Logo size={48} />
             </div>
 
             <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
@@ -317,7 +317,7 @@ export default function LandingPage() {
       <footer className="border-t border-[var(--border-default)] py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">
           <div className="flex items-center gap-2">
-            <MessageSquare className="text-primary-500 h-4 w-4" />
+            <Logo size={16} />
             <span className="text-xs text-[var(--text-muted)]">Realtime Chat — Andriy Amaro</span>
           </div>
           <div className="flex items-center gap-4">

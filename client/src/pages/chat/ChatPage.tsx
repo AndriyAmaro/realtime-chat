@@ -5,7 +5,8 @@ import { Badge } from '@core/primitives/Badge'
 import { ThemeToggle } from '@core/primitives/ThemeToggle'
 import { useAuthStore } from '@store/auth.store'
 import { authService } from '@services/auth.service'
-import { LogOut, MessageSquare } from 'lucide-react'
+import { LogOut } from 'lucide-react'
+import { Logo } from '@components/Logo'
 
 export default function ChatPage() {
   const navigate = useNavigate()
@@ -27,7 +28,7 @@ export default function ChatPage() {
       {/* Header */}
       <header className="flex items-center justify-between border-b border-[var(--border-default)] px-6 py-4">
         <div className="flex items-center gap-3">
-          <MessageSquare className="text-primary-500 h-6 w-6" />
+          <Logo size={24} />
           <h1 className="text-lg font-semibold text-[var(--text-primary)]">Realtime Chat</h1>
         </div>
 
@@ -55,8 +56,8 @@ export default function ChatPage() {
       {/* Content — placeholder */}
       <main className="flex flex-1 items-center justify-center p-8">
         <div className="text-center">
-          <div className="bg-primary-500/10 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl">
-            <MessageSquare className="text-primary-500 h-10 w-10" />
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl">
+            <Logo size={56} />
           </div>
           <h2 className="text-2xl font-semibold text-[var(--text-primary)]">
             Autenticação completa!
