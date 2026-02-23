@@ -28,7 +28,7 @@ export default function ChatPage() {
       {/* Header */}
       <header className="flex items-center justify-between border-b border-[var(--border-default)] px-6 py-4">
         <div className="flex items-center gap-3">
-          <Logo size={24} />
+          <Logo size={28} />
           <h1 className="text-lg font-semibold text-[var(--text-primary)]">Realtime Chat</h1>
         </div>
 
@@ -56,8 +56,8 @@ export default function ChatPage() {
       {/* Content — placeholder */}
       <main className="flex flex-1 items-center justify-center p-8">
         <div className="text-center">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl">
-            <Logo size={56} />
+          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-2xl">
+            <Logo size={64} />
           </div>
           <h2 className="text-2xl font-semibold text-[var(--text-primary)]">
             Autenticação completa!

@@ -22,10 +22,10 @@ export function Logo({ size = 24, className }: LogoProps) {
       <defs>
         <linearGradient
           id={gradientId}
-          x1="4"
-          y1="4"
-          x2="60"
-          y2="56"
+          x1="2"
+          y1="2"
+          x2="62"
+          y2="58"
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#2DD1B1" />
@@ -33,11 +33,11 @@ export function Logo({ size = 24, className }: LogoProps) {
         </linearGradient>
       </defs>
       <path
-        d="M14 4H50A10 10 0 0 1 60 14V30A10 10 0 0 1 50 40H22L10 56L14 40A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z"
+        d="M12 2H52A10 10 0 0 1 62 12V32A10 10 0 0 1 52 42H22L10 58L14 42A10 10 0 0 1 2 32V12A10 10 0 0 1 12 2Z"
         fill={`url(#${gradientId})`}
       />
       <polyline
-        points="10,22 18,22 22,22 26,10 30,34 34,16 37,22 44,22 54,22"
+        points="8,22 16,22 20,22 24,8 30,36 34,14 37,22 44,22 56,22"
         stroke="#fff"
         strokeWidth="3"
         strokeLinecap="round"

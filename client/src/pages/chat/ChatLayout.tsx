@@ -72,7 +72,7 @@ export default function ChatLayout() {
                 )}
               </Button>
             )}
-            <Logo size={20} />
+            <Logo size={24} />
             <h1 className="text-sm font-semibold text-[var(--text-primary)]">Realtime Chat</h1>
           </div>
 
@@ -139,8 +139,8 @@ export default function ChatLayout() {
               ) : (
                 <div className="flex flex-1 items-center justify-center p-8">
                   <div className="text-center">
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
-                      <Logo size={48} />
+                    <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl">
+                      <Logo size={56} />
                     </div>
                     <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                       Selecione uma sala
