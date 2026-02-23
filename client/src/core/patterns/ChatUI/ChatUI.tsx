@@ -372,18 +372,38 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
               {/* Attachments */}
               {message.attachments && message.attachments.length > 0 && (
                 <div className="mb-2 space-y-2">
-                  {message.attachments.map((attachment) => (
-                    <div
-                      key={attachment.id}
-                      className={cn(
-                        'flex items-center gap-2 rounded-lg p-2',
-                        position === 'sent' ? 'bg-white/10' : 'bg-[var(--bg-emphasis)]'
-                      )}
-                    >
-                      {attachment.type === 'image' ? <ImageIcon size={16} /> : <File size={16} />}
-                      <span className="truncate text-sm">{attachment.name}</span>
-                    </div>
-                  ))}
+                  {message.attachments.map((attachment) =>
+                    attachment.type === 'image' && attachment.url ? (
+                      <a
+                        key={attachment.id}
+                        href={attachment.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block overflow-hidden rounded-lg"
+                      >
+                        <img
+                          src={attachment.url}
+                          alt={attachment.name}
+                          className="max-h-72 max-w-full rounded-lg object-contain"
+                          loading="lazy"
+                        />
+                      </a>
+                    ) : (
+                      <a
+                        key={attachment.id}
+                        href={attachment.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          'flex items-center gap-2 rounded-lg p-2 transition-colors hover:opacity-80',
+                          position === 'sent' ? 'bg-white/10' : 'bg-[var(--bg-emphasis)]'
+                        )}
+                      >
+                        <File size={16} />
+                        <span className="truncate text-sm underline">{attachment.name}</span>
+                      </a>
+                    )
+                  )}
                 </div>
               )}
 
