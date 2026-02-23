@@ -75,30 +75,17 @@ export function useSocket() {
     if (!socket) return
 
     function onConnect() {
-      console.log(
-        '[socket] CONNECTED — id:',
-        socket!.id,
-        'transport:',
-        socket!.io.engine?.transport?.name
-      )
       setIsConnected(true)
       setConnectError(null)
       setIsReconnecting(false)
       setReconnectAttempt(0)
     }
 
-    function onDisconnect(reason: string) {
-      console.warn('[socket] DISCONNECTED — reason:', reason, 'id:', socket!.id)
+    function onDisconnect() {
       setIsConnected(false)
     }
 
     function onConnectError(err: Error) {
-      console.error(
-        '[socket] CONNECT_ERROR:',
-        err.message,
-        'type:',
-        (err as unknown as Record<string, unknown>).type
-      )
       setConnectError(err.message)
 
       // If the error is auth-related, refresh the token so the next

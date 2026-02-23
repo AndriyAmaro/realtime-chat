@@ -198,8 +198,8 @@ const TypingIndicator = React.forwardRef<HTMLDivElement, TypingIndicatorProps>(
       users.length === 1
         ? (firstUser?.name ?? '')
         : users.length === 2
-          ? `${firstUser?.name ?? ''} and ${secondUser?.name ?? ''}`
-          : `${firstUser?.name ?? ''} and ${users.length - 1} others`
+          ? `${firstUser?.name ?? ''} e ${secondUser?.name ?? ''}`
+          : `${firstUser?.name ?? ''} e mais ${users.length - 1}`
 
     return (
       <div
@@ -214,7 +214,7 @@ const TypingIndicator = React.forwardRef<HTMLDivElement, TypingIndicatorProps>(
           <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--text-muted)]" />
         </span>
         <span>
-          {names} {users.length === 1 ? 'is' : 'are'} typing...
+          {names} {users.length === 1 ? 'está digitando...' : 'estão digitando...'}
         </span>
       </div>
     )
@@ -415,7 +415,7 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
             {actionMenuSlot ? (
               <div
                 className={cn(
-                  'absolute top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100',
+                  'absolute top-1/2 -translate-y-1/2 transition-opacity md:opacity-0 md:group-hover:opacity-100',
                   position === 'sent' ? '-left-8' : '-right-8'
                 )}
               >
@@ -426,8 +426,8 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
                 <button
                   onClick={() => onMessageAction('menu', message)}
                   className={cn(
-                    'absolute top-1/2 -translate-y-1/2 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100',
-                    position === 'sent' ? '-left-8' : '-right-8',
+                    'absolute top-1/2 -translate-y-1/2 rounded p-1.5 transition-opacity md:opacity-0 md:group-hover:opacity-100',
+                    position === 'sent' ? '-left-9' : '-right-9',
                     'text-[var(--text-muted)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-secondary)]'
                   )}
                   aria-label="Message actions"

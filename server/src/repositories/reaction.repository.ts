@@ -5,19 +5,22 @@ import { prisma } from '../config/database.js'
 export const reactionRepository = {
   /** Toggle a reaction: create if not exists, delete if exists. Returns true if created. */
   async toggle(userId: string, messageId: string, emoji: string): Promise<boolean> {
-    const existing = await prisma.messageReaction.findUnique({
-      where: { userId_messageId_emoji: { userId, messageId, emoji } },
-    })
+    // Atomic transaction to avoid race conditions on concurrent toggles
+    return prisma.$transaction(async (tx) => {
+      const existing = await tx.messageReaction.findUnique({
+        where: { userId_messageId_emoji: { userId, messageId, emoji } },
+      })
 
-    if (existing) {
-      await prisma.messageReaction.delete({ where: { id: existing.id } })
-      return false // removed
-    }
+      if (existing) {
+        await tx.messageReaction.delete({ where: { id: existing.id } })
+        return false // removed
+      }
 
-    await prisma.messageReaction.create({
-      data: { userId, messageId, emoji },
+      await tx.messageReaction.create({
+        data: { userId, messageId, emoji },
+      })
+      return true // created
     })
-    return true // created
   },
 
   /** Get all reactions for a message, grouped by emoji */

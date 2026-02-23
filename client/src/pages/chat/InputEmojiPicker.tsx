@@ -242,7 +242,7 @@ export function InputEmojiPicker({ onSelect, disabled }: InputEmojiPickerProps) 
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-full left-0 z-20 mb-2 w-[320px] rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] shadow-xl">
+        <div className="absolute bottom-full left-0 z-20 mb-2 w-[min(320px,calc(100vw-2rem))] rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] shadow-xl">
           {/* Category tabs */}
           <div className="flex gap-1 border-b border-[var(--border-default)] px-2 pt-2 pb-1">
             {EMOJI_CATEGORIES.map((cat, i) => (
@@ -270,7 +270,7 @@ export function InputEmojiPicker({ onSelect, disabled }: InputEmojiPickerProps) 
           </div>
 
           {/* Emoji grid */}
-          <div className="grid max-h-[200px] grid-cols-8 gap-0.5 overflow-y-auto px-2 pb-2">
+          <div className="grid max-h-[200px] grid-cols-6 gap-0.5 overflow-y-auto px-2 pb-2 sm:grid-cols-8">
             {EMOJI_CATEGORIES[activeCategory].emojis.map((emoji) => (
               <button
                 key={emoji}

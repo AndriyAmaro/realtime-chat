@@ -48,8 +48,11 @@ async function setUserOnline(socket: TypedSocket): Promise<void> {
   try {
     await userRepository.updateStatus(userId, 'ONLINE')
 
-    // Notify all rooms this socket is in
-    socket.broadcast.emit('user:status', { userId, status: 'ONLINE' })
+    // Notify only rooms this socket has joined (not all connections globally)
+    for (const roomId of socket.rooms) {
+      if (roomId === socket.id) continue // skip default room
+      socket.to(roomId).emit('user:status', { userId, status: 'ONLINE' })
+    }
   } catch (err) {
     log.error({ err, userId }, 'Failed to set user online')
   }
