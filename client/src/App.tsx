@@ -5,11 +5,21 @@ import { useAuthStore } from '@store/auth.store'
 import { authService } from '@services/auth.service'
 import ProtectedRoute from '@components/ProtectedRoute'
 
-const LandingPage = lazy(() => import('@pages/LandingPage'))
-const AuthLayout = lazy(() => import('@pages/auth/AuthLayout'))
-const LoginPage = lazy(() => import('@pages/auth/LoginPage'))
-const RegisterPage = lazy(() => import('@pages/auth/RegisterPage'))
-const ChatLayout = lazy(() => import('@pages/chat/ChatLayout'))
+/** Wrap dynamic import to auto-reload on chunk mismatch after deploy */
+function lazyWithReload(factory: () => Promise<{ default: React.ComponentType }>) {
+  return lazy(() =>
+    factory().catch(() => {
+      window.location.reload()
+      return new Promise(() => {}) // never resolves — page reloads
+    })
+  )
+}
+
+const LandingPage = lazyWithReload(() => import('@pages/LandingPage'))
+const AuthLayout = lazyWithReload(() => import('@pages/auth/AuthLayout'))
+const LoginPage = lazyWithReload(() => import('@pages/auth/LoginPage'))
+const RegisterPage = lazyWithReload(() => import('@pages/auth/RegisterPage'))
+const ChatLayout = lazyWithReload(() => import('@pages/chat/ChatLayout'))
 
 function PageSpinner() {
   return (
