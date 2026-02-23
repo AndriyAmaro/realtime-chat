@@ -103,11 +103,12 @@ export function useMessages({
         clearTimeout(timeout)
 
         if (response.success) {
+          console.log(`[messages] room:join SUCCESS — roomId: ${roomId}`)
           joinedRoomRef.current = roomId
           // Only request history after confirmed join
           socket!.emit('message:history', { roomId, limit: HISTORY_LIMIT })
         } else {
-          console.error(`[socket] room:join failed (attempt ${retries + 1}):`, response.error)
+          console.error(`[messages] room:join FAILED (attempt ${retries + 1}):`, response.error)
           if (retries < maxRetries) {
             retries++
             setTimeout(joinRoom, 1000 * retries)
@@ -120,6 +121,13 @@ export function useMessages({
 
     // Listen for new messages
     function onNewMessage(message: MessagePayload) {
+      console.log('[messages] message:new received —', {
+        msgId: message.id,
+        msgRoom: message.roomId,
+        currentRoom: roomId,
+        match: message.roomId === roomId,
+        from: message.user?.name,
+      })
       if (message.roomId === roomId) {
         setMessages((prev) => {
           // Dedup by id (e.g. from sync + realtime)
@@ -131,6 +139,9 @@ export function useMessages({
 
     // Listen for history response
     function onHistory(data: { messages: MessagePayload[]; hasMore: boolean }) {
+      console.log(
+        `[messages] message:history received — ${data.messages.length} msgs, hasMore: ${data.hasMore}`
+      )
       setMessages((prev) => {
         if (prev.length > 0) {
           return [...data.messages, ...prev]
@@ -262,9 +273,11 @@ export function useMessages({
         clientId,
       }
 
+      console.log('[messages] message:send —', { roomId, clientId, connected: socket.connected })
       socket.emit('message:send', payload, (ack) => {
+        console.log('[messages] message:send ACK —', ack)
         if (!ack.success) {
-          console.error('[socket] Failed to send message:', ack.error)
+          console.error('[messages] message:send FAILED:', ack.error)
         }
       })
     },

@@ -20,7 +20,9 @@ export function getSocket(): TypedSocket {
   // In dev, Vite proxy handles /socket.io.
   socket = io('/', {
     auth: (cb) => {
-      cb({ token: useAuthStore.getState().accessToken })
+      const token = useAuthStore.getState().accessToken
+      console.log('[socket] auth callback — token exists:', !!token, 'length:', token?.length ?? 0)
+      cb({ token })
     },
     transports: ['polling'],
     reconnection: true,
@@ -29,6 +31,7 @@ export function getSocket(): TypedSocket {
     reconnectionDelayMax: 10000,
   })
 
+  console.log('[socket] Created new socket instance')
   return socket
 }
 
