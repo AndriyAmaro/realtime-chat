@@ -172,39 +172,14 @@ export function HeroBackground() {
         </svg>
       </div>
 
-      {/* Mid-right — floating triangle cluster (small network icon) */}
-      <div className="animate-float-delayed absolute top-[26%] right-[6%] opacity-[0.04] dark:opacity-[0.07]">
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" className="text-[#8b5cf6]">
-          <circle cx="18" cy="8" r="3" fill="currentColor" />
-          <circle cx="8" cy="28" r="2.5" fill="currentColor" />
-          <circle cx="28" cy="28" r="2" fill="currentColor" />
-          <line
-            x1="18"
-            y1="8"
-            x2="8"
-            y2="28"
-            stroke="currentColor"
-            strokeWidth="0.8"
-            opacity="0.6"
-          />
-          <line
-            x1="18"
-            y1="8"
-            x2="28"
-            y2="28"
-            stroke="currentColor"
-            strokeWidth="0.8"
-            opacity="0.6"
-          />
-          <line
-            x1="8"
-            y1="28"
-            x2="28"
-            y2="28"
-            stroke="currentColor"
-            strokeWidth="0.8"
-            opacity="0.6"
-          />
+      {/* Mid-right — floating typing indicator bubble */}
+      <div className="animate-float-delayed absolute top-[26%] right-[6%] opacity-[0.05] blur-[0.5px] dark:opacity-[0.08]">
+        <svg width="52" height="40" viewBox="0 0 52 40" fill="none" className="text-[#8b5cf6]">
+          <rect x="2" y="2" width="42" height="24" rx="10" fill="currentColor" />
+          <path d="M10 26 L6 36 L18 26" fill="currentColor" />
+          <circle cx="15" cy="14" r="2.5" fill="white" fillOpacity="0.3" />
+          <circle cx="23" cy="14" r="2.5" fill="white" fillOpacity="0.3" />
+          <circle cx="31" cy="14" r="2.5" fill="white" fillOpacity="0.3" />
         </svg>
       </div>
     </div>
