@@ -633,7 +633,44 @@ body {
 .animate-hero-orb-2 { animation: hero-orb-2 25s ease-in-out infinite; }
 .animate-hero-orb-3 { animation: hero-orb-3 20s ease-in-out infinite; }
 
-/* Dark mode — hero orbs enhanced (kept for potential reuse) */
+/* ── Hero Background: Network Topology Animations ── */
+
+@keyframes hero-node-pulse {
+  0%, 100% { opacity: inherit; transform: scale(1); }
+  50% { opacity: 0.28; transform: scale(1.5); }
+}
+
+@keyframes hero-ring-expand {
+  0% { transform: scale(1); opacity: inherit; }
+  100% { transform: scale(7); opacity: 0; }
+}
+
+.hero-node-pulse {
+  animation: hero-node-pulse 4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.hero-node-pulse-delayed {
+  animation: hero-node-pulse 4s ease-in-out infinite 2s;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.hero-ring-pulse {
+  animation: hero-ring-expand 3.5s ease-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.hero-ring-pulse-delayed {
+  animation: hero-ring-expand 3.5s ease-out infinite 1.8s;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+/* Subtle dot grid for hero depth */
+.hero-dot-grid {
+  background-image: radial-gradient(circle, var(--primary-500) 0.5px, transparent 0.5px);
+  background-size: 48px 48px;
+}
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -657,7 +694,11 @@ body {
   .animate-bg-gradient,
   .animate-hero-orb-1,
   .animate-hero-orb-2,
-  .animate-hero-orb-3 {
+  .animate-hero-orb-3,
+  .hero-node-pulse,
+  .hero-node-pulse-delayed,
+  .hero-ring-pulse,
+  .hero-ring-pulse-delayed {
     animation: none;
   }
   /* ECG: remove dasharray so full static path is visible */

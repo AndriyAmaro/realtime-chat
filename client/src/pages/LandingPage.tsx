@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '@core/primitives/Button'
 import { ThemeToggle } from '@core/primitives/ThemeToggle'
 import { Logo } from '@components/Logo'
+import { HeroBackground } from '@components/HeroBackground'
 import {
   Zap,
   Hash,
@@ -131,6 +132,9 @@ export default function LandingPage() {
           <div className="animate-hero-orb-2 absolute top-40 right-1/4 h-96 w-96 rounded-full bg-[#6366f1]/15 blur-[120px]" />
           <div className="animate-hero-orb-3 absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-[#8b5cf6]/10 blur-[80px]" />
         </div>
+
+        {/* Abstract chat & network background */}
+        <HeroBackground />
 
         <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-4xl flex-col items-center justify-center px-4 text-center sm:px-6">
           <div className="scroll-reveal">
