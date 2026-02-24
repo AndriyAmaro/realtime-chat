@@ -4,92 +4,123 @@ export function HeroBackground() {
       {/* ── Layer 1: Subtle dot grid (depth) ── */}
       <div className="hero-dot-grid absolute inset-0 opacity-[0.018] dark:opacity-[0.035]" />
 
-      {/* ── Layer 2: Network topology — connected user nodes ── */}
-      <svg
-        className="absolute inset-0 h-full w-full text-[var(--primary-500)]"
-        viewBox="0 0 1200 800"
-        preserveAspectRatio="xMidYMid slice"
-        fill="none"
-      >
-        {/* Connection lines */}
-        <g stroke="currentColor" strokeWidth="0.8" className="opacity-[0.05] dark:opacity-[0.09]">
-          {/* Left cluster */}
-          <line x1="80" y1="180" x2="160" y2="300" />
-          <line x1="160" y1="300" x2="100" y2="450" />
-          <line x1="80" y1="180" x2="200" y2="110" />
-          <line x1="200" y1="110" x2="300" y2="200" />
-          <line x1="160" y1="300" x2="300" y2="200" />
+      {/* ── Layer 2: Scattered chat icons ── */}
 
-          {/* Right cluster */}
-          <line x1="940" y1="120" x2="1060" y2="220" />
-          <line x1="1060" y1="220" x2="1120" y2="380" />
-          <line x1="1060" y1="220" x2="960" y2="360" />
-          <line x1="940" y1="120" x2="1100" y2="90" />
-          <line x1="960" y1="360" x2="1120" y2="380" />
-
-          {/* Bottom bridge */}
-          <line x1="380" y1="700" x2="520" y2="740" />
-          <line x1="520" y1="740" x2="680" y2="680" />
-          <line x1="680" y1="680" x2="820" y2="720" />
-        </g>
-
-        {/* Static nodes */}
-        <g fill="currentColor" className="opacity-[0.08] dark:opacity-[0.14]">
-          <circle cx="80" cy="180" r="3" />
-          <circle cx="100" cy="450" r="2.5" />
-          <circle cx="200" cy="110" r="2" />
-          <circle cx="300" cy="200" r="3" />
-          <circle cx="940" cy="120" r="3" />
-          <circle cx="1120" cy="380" r="2.5" />
-          <circle cx="960" cy="360" r="2" />
-          <circle cx="1100" cy="90" r="3" />
-          <circle cx="380" cy="700" r="2.5" />
-          <circle cx="520" cy="740" r="3" />
-          <circle cx="680" cy="680" r="2" />
-        </g>
-
-        {/* Active pulsing nodes */}
-        <g fill="currentColor">
-          <circle
-            cx="160"
-            cy="300"
-            r="4"
-            className="hero-node-pulse opacity-[0.12] dark:opacity-[0.2]"
-          />
-          <circle
-            cx="1060"
-            cy="220"
-            r="4"
-            className="hero-node-pulse-delayed opacity-[0.1] dark:opacity-[0.18]"
-          />
-          <circle
-            cx="820"
-            cy="720"
-            r="3"
-            className="hero-node-pulse opacity-[0.08] dark:opacity-[0.15]"
-          />
-        </g>
-
-        {/* Expanding ring pulses ("message sent" effect) */}
-        <circle
-          cx="160"
-          cy="300"
-          r="4"
-          stroke="currentColor"
+      {/* Double checkmark (read receipt) — left side */}
+      <div className="animate-float absolute top-[42%] left-[5%] opacity-[0.06] dark:opacity-[0.1]">
+        <svg
+          width="36"
+          height="22"
+          viewBox="0 0 36 22"
           fill="none"
-          strokeWidth="1"
-          className="hero-ring-pulse opacity-[0.1] dark:opacity-[0.14]"
-        />
-        <circle
-          cx="1060"
-          cy="220"
-          r="4"
-          stroke="currentColor"
+          className="text-[var(--primary-500)]"
+        >
+          <path
+            d="M2 11 L8 17 L18 5"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M12 11 L18 17 L28 5"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+
+      {/* Paper plane (send) — right side */}
+      <div className="animate-float-delayed absolute top-[58%] right-[4%] -rotate-12 opacity-[0.05] dark:opacity-[0.08]">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-[#8b5cf6]">
+          <path d="M28 4 L4 14 L13 18 L18 28 Z" fill="currentColor" />
+          <line
+            x1="28"
+            y1="4"
+            x2="13"
+            y2="18"
+            stroke="white"
+            strokeWidth="1.2"
+            strokeOpacity="0.3"
+          />
+        </svg>
+      </div>
+
+      {/* Heart reaction — top left area */}
+      <div className="animate-float-slow absolute top-[15%] left-[18%] opacity-[0.05] blur-[0.5px] dark:opacity-[0.08]">
+        <svg
+          width="24"
+          height="22"
+          viewBox="0 0 28 26"
           fill="none"
-          strokeWidth="1"
-          className="hero-ring-pulse-delayed opacity-[0.07] dark:opacity-[0.11]"
-        />
-      </svg>
+          className="text-[var(--primary-500)]"
+        >
+          <path
+            d="M14 24 C5 18 1 12 1 7 A5.5 5.5 0 0 1 14 5 A5.5 5.5 0 0 1 27 7 C27 12 23 18 14 24Z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+
+      {/* Smiley face — bottom right area */}
+      <div className="animate-float absolute right-[12%] bottom-[28%] opacity-[0.04] dark:opacity-[0.07]">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 32 32"
+          fill="none"
+          className="text-[var(--primary-500)]"
+        >
+          <circle cx="16" cy="16" r="14" fill="currentColor" />
+          <circle cx="11" cy="13" r="2" fill="white" fillOpacity="0.3" />
+          <circle cx="21" cy="13" r="2" fill="white" fillOpacity="0.3" />
+          <path
+            d="M10 19 Q16 24 22 19"
+            stroke="white"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            fill="none"
+            strokeOpacity="0.3"
+          />
+        </svg>
+      </div>
+
+      {/* Reply arrow — left lower area */}
+      <div className="animate-float-delayed absolute bottom-[35%] left-[8%] opacity-[0.04] blur-[0.5px] dark:opacity-[0.07]">
+        <svg width="26" height="22" viewBox="0 0 28 24" fill="none" className="text-[#8b5cf6]">
+          <path
+            d="M12 3 L3 12 L12 21"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M3 12 H18 A6 6 0 0 1 24 18 V21"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+        </svg>
+      </div>
+
+      {/* @ mention badge — top right area */}
+      <div className="animate-float absolute top-[18%] right-[15%] opacity-[0.05] dark:opacity-[0.08]">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="text-[#8b5cf6]">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="2.5" fill="none" />
+          <path
+            d="M22 18 A6 6 0 1 1 22 14 V18 A3 3 0 0 0 25 16"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            fill="none"
+          />
+        </svg>
+      </div>
 
       {/* ── Layer 3: Abstract chat bubbles at edges ── */}
 

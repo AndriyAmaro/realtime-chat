@@ -138,7 +138,7 @@ export default function LandingPage() {
 
         <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-4xl flex-col items-center justify-center px-4 text-center sm:px-6">
           <div className="scroll-reveal">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl">
+            <div className="animate-hero-logo mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl">
               <Logo size={56} />
             </div>
 

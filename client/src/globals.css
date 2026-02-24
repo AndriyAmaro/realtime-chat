@@ -633,37 +633,15 @@ body {
 .animate-hero-orb-2 { animation: hero-orb-2 25s ease-in-out infinite; }
 .animate-hero-orb-3 { animation: hero-orb-3 20s ease-in-out infinite; }
 
-/* ── Hero Background: Network Topology Animations ── */
+/* ── Hero Logo Animation ── */
 
-@keyframes hero-node-pulse {
-  0%, 100% { opacity: inherit; transform: scale(1); }
-  50% { opacity: 0.28; transform: scale(1.5); }
-}
-
-@keyframes hero-ring-expand {
-  0% { transform: scale(1); opacity: inherit; }
-  100% { transform: scale(7); opacity: 0; }
+@keyframes hero-logo-float {
+  0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 transparent); }
+  50% { transform: translateY(-8px) scale(1.06); filter: drop-shadow(0 4px 20px rgba(45, 209, 177, 0.3)); }
 }
 
-.hero-node-pulse {
-  animation: hero-node-pulse 4s ease-in-out infinite;
-  transform-origin: center;
-  transform-box: fill-box;
-}
-.hero-node-pulse-delayed {
-  animation: hero-node-pulse 4s ease-in-out infinite 2s;
-  transform-origin: center;
-  transform-box: fill-box;
-}
-.hero-ring-pulse {
-  animation: hero-ring-expand 3.5s ease-out infinite;
-  transform-origin: center;
-  transform-box: fill-box;
-}
-.hero-ring-pulse-delayed {
-  animation: hero-ring-expand 3.5s ease-out infinite 1.8s;
-  transform-origin: center;
-  transform-box: fill-box;
+.animate-hero-logo {
+  animation: hero-logo-float 5s ease-in-out infinite;
 }
 
 /* Subtle dot grid for hero depth */
@@ -695,10 +673,7 @@ body {
   .animate-hero-orb-1,
   .animate-hero-orb-2,
   .animate-hero-orb-3,
-  .hero-node-pulse,
-  .hero-node-pulse-delayed,
-  .hero-ring-pulse,
-  .hero-ring-pulse-delayed {
+  .animate-hero-logo {
     animation: none;
   }
   /* ECG: remove dasharray so full static path is visible */
