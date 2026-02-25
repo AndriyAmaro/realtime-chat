@@ -176,7 +176,7 @@ export function HeroBackground() {
       </div>
 
       {/* Keyboard / typing — bottom center-left */}
-      <div className="animate-float-slow absolute bottom-[6%] left-[50%] opacity-[0.10] sm:bottom-[30%] sm:left-[35%] dark:opacity-[0.18]">
+      <div className="animate-float-slow absolute bottom-[28%] left-[3%] opacity-[0.10] sm:bottom-[30%] sm:left-[35%] dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[var(--primary-500)]">
           <rect
             x="4"
