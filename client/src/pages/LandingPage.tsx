@@ -299,7 +299,7 @@ export default function LandingPage() {
           </div>
 
           {/* Socket.io — top center */}
-          <div className="animate-float absolute top-[6%] left-[40%] opacity-[0.12] dark:opacity-[0.2]">
+          <div className="animate-float absolute top-[2%] left-[40%] opacity-[0.12] sm:top-[6%] dark:opacity-[0.2]">
             <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#25c2a0]">
               <path d="M4 16h8m8 0h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               <circle cx="16" cy="16" r="4" stroke="currentColor" strokeWidth="2" />
