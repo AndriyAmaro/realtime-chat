@@ -112,7 +112,7 @@ export function HeroBackground() {
       </div>
 
       {/* Emoji smile — top center-left */}
-      <div className="animate-float absolute top-[20%] left-[3%] opacity-[0.10] sm:left-[25%] dark:opacity-[0.18]">
+      <div className="animate-float absolute top-[28%] left-[3%] opacity-[0.10] sm:top-[20%] sm:left-[25%] dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-[var(--primary-500)]">
           <circle
             cx="16"
