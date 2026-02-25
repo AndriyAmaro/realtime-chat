@@ -60,6 +60,149 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
       <div className="animate-auth-float-2 absolute bottom-[15%] left-[0%] h-[200px] w-[200px] rounded-full bg-[#2DD1B1]/[0.08] blur-[60px]" />
       <div className="animate-auth-float-3 absolute top-[50%] left-[10%] h-[120px] w-[120px] rounded-full bg-white/[0.03] blur-[40px]" />
 
+      {/* Floating chat icons — left side */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        {/* Chat bubble — top left */}
+        <div className="animate-float-slow absolute top-[8%] left-[4%] opacity-[0.08]">
+          <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-white">
+            <path
+              d="M6 6h20a2 2 0 012 2v12a2 2 0 01-2 2H14l-6 4v-4H6a2 2 0 01-2-2V8a2 2 0 012-2z"
+              fill="currentColor"
+              fillOpacity="0.15"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <circle cx="12" cy="14" r="1.2" fill="currentColor" />
+            <circle cx="16" cy="14" r="1.2" fill="currentColor" />
+            <circle cx="20" cy="14" r="1.2" fill="currentColor" />
+          </svg>
+        </div>
+
+        {/* @ symbol — mid left */}
+        <div className="animate-float-delayed absolute top-[38%] left-[3%] opacity-[0.07]">
+          <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-white">
+            <circle cx="16" cy="16" r="12" stroke="currentColor" strokeWidth="1.3" />
+            <circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth="1.3" />
+            <path
+              d="M21 16v3a3 3 0 006 0"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
+        {/* Bell — bottom left */}
+        <div className="animate-float absolute bottom-[12%] left-[5%] opacity-[0.07]">
+          <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-white">
+            <path
+              d="M16 4a8 8 0 018 8c0 4 2 6 2 8H6c0-2 2-4 2-8a8 8 0 018-8z"
+              fill="currentColor"
+              fillOpacity="0.12"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <path
+              d="M13 22a3 3 0 006 0"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
+        {/* Emoji — lower left */}
+        <div className="animate-float-slow absolute bottom-[35%] left-[2%] opacity-[0.06]">
+          <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 text-white">
+            <circle
+              cx="16"
+              cy="16"
+              r="12"
+              fill="currentColor"
+              fillOpacity="0.1"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <circle cx="12" cy="14" r="1.3" fill="currentColor" />
+            <circle cx="20" cy="14" r="1.3" fill="currentColor" />
+            <path
+              d="M11 19a6 6 0 0010 0"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
+        {/* Paper plane — top right */}
+        <div className="animate-float absolute top-[12%] right-[3%] opacity-[0.08]">
+          <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-white">
+            <path
+              d="M4 4l24 12L4 28l4-12L4 4z"
+              fill="currentColor"
+              fillOpacity="0.12"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+            <path d="M8 16h12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+        </div>
+
+        {/* Hashtag — mid right */}
+        <div className="animate-float-delayed absolute top-[42%] right-[2%] opacity-[0.07]">
+          <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-white">
+            <path
+              d="M12 4l-2 24M22 4l-2 24M4 12h24M4 20h24"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
+        {/* Double check — upper right */}
+        <div className="animate-float-slow absolute top-[25%] right-[6%] opacity-[0.06]">
+          <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 text-white">
+            <path
+              d="M4 16l5 5L19 9"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M12 16l5 5L27 9"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity="0.6"
+            />
+          </svg>
+        </div>
+
+        {/* Double bubbles — bottom right */}
+        <div className="animate-float absolute right-[4%] bottom-[10%] opacity-[0.07]">
+          <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-white">
+            <path
+              d="M4 5h16a2 2 0 012 2v8a2 2 0 01-2 2h-6l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"
+              fill="currentColor"
+              fillOpacity="0.1"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M12 19h8a2 2 0 012 2v6a2 2 0 01-2 2h-2v-2l-3 2v-2h-3a2 2 0 01-2-2v-6a2 2 0 012-2z"
+              fill="currentColor"
+              fillOpacity="0.15"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+          </svg>
+        </div>
+      </div>
+
       {/* Content layer */}
       <div className="absolute inset-0 flex flex-col items-center justify-center px-10">
         {/* Branding */}
