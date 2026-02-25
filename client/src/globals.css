@@ -629,18 +629,36 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   AUTH BACKGROUND - ECG Monitor Sweep Animation
-   Uses stroke-dashoffset to create real heart monitor effect:
-   bright leading edge + fading trail sweeping left → right
+   AUTH BACKGROUND - Chat Mockup Animations
+   Staggered message fade-in + typing indicator bounce
    ═══════════════════════════════════════════════════════════ */
 
-@keyframes ecg-draw {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -1; }
+@keyframes auth-chat-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.animate-ecg-draw {
-  animation: ecg-draw linear infinite;
+.animate-auth-chat-in {
+  animation: auth-chat-in 0.5s ease-out forwards;
+}
+
+@keyframes auth-typing-dot {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-auth-typing-dot {
+  animation: auth-typing-dot 1.4s ease-in-out infinite;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -726,9 +744,12 @@ body {
   .activity-marquee-track {
     animation: none;
   }
-  /* ECG: remove dasharray so full static path is visible */
-  .animate-ecg-draw {
+  /* Auth chat mockup: disable animations */
+  .animate-auth-chat-in {
     animation: none;
-    stroke-dasharray: none !important;
+    opacity: 1;
+  }
+  .animate-auth-typing-dot {
+    animation: none;
   }
 }
