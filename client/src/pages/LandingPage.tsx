@@ -227,15 +227,23 @@ export default function LandingPage() {
                 className={`scroll-reveal stagger-${i + 1} glass card-glow group relative overflow-hidden rounded-2xl p-6 shadow-sm ring-1 ring-[var(--primary-500)]/10 transition-all hover:-translate-y-1 dark:shadow-none dark:ring-[var(--primary-500)]/15`}
               >
                 <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--primary-500)]/10 text-[var(--primary-500)] shadow-sm ring-1 ring-[var(--primary-500)]/10 transition-all group-hover:bg-[var(--primary-500)] group-hover:text-white group-hover:shadow-[var(--primary-500)]/20 group-hover:shadow-md">
-                  <feature.icon className="h-5 w-5" />
+                {/* Subtle gradient background */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--primary-500)]/[0.03] via-transparent to-[#2DD1B1]/[0.03] dark:from-[var(--primary-500)]/[0.05] dark:to-[#2DD1B1]/[0.05]" />
+                {/* Watermark icon */}
+                <div className="animate-float-slow pointer-events-none absolute -right-3 -bottom-3 text-[var(--primary-500)] opacity-[0.04] transition-opacity group-hover:opacity-[0.08] dark:opacity-[0.06] dark:group-hover:opacity-[0.12]">
+                  <feature.icon className="h-24 w-24" />
                 </div>
-                <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                  {feature.title}
-                </h3>
-                <p className="mt-2 text-xs leading-relaxed text-[var(--text-muted)]">
-                  {feature.description}
-                </p>
+                <div className="relative">
+                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--primary-500)]/10 text-[var(--primary-500)] shadow-sm ring-1 ring-[var(--primary-500)]/10 transition-all group-hover:bg-[var(--primary-500)] group-hover:text-white group-hover:shadow-[var(--primary-500)]/20 group-hover:shadow-md">
+                    <feature.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-2 text-xs leading-relaxed text-[var(--text-muted)]">
+                    {feature.description}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
