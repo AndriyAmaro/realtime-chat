@@ -4,6 +4,7 @@ import { Button } from '@core/primitives/Button'
 import { ThemeToggle } from '@core/primitives/ThemeToggle'
 import { Logo } from '@components/Logo'
 import { HeroBackground } from '@components/HeroBackground'
+import { TechMarquee } from '@components/TechMarquee'
 import {
   Zap,
   Hash,
@@ -60,19 +61,6 @@ const FEATURES = [
     title: 'Observabilidade',
     description: 'Logging estruturado com Pino, métricas de performance e tracking de erros.',
   },
-] as const
-
-const TECH_STACK = [
-  { name: 'React 19', color: 'text-[#61DAFB]' },
-  { name: 'TypeScript', color: 'text-[#3178C6]' },
-  { name: 'Vite', color: 'text-[#646CFF]' },
-  { name: 'Tailwind CSS', color: 'text-[#06B6D4]' },
-  { name: 'Express 5', color: 'text-[#68A063]' },
-  { name: 'Socket.io', color: 'text-[var(--text-primary)]' },
-  { name: 'Prisma 7', color: 'text-[#2D3748]' },
-  { name: 'PostgreSQL', color: 'text-[#4169E1]' },
-  { name: 'Docker', color: 'text-[#2496ED]' },
-  { name: 'Pino', color: 'text-[#687634]' },
 ] as const
 
 export default function LandingPage() {
@@ -280,18 +268,14 @@ export default function LandingPage() {
             <h2 className="text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
               Tech Stack
             </h2>
+            <p className="mt-3 text-[var(--text-secondary)]">
+              Tecnologias modernas para uma arquitetura escalável e performática.
+            </p>
           </div>
+        </div>
 
-          <div className="scroll-reveal flex flex-wrap items-center justify-center gap-3">
-            {TECH_STACK.map((tech) => (
-              <span
-                key={tech.name}
-                className="glass card-glow rounded-full px-4 py-2 text-sm font-medium text-[var(--text-primary)]"
-              >
-                <span className={tech.color}>●</span> {tech.name}
-              </span>
-            ))}
-          </div>
+        <div className="scroll-reveal">
+          <TechMarquee />
         </div>
       </section>
 

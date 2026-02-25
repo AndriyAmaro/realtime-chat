@@ -555,6 +555,15 @@ body {
 .animate-glow-pulse { animation: glow-pulse 2.5s ease-in-out infinite; }
 .animate-bg-gradient { animation: bg-gradient-shift 6s ease infinite; background-size: 200% 200%; }
 
+/* Tech Stack Marquee */
+.tech-marquee {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+.tech-marquee:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
 /* Perspective */
 .perspective-1200 { perspective: 1200px; }
 .rotate-x-2 { transform: rotateX(2deg); }
