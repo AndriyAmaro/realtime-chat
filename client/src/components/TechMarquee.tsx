@@ -209,13 +209,16 @@ const TECH_ITEMS: TechItem[] = [
 
 function TechCard({ name, color, icon }: TechItem) {
   return (
-    <div className="glass card-glow flex shrink-0 items-center gap-3 rounded-xl px-5 py-3.5 shadow-sm ring-1 ring-black/[0.06] transition-transform hover:scale-[1.03] dark:shadow-none dark:ring-white/[0.06]">
-      <div style={{ color }} className="flex items-center justify-center">
-        {icon}
+    <div className="glass card-glow relative shrink-0 overflow-hidden rounded-xl shadow-sm ring-1 ring-[var(--primary-500)]/10 transition-transform hover:scale-[1.03] dark:shadow-none dark:ring-[var(--primary-500)]/15">
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
+      <div className="flex items-center gap-3 px-5 py-3.5">
+        <div style={{ color }} className="flex items-center justify-center">
+          {icon}
+        </div>
+        <span className="text-sm font-medium whitespace-nowrap text-[var(--text-primary)]">
+          {name}
+        </span>
       </div>
-      <span className="text-sm font-medium whitespace-nowrap text-[var(--text-primary)]">
-        {name}
-      </span>
     </div>
   )
 }

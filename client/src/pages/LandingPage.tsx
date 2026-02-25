@@ -659,7 +659,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div className="scroll-reveal mb-10 text-center">
             <h2 className="text-2xl font-bold sm:text-3xl">
-              <span className="animate-gradient bg-gradient-to-r from-[var(--primary-500)] via-[#8b5cf6] to-[var(--primary-500)] bg-clip-text text-transparent">
+              <span className="animate-gradient bg-gradient-to-r from-[var(--primary-500)] via-[#2DD1B1] to-[var(--primary-500)] bg-clip-text text-transparent">
                 Tech Stack
               </span>
             </h2>
