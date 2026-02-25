@@ -161,20 +161,6 @@ export function HeroBackground() {
         </svg>
       </div>
 
-      {/* Small paper plane — top right area */}
-      <div className="animate-float absolute top-[25%] left-[50%] -translate-x-1/2 opacity-[0.10] sm:top-[30%] sm:right-[18%] sm:left-auto sm:translate-x-0 dark:opacity-[0.18]">
-        <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 text-[#2DD1B1]">
-          <path
-            d="M4 4l24 12L4 28l4-12L4 4z"
-            fill="currentColor"
-            fillOpacity="0.12"
-            stroke="currentColor"
-            strokeWidth="1.3"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
-
       {/* Keyboard / typing — bottom center-left */}
       <div className="animate-float-slow absolute bottom-[28%] left-[3%] opacity-[0.10] sm:bottom-[30%] sm:left-[35%] dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[var(--primary-500)]">
