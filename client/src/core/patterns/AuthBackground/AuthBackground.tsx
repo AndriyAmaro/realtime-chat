@@ -64,7 +64,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
       <div className="absolute inset-0 flex flex-col items-center justify-center px-10">
         {/* Branding */}
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/90 p-3.5 shadow-lg">
+          <div className="mb-4 inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/90 p-3.5 shadow-lg ring-4 ring-white/20 ring-offset-0">
             <svg viewBox="0 0 64 64" fill="none" className="h-12 w-12">
               <defs>
                 <linearGradient
