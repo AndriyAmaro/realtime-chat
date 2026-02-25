@@ -686,6 +686,157 @@ export default function LandingPage() {
           <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2DD1B1]/[0.08] blur-[100px] dark:bg-[#2DD1B1]/[0.14]" />
         </div>
 
+        {/* Floating chat icons */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          {/* Chat bubble — top left */}
+          <div className="animate-float-slow absolute top-[8%] left-[5%] opacity-[0.12] dark:opacity-[0.20]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-[var(--primary-500)]">
+              <path
+                d="M6 6h20a2 2 0 012 2v12a2 2 0 01-2 2H14l-6 4v-4H6a2 2 0 01-2-2V8a2 2 0 012-2z"
+                fill="currentColor"
+                fillOpacity="0.15"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <circle cx="12" cy="14" r="1.2" fill="currentColor" />
+              <circle cx="16" cy="14" r="1.2" fill="currentColor" />
+              <circle cx="20" cy="14" r="1.2" fill="currentColor" />
+            </svg>
+          </div>
+
+          {/* Send / paper plane — top right */}
+          <div className="animate-float absolute top-[10%] right-[8%] opacity-[0.10] dark:opacity-[0.18]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#2DD1B1]">
+              <path
+                d="M4 4l24 12L4 28l4-12L4 4z"
+                fill="currentColor"
+                fillOpacity="0.12"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinejoin="round"
+              />
+              <path d="M8 16h12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            </svg>
+          </div>
+
+          {/* Heart — mid left */}
+          <div className="animate-float-delayed absolute top-[45%] left-[8%] opacity-[0.10] dark:opacity-[0.16]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[var(--primary-500)]">
+              <path
+                d="M16 28S4 20 4 12a6 6 0 0112-1 6 6 0 0112 1c0 8-12 16-12 16z"
+                fill="currentColor"
+                fillOpacity="0.15"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+            </svg>
+          </div>
+
+          {/* Notification bell — mid right */}
+          <div className="animate-float-slow absolute top-[40%] right-[5%] opacity-[0.12] dark:opacity-[0.20]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-11 w-11 text-[#2DD1B1]">
+              <path
+                d="M16 4a8 8 0 018 8c0 4 2 6 2 8H6c0-2 2-4 2-8a8 8 0 018-8z"
+                fill="currentColor"
+                fillOpacity="0.12"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <path
+                d="M13 22a3 3 0 006 0"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+              <circle cx="24" cy="8" r="3" fill="currentColor" fillOpacity="0.4" />
+            </svg>
+          </div>
+
+          {/* Emoji smile — bottom left */}
+          <div className="animate-float absolute bottom-[12%] left-[12%] opacity-[0.10] dark:opacity-[0.16]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[var(--primary-500)]">
+              <circle
+                cx="16"
+                cy="16"
+                r="12"
+                fill="currentColor"
+                fillOpacity="0.1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <circle cx="12" cy="14" r="1.3" fill="currentColor" />
+              <circle cx="20" cy="14" r="1.3" fill="currentColor" />
+              <path
+                d="M11 19a6 6 0 0010 0"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+
+          {/* Double chat bubbles — bottom right */}
+          <div className="animate-float-delayed absolute right-[10%] bottom-[10%] opacity-[0.10] dark:opacity-[0.18]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#2DD1B1]">
+              <path
+                d="M4 5h16a2 2 0 012 2v8a2 2 0 01-2 2h-6l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"
+                fill="currentColor"
+                fillOpacity="0.1"
+                stroke="currentColor"
+                strokeWidth="1.2"
+              />
+              <path
+                d="M12 19h8a2 2 0 012 2v6a2 2 0 01-2 2h-2v-2l-3 2v-2h-3a2 2 0 01-2-2v-6a2 2 0 012-2z"
+                fill="currentColor"
+                fillOpacity="0.15"
+                stroke="currentColor"
+                strokeWidth="1.2"
+              />
+            </svg>
+          </div>
+
+          {/* Small chat bubble — top center */}
+          <div className="animate-float absolute top-[4%] left-[40%] opacity-[0.08] dark:opacity-[0.12]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[var(--primary-500)]">
+              <path
+                d="M6 6h20a2 2 0 012 2v12a2 2 0 01-2 2H14l-6 4v-4H6a2 2 0 01-2-2V8a2 2 0 012-2z"
+                fill="currentColor"
+                fillOpacity="0.15"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+            </svg>
+          </div>
+
+          {/* Small paper plane — bottom center-left */}
+          <div className="animate-float-slow absolute bottom-[20%] left-[30%] opacity-[0.08] dark:opacity-[0.12]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 text-[#2DD1B1]">
+              <path
+                d="M4 4l24 12L4 28l4-12L4 4z"
+                fill="currentColor"
+                fillOpacity="0.12"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+
+          {/* @ symbol — right mid-low */}
+          <div className="animate-float-delayed absolute right-[18%] bottom-[30%] opacity-[0.08] dark:opacity-[0.14]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-[var(--primary-500)]">
+              <circle cx="16" cy="16" r="12" stroke="currentColor" strokeWidth="1.3" />
+              <circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth="1.3" />
+              <path
+                d="M21 16v3a3 3 0 006 0"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+
         <div className="relative mx-auto max-w-2xl px-4 sm:px-6">
           <div className="scroll-reveal glass relative overflow-hidden rounded-2xl p-10 text-center ring-1 ring-[var(--primary-500)]/15 sm:p-14">
             <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
