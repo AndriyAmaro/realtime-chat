@@ -679,17 +679,17 @@ export default function LandingPage() {
       {/* CTA Final */}
       <section className="relative overflow-hidden py-20 sm:py-28">
         <div className="absolute inset-x-0 top-0 mx-auto h-[2px] max-w-6xl bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
-        {/* Gradient orbs — Pulse teal palette (same as Architecture) */}
+        {/* Gradient orbs — subtle Pulse teal */}
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="bg-primary-500/15 dark:bg-primary-500/20 absolute top-0 left-1/4 h-96 w-96 rounded-full blur-[120px]" />
-          <div className="bg-primary-500/10 dark:bg-primary-500/15 absolute right-1/4 bottom-0 h-80 w-80 rounded-full blur-[120px]" />
-          <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2DD1B1]/[0.08] blur-[100px] dark:bg-[#2DD1B1]/[0.14]" />
+          <div className="bg-primary-500/[0.06] dark:bg-primary-500/[0.10] absolute top-0 left-1/4 h-96 w-96 rounded-full blur-[120px]" />
+          <div className="bg-primary-500/[0.04] dark:bg-primary-500/[0.08] absolute right-1/4 bottom-0 h-80 w-80 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2DD1B1]/[0.03] blur-[100px] dark:bg-[#2DD1B1]/[0.06]" />
         </div>
 
         {/* Floating chat icons */}
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           {/* Chat bubble — top left */}
-          <div className="animate-float-slow absolute top-[8%] left-[5%] opacity-[0.06] dark:opacity-[0.10]">
+          <div className="animate-float-slow absolute top-[8%] left-[5%] opacity-[0.15] dark:opacity-[0.25]">
             <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-[var(--primary-500)]">
               <path
                 d="M6 6h20a2 2 0 012 2v12a2 2 0 01-2 2H14l-6 4v-4H6a2 2 0 01-2-2V8a2 2 0 012-2z"
@@ -705,7 +705,7 @@ export default function LandingPage() {
           </div>
 
           {/* Send / paper plane — top right */}
-          <div className="animate-float absolute top-[10%] right-[8%] opacity-[0.06] dark:opacity-[0.10]">
+          <div className="animate-float absolute top-[10%] right-[8%] opacity-[0.15] dark:opacity-[0.25]">
             <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#2DD1B1]">
               <path
                 d="M4 4l24 12L4 28l4-12L4 4z"
@@ -720,7 +720,7 @@ export default function LandingPage() {
           </div>
 
           {/* Heart — mid left */}
-          <div className="animate-float-delayed absolute top-[45%] left-[8%] opacity-[0.05] dark:opacity-[0.08]">
+          <div className="animate-float-delayed absolute top-[45%] left-[8%] opacity-[0.12] dark:opacity-[0.20]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[var(--primary-500)]">
               <path
                 d="M16 28S4 20 4 12a6 6 0 0112-1 6 6 0 0112 1c0 8-12 16-12 16z"
@@ -733,7 +733,7 @@ export default function LandingPage() {
           </div>
 
           {/* Notification bell — mid right */}
-          <div className="animate-float-slow absolute top-[40%] right-[5%] opacity-[0.06] dark:opacity-[0.10]">
+          <div className="animate-float-slow absolute top-[40%] right-[5%] opacity-[0.15] dark:opacity-[0.25]">
             <svg viewBox="0 0 32 32" fill="none" className="h-11 w-11 text-[#2DD1B1]">
               <path
                 d="M16 4a8 8 0 018 8c0 4 2 6 2 8H6c0-2 2-4 2-8a8 8 0 018-8z"
@@ -753,7 +753,7 @@ export default function LandingPage() {
           </div>
 
           {/* Emoji smile — bottom left */}
-          <div className="animate-float absolute bottom-[12%] left-[12%] opacity-[0.05] dark:opacity-[0.08]">
+          <div className="animate-float absolute bottom-[12%] left-[12%] opacity-[0.12] dark:opacity-[0.20]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[var(--primary-500)]">
               <circle
                 cx="16"
@@ -776,7 +776,7 @@ export default function LandingPage() {
           </div>
 
           {/* Double chat bubbles — bottom right */}
-          <div className="animate-float-delayed absolute right-[10%] bottom-[10%] opacity-[0.06] dark:opacity-[0.10]">
+          <div className="animate-float-delayed absolute right-[10%] bottom-[10%] opacity-[0.15] dark:opacity-[0.25]">
             <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#2DD1B1]">
               <path
                 d="M4 5h16a2 2 0 012 2v8a2 2 0 01-2 2h-6l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"
@@ -796,7 +796,7 @@ export default function LandingPage() {
           </div>
 
           {/* Small chat bubble — top center */}
-          <div className="animate-float absolute top-[4%] left-[40%] opacity-[0.04] dark:opacity-[0.07]">
+          <div className="animate-float absolute top-[4%] left-[40%] opacity-[0.10] dark:opacity-[0.18]">
             <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[var(--primary-500)]">
               <path
                 d="M6 6h20a2 2 0 012 2v12a2 2 0 01-2 2H14l-6 4v-4H6a2 2 0 01-2-2V8a2 2 0 012-2z"
@@ -809,7 +809,7 @@ export default function LandingPage() {
           </div>
 
           {/* Small paper plane — bottom center-left */}
-          <div className="animate-float-slow absolute bottom-[20%] left-[30%] opacity-[0.04] dark:opacity-[0.07]">
+          <div className="animate-float-slow absolute bottom-[20%] left-[30%] opacity-[0.10] dark:opacity-[0.18]">
             <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 text-[#2DD1B1]">
               <path
                 d="M4 4l24 12L4 28l4-12L4 4z"
@@ -823,7 +823,7 @@ export default function LandingPage() {
           </div>
 
           {/* @ symbol — right mid-low */}
-          <div className="animate-float-delayed absolute right-[18%] bottom-[30%] opacity-[0.04] dark:opacity-[0.07]">
+          <div className="animate-float-delayed absolute right-[18%] bottom-[30%] opacity-[0.10] dark:opacity-[0.18]">
             <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-[var(--primary-500)]">
               <circle cx="16" cy="16" r="12" stroke="currentColor" strokeWidth="1.3" />
               <circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth="1.3" />
