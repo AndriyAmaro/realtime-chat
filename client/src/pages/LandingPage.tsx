@@ -246,8 +246,8 @@ export default function LandingPage() {
             </div>
 
             <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
-              Chat em{' '}
-              <span className="animate-gradient bg-gradient-to-r from-[var(--primary-500)] via-[#2DD1B1] to-[var(--primary-500)] bg-clip-text text-transparent">
+              <span className="animate-hero-title inline-block">Chat em</span>{' '}
+              <span className="animate-hero-title-delay animate-gradient inline-block bg-gradient-to-r from-[var(--primary-500)] via-[#2DD1B1] to-[var(--primary-500)] bg-clip-text text-transparent">
                 Tempo Real
               </span>
             </h1>

@@ -669,6 +669,17 @@ body {
   animation: hero-logo-float 5s ease-in-out infinite;
 }
 
+@keyframes hero-title-in {
+  0% { opacity: 0; transform: translateY(24px); filter: blur(8px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.animate-hero-title {
+  animation: hero-title-in 0.8s ease-out both;
+}
+.animate-hero-title-delay {
+  animation: hero-title-in 0.8s 0.15s ease-out both;
+}
+
 /* Subtle dot grid for hero depth */
 .hero-dot-grid {
   background-image: radial-gradient(circle, var(--primary-500) 0.5px, transparent 0.5px);
@@ -699,6 +710,8 @@ body {
   .animate-hero-orb-2,
   .animate-hero-orb-3,
   .animate-hero-logo,
+  .animate-hero-title,
+  .animate-hero-title-delay,
   .tech-marquee-track,
   .tech-marquee-track-reverse {
     animation: none;
