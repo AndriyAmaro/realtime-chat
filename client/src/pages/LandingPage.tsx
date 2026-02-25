@@ -199,10 +199,17 @@ export default function LandingPage() {
 
       {/* Architecture */}
       <section className="relative overflow-hidden border-t border-[var(--border-default)] py-20 sm:py-28">
-        {/* Floating tech icons background */}
+        {/* Gradient orbs background */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div className="absolute top-0 left-1/4 h-80 w-80 rounded-full bg-[#61DAFB]/[0.06] blur-[100px] dark:bg-[#61DAFB]/[0.08]" />
+          <div className="absolute right-1/4 bottom-0 h-72 w-72 rounded-full bg-[#4169E1]/[0.06] blur-[100px] dark:bg-[#4169E1]/[0.08]" />
+          <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#68A063]/[0.04] blur-[80px] dark:bg-[#68A063]/[0.06]" />
+        </div>
+
+        {/* Floating tech icons */}
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           {/* React atom — top left */}
-          <div className="animate-float-slow absolute top-[12%] left-[6%] opacity-[0.04] dark:opacity-[0.07]">
+          <div className="animate-float-slow absolute top-[12%] left-[6%] opacity-[0.08] dark:opacity-[0.14]">
             <svg viewBox="0 0 32 32" fill="none" className="h-16 w-16 text-[#61DAFB]">
               <circle cx="16" cy="16" r="2.5" fill="currentColor" />
               <g stroke="currentColor" strokeWidth="0.8">
@@ -214,7 +221,7 @@ export default function LandingPage() {
           </div>
 
           {/* Express terminal — right side */}
-          <div className="animate-float-delayed absolute top-[20%] right-[5%] opacity-[0.04] dark:opacity-[0.07]">
+          <div className="animate-float-delayed absolute top-[20%] right-[5%] opacity-[0.08] dark:opacity-[0.14]">
             <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-[#68A063]">
               <path
                 d="M6 8l6 6-6 6"
@@ -228,7 +235,7 @@ export default function LandingPage() {
           </div>
 
           {/* PostgreSQL cylinder — bottom left */}
-          <div className="animate-float absolute bottom-[10%] left-[8%] opacity-[0.04] dark:opacity-[0.07]">
+          <div className="animate-float absolute bottom-[10%] left-[8%] opacity-[0.08] dark:opacity-[0.14]">
             <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-[#4169E1]">
               <ellipse cx="16" cy="8" rx="10" ry="4" stroke="currentColor" strokeWidth="1.2" />
               <path
@@ -249,7 +256,7 @@ export default function LandingPage() {
           </div>
 
           {/* React atom small — bottom right */}
-          <div className="animate-float-delayed absolute right-[10%] bottom-[18%] opacity-[0.03] dark:opacity-[0.06]">
+          <div className="animate-float-delayed absolute right-[10%] bottom-[18%] opacity-[0.06] dark:opacity-[0.1]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#61DAFB]">
               <circle cx="16" cy="16" r="2.5" fill="currentColor" />
               <g stroke="currentColor" strokeWidth="0.8">
@@ -261,7 +268,7 @@ export default function LandingPage() {
           </div>
 
           {/* Express terminal small — top center-right */}
-          <div className="animate-float-slow absolute top-[8%] right-[30%] opacity-[0.03] dark:opacity-[0.05]">
+          <div className="animate-float-slow absolute top-[8%] right-[30%] opacity-[0.06] dark:opacity-[0.1]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#68A063]">
               <path
                 d="M6 8l6 6-6 6"
@@ -275,7 +282,7 @@ export default function LandingPage() {
           </div>
 
           {/* PostgreSQL cylinder small — top left area */}
-          <div className="animate-float absolute top-[30%] left-[20%] opacity-[0.03] dark:opacity-[0.05]">
+          <div className="animate-float absolute top-[30%] left-[20%] opacity-[0.06] dark:opacity-[0.1]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#4169E1]">
               <ellipse cx="16" cy="8" rx="10" ry="4" stroke="currentColor" strokeWidth="1.2" />
               <path
