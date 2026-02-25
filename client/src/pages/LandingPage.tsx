@@ -229,11 +229,11 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden pt-14">
-        {/* Background orbs */}
+        {/* Background orbs — Pulse teal palette */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="bg-primary-500/20 animate-hero-orb-1 absolute top-20 left-1/4 h-72 w-72 rounded-full blur-[100px]" />
-          <div className="animate-hero-orb-2 absolute top-40 right-1/4 h-96 w-96 rounded-full bg-[#6366f1]/15 blur-[120px]" />
-          <div className="animate-hero-orb-3 absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-[#8b5cf6]/10 blur-[80px]" />
+          <div className="animate-hero-orb-1 bg-primary-500/20 absolute top-20 left-1/4 h-72 w-72 rounded-full blur-[100px]" />
+          <div className="animate-hero-orb-2 absolute top-40 right-1/4 h-96 w-96 rounded-full bg-[#2DD1B1]/15 blur-[120px]" />
+          <div className="animate-hero-orb-3 absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-[#0D7768]/15 blur-[80px]" />
         </div>
 
         {/* Abstract chat & network background */}
@@ -247,7 +247,7 @@ export default function LandingPage() {
 
             <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
               Chat em{' '}
-              <span className="animate-gradient bg-gradient-to-r from-[var(--primary-500)] via-[#8b5cf6] to-[var(--primary-500)] bg-clip-text text-transparent">
+              <span className="animate-gradient bg-gradient-to-r from-[var(--primary-500)] via-[#2DD1B1] to-[var(--primary-500)] bg-clip-text text-transparent">
                 Tempo Real
               </span>
             </h1>
