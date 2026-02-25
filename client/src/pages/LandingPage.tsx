@@ -559,7 +559,7 @@ export default function LandingPage() {
         {/* Floating tech icons */}
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           {/* React atom — above title left */}
-          <div className="animate-float-slow absolute top-[3%] left-[20%] opacity-[0.15] dark:opacity-[0.25]">
+          <div className="animate-float-slow absolute top-[3%] left-[8%] opacity-[0.15] dark:opacity-[0.25]">
             <svg viewBox="0 0 32 32" fill="none" className="h-16 w-16 text-[#61DAFB]">
               <circle cx="16" cy="16" r="2.5" fill="currentColor" />
               <g stroke="currentColor" strokeWidth="0.8">
