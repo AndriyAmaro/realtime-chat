@@ -214,7 +214,8 @@ export default function LandingPage() {
           {/* Architecture diagram: 3 columns connected by arrows */}
           <div className="scroll-reveal-scale scroll-reveal grid items-start gap-6 sm:grid-cols-3">
             {/* Frontend */}
-            <div className="group glass card-glow relative rounded-2xl p-6 shadow-sm ring-1 ring-black/[0.06] transition-all hover:-translate-y-1 dark:shadow-none dark:ring-white/[0.06]">
+            <div className="group glass card-glow relative overflow-hidden rounded-2xl p-6 shadow-sm ring-1 ring-black/[0.06] transition-all hover:-translate-y-1 lg:p-8 dark:shadow-none dark:ring-white/[0.06]">
+              <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#61DAFB] to-transparent" />
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#61DAFB]/10 text-[#61DAFB] transition-colors group-hover:bg-[#61DAFB] group-hover:text-white">
                   <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5">
@@ -268,7 +269,8 @@ export default function LandingPage() {
             </div>
 
             {/* Backend */}
-            <div className="group glass card-glow relative rounded-2xl p-6 shadow-sm ring-1 ring-black/[0.06] transition-all hover:-translate-y-1 dark:shadow-none dark:ring-white/[0.06]">
+            <div className="group glass card-glow relative overflow-hidden rounded-2xl p-6 shadow-sm ring-1 ring-black/[0.06] transition-all hover:-translate-y-1 lg:p-8 dark:shadow-none dark:ring-white/[0.06]">
+              <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#68A063] to-transparent" />
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#68A063]/10 text-[#68A063] transition-colors group-hover:bg-[#68A063] group-hover:text-white">
                   <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5">
@@ -329,7 +331,8 @@ export default function LandingPage() {
             </div>
 
             {/* Database */}
-            <div className="group glass card-glow rounded-2xl p-6 shadow-sm ring-1 ring-black/[0.06] transition-all hover:-translate-y-1 dark:shadow-none dark:ring-white/[0.06]">
+            <div className="group glass card-glow relative overflow-hidden rounded-2xl p-6 shadow-sm ring-1 ring-black/[0.06] transition-all hover:-translate-y-1 lg:p-8 dark:shadow-none dark:ring-white/[0.06]">
+              <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#4169E1] to-transparent" />
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#4169E1]/10 text-[#4169E1] transition-colors group-hover:bg-[#4169E1] group-hover:text-white">
                   <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5">
