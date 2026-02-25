@@ -585,7 +585,7 @@ export default function LandingPage() {
           </div>
 
           {/* PostgreSQL cylinder — bottom left */}
-          <div className="animate-float absolute bottom-[10%] left-[8%] opacity-[0.15] dark:opacity-[0.25]">
+          <div className="animate-float absolute bottom-[5%] left-[8%] opacity-[0.15] dark:opacity-[0.25]">
             <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-[#4169E1]">
               <ellipse cx="16" cy="8" rx="10" ry="4" stroke="currentColor" strokeWidth="1.2" />
               <path
@@ -643,7 +643,7 @@ export default function LandingPage() {
           </div>
 
           {/* Tailwind waves — bottom center-right */}
-          <div className="animate-float-delayed absolute right-[22%] bottom-[8%] opacity-[0.12] dark:opacity-[0.2]">
+          <div className="animate-float-delayed absolute right-[16%] bottom-[8%] opacity-[0.12] dark:opacity-[0.2]">
             <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#06B6D4]">
               <path
                 d="M4 14c4-8 8-8 12-4s8 0 12-4"
