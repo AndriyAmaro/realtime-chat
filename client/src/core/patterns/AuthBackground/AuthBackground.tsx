@@ -64,12 +64,24 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
       <div className="absolute inset-0 flex flex-col items-center justify-center px-10">
         {/* Branding */}
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] p-3 shadow-lg backdrop-blur-sm">
-            <svg viewBox="0 0 64 64" fill="none" className="h-9 w-9">
+          <div className="mb-4 inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/90 p-3.5 shadow-lg">
+            <svg viewBox="0 0 64 64" fill="none" className="h-12 w-12">
+              <defs>
+                <linearGradient
+                  id="auth-logo-g"
+                  x1="2"
+                  y1="2"
+                  x2="62"
+                  y2="58"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#2DD1B1" />
+                  <stop offset="1" stopColor="#0D7768" />
+                </linearGradient>
+              </defs>
               <path
                 d="M12 2H52A10 10 0 0 1 62 12V32A10 10 0 0 1 52 42H22L10 58L14 42A10 10 0 0 1 2 32V12A10 10 0 0 1 12 2Z"
-                fill="white"
-                fillOpacity="0.2"
+                fill="url(#auth-logo-g)"
               />
               <polyline
                 points="8,22 16,22 20,22 24,8 30,36 34,14 37,22 44,22 56,22"
