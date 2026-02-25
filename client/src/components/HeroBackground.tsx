@@ -135,7 +135,7 @@ export function HeroBackground() {
       </div>
 
       {/* @ symbol — bottom center-right */}
-      <div className="animate-float-slow absolute right-[3%] bottom-[22%] opacity-[0.10] sm:right-[22%] dark:opacity-[0.18]">
+      <div className="animate-float-slow absolute right-[3%] bottom-[28%] opacity-[0.10] sm:right-[22%] sm:bottom-[22%] dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-[#2DD1B1]">
           <circle cx="16" cy="16" r="12" stroke="currentColor" strokeWidth="1.3" />
           <circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth="1.3" />
@@ -197,7 +197,7 @@ export function HeroBackground() {
       </div>
 
       {/* Hashtag (rooms) — center right area */}
-      <div className="animate-float-delayed absolute top-auto right-[38%] bottom-[14%] opacity-[0.10] sm:top-[48%] sm:right-[15%] sm:bottom-auto dark:opacity-[0.18]">
+      <div className="animate-float-delayed absolute top-auto right-[38%] bottom-[8%] opacity-[0.10] sm:top-[48%] sm:right-[15%] sm:bottom-auto dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[#2DD1B1]">
           <path
             d="M12 4l-2 24M22 4l-2 24M4 12h24M4 20h24"
