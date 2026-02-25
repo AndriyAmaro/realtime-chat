@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@core/primitives/Button'
 import { ThemeToggle } from '@core/primitives/ThemeToggle'
@@ -62,6 +62,47 @@ const FEATURES = [
     description: 'Logging estruturado com Pino, métricas de performance e tracking de erros.',
   },
 ] as const
+
+function CountUp({ end, duration = 1.5 }: { end: number; duration?: number }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const hasAnimated = useRef(false)
+
+  const animate = useCallback(() => {
+    if (hasAnimated.current) return
+    hasAnimated.current = true
+    const start = performance.now()
+    const step = (now: number) => {
+      const progress = Math.min((now - start) / (duration * 1000), 1)
+      const eased = 1 - Math.pow(1 - progress, 3) // ease-out cubic
+      setCount(Math.round(eased * end))
+      if (progress < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }, [end, duration])
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) animate()
+      },
+      { threshold: 0.5 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [animate])
+
+  return (
+    <span
+      ref={ref}
+      className="animate-gradient block bg-gradient-to-r from-[var(--primary-500)] via-[#2DD1B1] to-[var(--primary-500)] bg-clip-text text-2xl font-bold text-transparent"
+    >
+      {count}
+    </span>
+  )
+}
 
 export default function LandingPage() {
   const sectionsRef = useRef<HTMLDivElement>(null)
@@ -199,11 +240,11 @@ export default function LandingPage() {
 
       {/* Architecture */}
       <section className="relative overflow-hidden border-t border-[var(--border-default)] py-20 sm:py-28">
-        {/* Gradient orbs background */}
+        {/* Gradient orbs background — Pulse teal palette */}
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="bg-primary-500/10 dark:bg-primary-500/15 absolute top-0 left-1/4 h-96 w-96 rounded-full blur-[120px]" />
-          <div className="absolute right-1/4 bottom-0 h-80 w-80 rounded-full bg-[#0D7768]/[0.10] blur-[120px] dark:bg-[#0D7768]/[0.15]" />
-          <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2DD1B1]/[0.07] blur-[100px] dark:bg-[#2DD1B1]/[0.12]" />
+          <div className="bg-primary-500/15 dark:bg-primary-500/20 absolute top-0 left-1/4 h-96 w-96 rounded-full blur-[120px]" />
+          <div className="bg-primary-500/10 dark:bg-primary-500/15 absolute right-1/4 bottom-0 h-80 w-80 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2DD1B1]/[0.08] blur-[100px] dark:bg-[#2DD1B1]/[0.14]" />
         </div>
 
         {/* Floating tech icons */}
@@ -255,8 +296,64 @@ export default function LandingPage() {
             </svg>
           </div>
 
+          {/* Socket.io — top center */}
+          <div className="animate-float absolute top-[6%] left-[40%] opacity-[0.12] dark:opacity-[0.2]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#25c2a0]">
+              <path d="M4 16h8m8 0h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="16" cy="16" r="4" stroke="currentColor" strokeWidth="2" />
+              <path
+                d="M7 12l-3 4 3 4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M25 12l3 4-3 4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+
+          {/* Prisma triangle — right mid */}
+          <div className="animate-float-slow absolute top-[45%] right-[4%] opacity-[0.12] dark:opacity-[0.2]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-[#5A67D8]">
+              <path
+                d="M16 3L4 28h20L16 3z"
+                fill="currentColor"
+                fillOpacity="0.12"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+              />
+              <path d="M16 3l8 25" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
+            </svg>
+          </div>
+
+          {/* Tailwind waves — bottom center-right */}
+          <div className="animate-float-delayed absolute right-[22%] bottom-[8%] opacity-[0.12] dark:opacity-[0.2]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#06B6D4]">
+              <path
+                d="M4 14c4-8 8-8 12-4s8 0 12-4"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <path
+                d="M4 22c4-8 8-8 12-4s8 0 12-4"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                opacity="0.5"
+              />
+            </svg>
+          </div>
+
           {/* React atom small — bottom right */}
-          <div className="animate-float-delayed absolute right-[10%] bottom-[18%] opacity-[0.1] dark:opacity-[0.18]">
+          <div className="animate-float-delayed absolute right-[10%] bottom-[22%] opacity-[0.1] dark:opacity-[0.18]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#61DAFB]">
               <circle cx="16" cy="16" r="2.5" fill="currentColor" />
               <g stroke="currentColor" strokeWidth="0.8">
@@ -268,7 +365,7 @@ export default function LandingPage() {
           </div>
 
           {/* Express terminal small — top center-right */}
-          <div className="animate-float-slow absolute top-[8%] right-[30%] opacity-[0.1] dark:opacity-[0.18]">
+          <div className="animate-float-slow absolute top-[8%] right-[18%] opacity-[0.1] dark:opacity-[0.18]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#68A063]">
               <path
                 d="M6 8l6 6-6 6"
@@ -281,12 +378,50 @@ export default function LandingPage() {
             </svg>
           </div>
 
-          {/* PostgreSQL cylinder small — top left area */}
-          <div className="animate-float absolute top-[30%] left-[20%] opacity-[0.1] dark:opacity-[0.18]">
+          {/* PostgreSQL cylinder small — left mid */}
+          <div className="animate-float absolute top-[35%] left-[18%] opacity-[0.1] dark:opacity-[0.18]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#4169E1]">
               <ellipse cx="16" cy="8" rx="10" ry="4" stroke="currentColor" strokeWidth="1.2" />
               <path
                 d="M6 8v16c0 2.2 4.5 4 10 4s10-1.8 10-4V8"
+                stroke="currentColor"
+                strokeWidth="1.2"
+              />
+            </svg>
+          </div>
+
+          {/* TypeScript TS — bottom left area */}
+          <div className="animate-float-delayed absolute bottom-[25%] left-[15%] opacity-[0.1] dark:opacity-[0.18]">
+            <svg viewBox="0 0 32 32" className="h-10 w-10 text-[#3178C6]">
+              <rect x="2" y="2" width="28" height="28" rx="4" fill="currentColor" />
+              <text
+                x="16"
+                y="22"
+                textAnchor="middle"
+                fill="white"
+                fontSize="14"
+                fontWeight="700"
+                fontFamily="system-ui,sans-serif"
+              >
+                TS
+              </text>
+            </svg>
+          </div>
+
+          {/* Docker whale — top left mid */}
+          <div className="animate-float-slow absolute top-[22%] left-[25%] opacity-[0.08] dark:opacity-[0.14]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-11 w-11 text-[#2496ED]">
+              <g stroke="currentColor" strokeWidth="1.2">
+                <rect x="9" y="6" width="4" height="3.5" rx="0.5" />
+                <rect x="14" y="6" width="4" height="3.5" rx="0.5" />
+                <rect x="9" y="10.5" width="4" height="3.5" rx="0.5" />
+                <rect x="14" y="10.5" width="4" height="3.5" rx="0.5" />
+                <rect x="19" y="10.5" width="4" height="3.5" rx="0.5" />
+              </g>
+              <path
+                d="M3 17c0-3 3-3 5-3h16c3 0 5 2 5 5 0 5-5 9-13 9S3 24 3 19v-2z"
+                fill="currentColor"
+                fillOpacity="0.1"
                 stroke="currentColor"
                 strokeWidth="1.2"
               />
@@ -485,30 +620,30 @@ export default function LandingPage() {
           </div>
 
           {/* Stats bar */}
-          <div className="scroll-reveal mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          <div className="scroll-reveal mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
             <div className="text-center">
-              <span className="block text-lg font-bold text-[var(--text-primary)]">24</span>
+              <CountUp end={24} />
               <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)]">
                 ENDPOINTS REST
               </span>
             </div>
-            <div className="h-6 w-px bg-[var(--border-default)]" />
+            <div className="h-8 w-px bg-gradient-to-b from-transparent via-[var(--primary-500)]/30 to-transparent" />
             <div className="text-center">
-              <span className="block text-lg font-bold text-[var(--text-primary)]">18</span>
+              <CountUp end={18} duration={1.2} />
               <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)]">
                 EVENTOS SOCKET.IO
               </span>
             </div>
-            <div className="h-6 w-px bg-[var(--border-default)]" />
+            <div className="h-8 w-px bg-gradient-to-b from-transparent via-[var(--primary-500)]/30 to-transparent" />
             <div className="text-center">
-              <span className="block text-lg font-bold text-[var(--text-primary)]">37</span>
+              <CountUp end={37} duration={1.8} />
               <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)]">
                 TESTES
               </span>
             </div>
-            <div className="h-6 w-px bg-[var(--border-default)]" />
+            <div className="h-8 w-px bg-gradient-to-b from-transparent via-[var(--primary-500)]/30 to-transparent" />
             <div className="text-center">
-              <span className="block text-lg font-bold text-[var(--text-primary)]">29</span>
+              <CountUp end={29} duration={1.6} />
               <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)]">
                 FASES
               </span>
