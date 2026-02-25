@@ -59,7 +59,7 @@ export function HeroBackground() {
       </div>
 
       {/* Heart reaction — mid right */}
-      <div className="animate-float-slow absolute top-[38%] right-[5%] opacity-[0.15] dark:opacity-[0.25]">
+      <div className="animate-float-slow absolute top-[38%] right-[5%] hidden opacity-[0.15] sm:block dark:opacity-[0.25]">
         <svg viewBox="0 0 32 32" fill="none" className="h-11 w-11 text-[#2DD1B1]">
           <path
             d="M16 28S4 20 4 12a6 6 0 0112-1 6 6 0 0112 1c0 8-12 16-12 16z"
