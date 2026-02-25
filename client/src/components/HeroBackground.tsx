@@ -38,7 +38,7 @@ export function HeroBackground() {
       </div>
 
       {/* Double check (read receipt) — mid left */}
-      <div className="animate-float-delayed absolute top-[14%] right-[7%] opacity-[0.12] sm:top-[40%] sm:right-auto sm:left-[6%] dark:opacity-[0.20]">
+      <div className="animate-float-delayed absolute top-[22%] right-[7%] opacity-[0.12] sm:top-[40%] sm:right-auto sm:left-[6%] dark:opacity-[0.20]">
         <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[var(--primary-500)]">
           <path
             d="M4 16l5 5L19 9"
@@ -162,7 +162,7 @@ export function HeroBackground() {
       </div>
 
       {/* Small paper plane — top right area */}
-      <div className="animate-float absolute top-[22%] left-[50%] -translate-x-1/2 opacity-[0.10] sm:top-[30%] sm:right-[18%] sm:left-auto sm:translate-x-0 dark:opacity-[0.18]">
+      <div className="animate-float absolute top-[28%] left-[50%] -translate-x-1/2 opacity-[0.10] sm:top-[30%] sm:right-[18%] sm:left-auto sm:translate-x-0 dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 text-[#2DD1B1]">
           <path
             d="M4 4l24 12L4 28l4-12L4 4z"
@@ -176,7 +176,7 @@ export function HeroBackground() {
       </div>
 
       {/* Keyboard / typing — bottom center-left */}
-      <div className="animate-float-slow absolute bottom-[10%] left-[50%] opacity-[0.10] sm:bottom-[30%] sm:left-[35%] dark:opacity-[0.18]">
+      <div className="animate-float-slow absolute bottom-[6%] left-[50%] opacity-[0.10] sm:bottom-[30%] sm:left-[35%] dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[var(--primary-500)]">
           <rect
             x="4"
@@ -197,7 +197,7 @@ export function HeroBackground() {
       </div>
 
       {/* Hashtag (rooms) — center right area */}
-      <div className="animate-float-delayed absolute top-auto right-[38%] bottom-[10%] opacity-[0.10] sm:top-[48%] sm:right-[15%] sm:bottom-auto dark:opacity-[0.18]">
+      <div className="animate-float-delayed absolute top-auto right-[38%] bottom-[14%] opacity-[0.10] sm:top-[48%] sm:right-[15%] sm:bottom-auto dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[#2DD1B1]">
           <path
             d="M12 4l-2 24M22 4l-2 24M4 12h24M4 20h24"
