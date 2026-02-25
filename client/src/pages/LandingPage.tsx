@@ -678,10 +678,13 @@ export default function LandingPage() {
 
       {/* CTA Final */}
       <section className="relative border-t border-[var(--border-default)] py-20 sm:py-28">
-        <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
-          <div className="scroll-reveal">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
-              Teste agora
+        <div className="mx-auto max-w-2xl px-4 sm:px-6">
+          <div className="scroll-reveal glass relative overflow-hidden rounded-2xl p-10 text-center ring-1 ring-[var(--primary-500)]/15 sm:p-14">
+            <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
+            <h2 className="text-2xl font-bold sm:text-3xl">
+              <span className="animate-gradient bg-gradient-to-r from-[var(--primary-500)] via-[#2DD1B1] to-[var(--primary-500)] bg-clip-text text-transparent">
+                Teste agora
+              </span>
             </h2>
             <p className="mt-3 text-[var(--text-secondary)]">
               Crie uma conta gratuita ou use as credenciais de demonstração.
