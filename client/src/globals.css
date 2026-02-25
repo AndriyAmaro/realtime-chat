@@ -629,37 +629,103 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   AUTH BACKGROUND - Chat Mockup Animations
-   Staggered message fade-in + typing indicator bounce
+   AUTH BACKGROUND - Premium Chat Mockup
+   Animated gradient, shimmer text, spring messages, floating orbs
    ═══════════════════════════════════════════════════════════ */
 
+/* Animated gradient background — subtle teal shift */
+.auth-gradient-bg {
+  background: linear-gradient(
+    135deg,
+    #1ACFAE 0%, #14B89C 20%, #10A68D 40%,
+    #0D8F7A 60%, #0A7A69 80%, #0D8F7A 100%
+  );
+  background-size: 200% 200%;
+  animation: auth-gradient-shift 12s ease-in-out infinite;
+}
+
+@keyframes auth-gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Gradient shimmer text — subtle light sweep */
+.auth-shimmer-text {
+  background: linear-gradient(
+    110deg,
+    rgba(255,255,255,0.9) 0%,
+    rgba(255,255,255,0.9) 40%,
+    rgba(255,255,255,0.55) 50%,
+    rgba(255,255,255,0.9) 60%,
+    rgba(255,255,255,0.9) 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: auth-shimmer 5s ease-in-out infinite;
+}
+
+@keyframes auth-shimmer {
+  0%, 100% { background-position: 100% center; }
+  50% { background-position: -100% center; }
+}
+
+/* Chat message entrance — spring easing with subtle scale */
 @keyframes auth-chat-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .animate-auth-chat-in {
-  animation: auth-chat-in 0.5s ease-out forwards;
+  animation: auth-chat-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Typing dots — bounce with opacity pulse */
 @keyframes auth-typing-dot {
-  0%, 60%, 100% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(-4px);
-  }
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
 }
 
 .animate-auth-typing-dot {
   animation: auth-typing-dot 1.4s ease-in-out infinite;
 }
+
+/* Online indicator pulse */
+@keyframes auth-online-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(74, 222, 128, 0); }
+}
+
+.animate-auth-online-pulse {
+  animation: auth-online-pulse 2s ease-in-out infinite;
+}
+
+/* Floating ambient orbs */
+@keyframes auth-float-1 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(-20px, 15px); }
+  66% { transform: translate(10px, -10px); }
+}
+@keyframes auth-float-2 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(15px, -20px); }
+  66% { transform: translate(-10px, 10px); }
+}
+@keyframes auth-float-3 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 15px); }
+}
+
+.animate-auth-float-1 { animation: auth-float-1 15s ease-in-out infinite; }
+.animate-auth-float-2 { animation: auth-float-2 18s ease-in-out infinite; }
+.animate-auth-float-3 { animation: auth-float-3 12s ease-in-out infinite; }
 
 /* ═══════════════════════════════════════════════════════════
    HERO BACKGROUND - Glassmorphism Orb Animations
@@ -744,12 +810,21 @@ body {
   .activity-marquee-track {
     animation: none;
   }
-  /* Auth chat mockup: disable animations */
+  /* Auth background: disable all animations */
+  .auth-gradient-bg,
+  .animate-auth-float-1,
+  .animate-auth-float-2,
+  .animate-auth-float-3,
+  .animate-auth-online-pulse,
+  .animate-auth-typing-dot {
+    animation: none;
+  }
   .animate-auth-chat-in {
     animation: none;
     opacity: 1;
   }
-  .animate-auth-typing-dot {
+  .auth-shimmer-text {
     animation: none;
+    -webkit-text-fill-color: rgba(255,255,255,0.9);
   }
 }

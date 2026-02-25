@@ -15,12 +15,6 @@ export default function AuthLayout() {
       {/* Left panel — AuthBackground (hidden on mobile) */}
       <div className="relative hidden w-1/2 lg:block">
         <AuthBackground />
-        <div className="absolute right-8 bottom-8 left-8">
-          <p className="text-lg font-semibold text-white/90">Conecte-se em tempo real</p>
-          <p className="mt-1 text-sm text-white/60">
-            Chat com salas, mensagens instantâneas e muito mais.
-          </p>
-        </div>
       </div>
 
       {/* Right panel — Auth form */}
