@@ -72,7 +72,7 @@ export function HeroBackground() {
       </div>
 
       {/* Notification bell — bottom left */}
-      <div className="animate-float absolute bottom-[18%] left-[10%] opacity-[0.12] dark:opacity-[0.20]">
+      <div className="animate-float absolute bottom-[10%] left-[10%] opacity-[0.12] sm:bottom-[18%] dark:opacity-[0.20]">
         <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[var(--primary-500)]">
           <path
             d="M16 4a8 8 0 018 8c0 4 2 6 2 8H6c0-2 2-4 2-8a8 8 0 018-8z"
@@ -92,7 +92,7 @@ export function HeroBackground() {
       </div>
 
       {/* Double chat bubbles — bottom right */}
-      <div className="animate-float-delayed absolute right-[8%] bottom-[15%] opacity-[0.15] dark:opacity-[0.25]">
+      <div className="animate-float-delayed absolute right-[8%] bottom-[8%] opacity-[0.15] sm:bottom-[15%] dark:opacity-[0.25]">
         <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#2DD1B1]">
           <path
             d="M4 5h16a2 2 0 012 2v8a2 2 0 01-2 2h-6l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"
@@ -162,7 +162,7 @@ export function HeroBackground() {
       </div>
 
       {/* Small paper plane — top right area */}
-      <div className="animate-float absolute top-[28%] left-[50%] -translate-x-1/2 opacity-[0.10] sm:top-[30%] sm:right-[18%] sm:left-auto sm:translate-x-0 dark:opacity-[0.18]">
+      <div className="animate-float absolute top-[25%] left-[50%] -translate-x-1/2 opacity-[0.10] sm:top-[30%] sm:right-[18%] sm:left-auto sm:translate-x-0 dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 text-[#2DD1B1]">
           <path
             d="M4 4l24 12L4 28l4-12L4 4z"
