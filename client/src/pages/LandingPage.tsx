@@ -657,7 +657,7 @@ export default function LandingPage() {
       {/* Tech Stack */}
       <section className="relative border-t border-[var(--border-default)] py-20 sm:py-28">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="scroll-reveal mb-10 text-center">
+          <div className="scroll-reveal mb-14 text-center">
             <h2 className="text-2xl font-bold sm:text-3xl">
               <span className="animate-gradient bg-gradient-to-r from-[var(--primary-500)] via-[#2DD1B1] to-[var(--primary-500)] bg-clip-text text-transparent">
                 Tech Stack
@@ -670,6 +670,7 @@ export default function LandingPage() {
         </div>
 
         <div className="scroll-reveal">
+          <div className="mx-auto mb-1 h-[2px] max-w-2xl bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
           <TechMarquee />
         </div>
       </section>
