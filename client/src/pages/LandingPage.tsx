@@ -239,7 +239,7 @@ export default function LandingPage() {
         {/* Abstract chat & network background */}
         <HeroBackground />
 
-        <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-4xl flex-col items-center justify-center px-4 text-center sm:px-6">
+        <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-4xl flex-col items-center justify-center px-4 pb-24 text-center sm:px-6 sm:pb-32">
           <div className="scroll-reveal">
             <div className="animate-hero-logo mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl">
               <Logo size={56} />
