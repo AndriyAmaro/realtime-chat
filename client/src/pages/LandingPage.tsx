@@ -1060,7 +1060,7 @@ export default function LandingPage() {
           </div>
 
           {/* Emoji smile — bottom left */}
-          <div className="animate-float absolute bottom-[12%] left-[12%] opacity-[0.12] dark:opacity-[0.20]">
+          <div className="animate-float absolute bottom-[5%] left-[12%] opacity-[0.12] dark:opacity-[0.20]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[var(--primary-500)]">
               <circle
                 cx="16"
@@ -1083,7 +1083,7 @@ export default function LandingPage() {
           </div>
 
           {/* Double chat bubbles — bottom right */}
-          <div className="animate-float-delayed absolute right-[10%] bottom-[10%] opacity-[0.15] dark:opacity-[0.25]">
+          <div className="animate-float-delayed absolute right-[10%] bottom-[3%] opacity-[0.15] dark:opacity-[0.25]">
             <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-[#2DD1B1]">
               <path
                 d="M4 5h16a2 2 0 012 2v8a2 2 0 01-2 2h-6l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"
