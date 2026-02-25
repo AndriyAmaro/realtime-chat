@@ -571,7 +571,7 @@ export default function LandingPage() {
           </div>
 
           {/* Express terminal — right side */}
-          <div className="animate-float-delayed absolute top-[10%] right-[3%] opacity-[0.15] dark:opacity-[0.25]">
+          <div className="animate-float-delayed absolute top-[3%] right-[3%] opacity-[0.15] dark:opacity-[0.25]">
             <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-[#68A063]">
               <path
                 d="M6 8l6 6-6 6"
