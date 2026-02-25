@@ -112,7 +112,7 @@ export function HeroBackground() {
       </div>
 
       {/* Emoji smile — top center-left */}
-      <div className="animate-float absolute top-[28%] left-[3%] opacity-[0.10] sm:top-[20%] sm:left-[25%] dark:opacity-[0.18]">
+      <div className="animate-float absolute top-[24%] left-[3%] opacity-[0.10] sm:top-[20%] sm:left-[25%] dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-[var(--primary-500)]">
           <circle
             cx="16"
@@ -158,27 +158,6 @@ export function HeroBackground() {
             stroke="currentColor"
             strokeWidth="1.3"
           />
-        </svg>
-      </div>
-
-      {/* Keyboard / typing — bottom center-left */}
-      <div className="animate-float-slow absolute bottom-[28%] left-[3%] opacity-[0.10] sm:bottom-[30%] sm:left-[35%] dark:opacity-[0.18]">
-        <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[var(--primary-500)]">
-          <rect
-            x="4"
-            y="8"
-            width="24"
-            height="16"
-            rx="3"
-            fill="currentColor"
-            fillOpacity="0.1"
-            stroke="currentColor"
-            strokeWidth="1.3"
-          />
-          <rect x="8" y="12" width="3" height="2" rx="0.5" fill="currentColor" opacity="0.5" />
-          <rect x="13" y="12" width="3" height="2" rx="0.5" fill="currentColor" opacity="0.5" />
-          <rect x="18" y="12" width="3" height="2" rx="0.5" fill="currentColor" opacity="0.5" />
-          <rect x="10" y="17" width="12" height="2" rx="0.5" fill="currentColor" opacity="0.4" />
         </svg>
       </div>
 
