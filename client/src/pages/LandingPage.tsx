@@ -231,7 +231,7 @@ export default function LandingPage() {
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--primary-500)]/[0.05] via-[var(--primary-500)]/[0.02] to-[#2DD1B1]/[0.04] dark:from-[var(--primary-500)]/[0.08] dark:via-[var(--primary-500)]/[0.03] dark:to-[#2DD1B1]/[0.06]" />
                 {/* Watermark icon */}
                 <div className="animate-float-slow pointer-events-none absolute -right-2 -bottom-2 text-[var(--primary-500)] opacity-[0.04] transition-opacity group-hover:opacity-[0.07] dark:opacity-[0.06] dark:group-hover:opacity-[0.10]">
-                  <feature.icon className="h-18 w-18" />
+                  <feature.icon className="h-14 w-14" />
                 </div>
                 <div className="relative">
                   <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--primary-500)]/10 text-[var(--primary-500)] shadow-sm ring-1 ring-[var(--primary-500)]/10 transition-all group-hover:bg-[var(--primary-500)] group-hover:text-white group-hover:shadow-[var(--primary-500)]/20 group-hover:shadow-md">
