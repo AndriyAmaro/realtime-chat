@@ -1172,7 +1172,7 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6">
           <div className="flex items-center gap-2">
             <Logo size={20} />
-            <span className="text-xs text-[var(--text-muted)]">Realtime Chat — Andriy Amaro</span>
+            <span className="text-xs text-[var(--text-muted)]">Realtime Chat — Andri Amaro</span>
           </div>
           <div className="flex items-center gap-4">
             <a
