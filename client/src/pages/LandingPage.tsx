@@ -199,64 +199,222 @@ export default function LandingPage() {
 
       {/* Architecture */}
       <section className="relative border-t border-[var(--border-default)] py-20 sm:py-28">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="scroll-reveal mb-12 text-center">
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
-              Arquitetura
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="scroll-reveal mb-14 text-center">
+            <h2 className="text-2xl font-bold sm:text-3xl">
+              <span className="animate-gradient bg-gradient-to-r from-[var(--primary-500)] via-[#8b5cf6] to-[var(--primary-500)] bg-clip-text text-transparent">
+                Arquitetura
+              </span>
             </h2>
             <p className="mt-3 text-[var(--text-secondary)]">
               3 camadas no backend, comunicação bidirecional via WebSocket.
             </p>
           </div>
 
-          <div className="scroll-reveal-scale scroll-reveal grid gap-4 sm:grid-cols-3">
-            {/* Client */}
-            <div className="glass card-glow flex flex-col items-center rounded-xl p-6 text-center">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#61DAFB]/10 text-[#61DAFB]">
-                <span className="text-xl font-bold">R</span>
+          {/* Architecture diagram: 3 columns connected by arrows */}
+          <div className="scroll-reveal-scale scroll-reveal grid items-start gap-6 sm:grid-cols-3">
+            {/* Frontend */}
+            <div className="group glass card-glow relative rounded-2xl p-6 shadow-sm ring-1 ring-black/[0.06] transition-all hover:-translate-y-1 dark:shadow-none dark:ring-white/[0.06]">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#61DAFB]/10 text-[#61DAFB] transition-colors group-hover:bg-[#61DAFB] group-hover:text-white">
+                  <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5">
+                    <circle cx="16" cy="16" r="2.5" fill="currentColor" />
+                    <g stroke="currentColor" strokeWidth="1.2">
+                      <ellipse cx="16" cy="16" rx="12" ry="4.5" />
+                      <ellipse cx="16" cy="16" rx="12" ry="4.5" transform="rotate(60 16 16)" />
+                      <ellipse cx="16" cy="16" rx="12" ry="4.5" transform="rotate(120 16 16)" />
+                    </g>
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)]">Frontend</h3>
+                  <span className="text-[10px] font-medium tracking-wider text-[var(--primary-500)]">
+                    VERCEL
+                  </span>
+                </div>
               </div>
-              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Frontend</h3>
-              <p className="mt-2 text-xs text-[var(--text-muted)]">
-                React 19 + Vite + Tailwind CSS 4 + 40+ componentes do Design System Pulse
-              </p>
-              <span className="mt-3 text-[10px] font-medium text-[var(--text-muted)]">VERCEL</span>
+
+              <ul className="space-y-2 text-xs leading-relaxed text-[var(--text-muted)]">
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#61DAFB]" />
+                  React 19 + Vite + TypeScript
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#61DAFB]" />
+                  Tailwind CSS 4 + Design System Pulse
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#61DAFB]" />
+                  Zustand + React Router 7
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#61DAFB]" />
+                  40+ componentes reutilizáveis
+                </li>
+              </ul>
+
+              {/* Arrow connector (visible on sm+) */}
+              <div className="pointer-events-none absolute top-1/2 -right-3 z-10 hidden -translate-y-1/2 text-[var(--text-muted)] sm:block">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M4 10h12m-4-4l4 4-4 4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
             </div>
 
-            {/* Server */}
-            <div className="glass card-glow flex flex-col items-center rounded-xl p-6 text-center">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#68A063]/10 text-[#68A063]">
-                <span className="text-xl font-bold">E</span>
+            {/* Backend */}
+            <div className="group glass card-glow relative rounded-2xl p-6 shadow-sm ring-1 ring-black/[0.06] transition-all hover:-translate-y-1 dark:shadow-none dark:ring-white/[0.06]">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#68A063]/10 text-[#68A063] transition-colors group-hover:bg-[#68A063] group-hover:text-white">
+                  <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5">
+                    <path
+                      d="M6 8l6 6-6 6"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M16 22h10"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)]">Backend</h3>
+                  <span className="text-[10px] font-medium tracking-wider text-[var(--primary-500)]">
+                    RAILWAY
+                  </span>
+                </div>
               </div>
-              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Backend</h3>
-              <p className="mt-2 text-xs text-[var(--text-muted)]">
-                Express 5 + Prisma 7 + Socket.io + Pino + Controller → Service → Repository
-              </p>
-              <span className="mt-3 text-[10px] font-medium text-[var(--text-muted)]">RAILWAY</span>
+
+              <ul className="space-y-2 text-xs leading-relaxed text-[var(--text-muted)]">
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#68A063]" />
+                  Express 5 + Socket.io + Pino
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#68A063]" />
+                  Controller → Service → Repository
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#68A063]" />
+                  JWT auth + refresh tokens
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#68A063]" />
+                  Zod validation + error handling
+                </li>
+              </ul>
+
+              {/* Arrow connector (visible on sm+) */}
+              <div className="pointer-events-none absolute top-1/2 -right-3 z-10 hidden -translate-y-1/2 text-[var(--text-muted)] sm:block">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M4 10h12m-4-4l4 4-4 4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
             </div>
 
             {/* Database */}
-            <div className="glass card-glow flex flex-col items-center rounded-xl p-6 text-center">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#4169E1]/10 text-[#4169E1]">
-                <span className="text-xl font-bold">P</span>
+            <div className="group glass card-glow rounded-2xl p-6 shadow-sm ring-1 ring-black/[0.06] transition-all hover:-translate-y-1 dark:shadow-none dark:ring-white/[0.06]">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#4169E1]/10 text-[#4169E1] transition-colors group-hover:bg-[#4169E1] group-hover:text-white">
+                  <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5">
+                    <ellipse
+                      cx="16"
+                      cy="8"
+                      rx="10"
+                      ry="4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      d="M6 8v16c0 2.2 4.5 4 10 4s10-1.8 10-4V8"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                    <ellipse
+                      cx="16"
+                      cy="16"
+                      rx="10"
+                      ry="4"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      opacity="0.4"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)]">Database</h3>
+                  <span className="text-[10px] font-medium tracking-wider text-[var(--primary-500)]">
+                    RAILWAY
+                  </span>
+                </div>
               </div>
-              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Database</h3>
-              <p className="mt-2 text-xs text-[var(--text-muted)]">
-                PostgreSQL 16 + 6 models + cursor-based pagination + soft delete
-              </p>
-              <span className="mt-3 text-[10px] font-medium text-[var(--text-muted)]">RAILWAY</span>
+
+              <ul className="space-y-2 text-xs leading-relaxed text-[var(--text-muted)]">
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#4169E1]" />
+                  PostgreSQL 16 + Prisma 7 ORM
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#4169E1]" />6 models +
+                  cursor-based pagination
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#4169E1]" />
+                  Soft delete + audit timestamps
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-[#4169E1]" />
+                  Full-text search + indexes
+                </li>
+              </ul>
             </div>
           </div>
 
-          <div className="scroll-reveal mt-8 flex flex-wrap items-center justify-center gap-3">
-            <span className="text-xs font-medium text-[var(--text-muted)]">24 endpoints REST</span>
-            <span className="text-[var(--text-muted)]">·</span>
-            <span className="text-xs font-medium text-[var(--text-muted)]">
-              18 eventos Socket.io
-            </span>
-            <span className="text-[var(--text-muted)]">·</span>
-            <span className="text-xs font-medium text-[var(--text-muted)]">37 testes</span>
-            <span className="text-[var(--text-muted)]">·</span>
-            <span className="text-xs font-medium text-[var(--text-muted)]">29 fases</span>
+          {/* Stats bar */}
+          <div className="scroll-reveal mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            <div className="text-center">
+              <span className="block text-lg font-bold text-[var(--text-primary)]">24</span>
+              <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)]">
+                ENDPOINTS REST
+              </span>
+            </div>
+            <div className="h-6 w-px bg-[var(--border-default)]" />
+            <div className="text-center">
+              <span className="block text-lg font-bold text-[var(--text-primary)]">18</span>
+              <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)]">
+                EVENTOS SOCKET.IO
+              </span>
+            </div>
+            <div className="h-6 w-px bg-[var(--border-default)]" />
+            <div className="text-center">
+              <span className="block text-lg font-bold text-[var(--text-primary)]">37</span>
+              <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)]">
+                TESTES
+              </span>
+            </div>
+            <div className="h-6 w-px bg-[var(--border-default)]" />
+            <div className="text-center">
+              <span className="block text-lg font-bold text-[var(--text-primary)]">29</span>
+              <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)]">
+                FASES
+              </span>
+            </div>
           </div>
         </div>
       </section>
