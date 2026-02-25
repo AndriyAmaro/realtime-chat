@@ -248,9 +248,16 @@ function MarqueeRow({ items, reverse }: { items: TechItem[]; reverse?: boolean }
 
 export function TechMarquee() {
   return (
-    <div className="space-y-3">
-      <MarqueeRow items={ROW_1} />
-      <MarqueeRow items={ROW_2} reverse />
-    </div>
+    <>
+      {/* Mobile: 2 rows */}
+      <div className="space-y-3 sm:hidden">
+        <MarqueeRow items={ROW_1} />
+        <MarqueeRow items={ROW_2} reverse />
+      </div>
+      {/* Desktop: single row with all items */}
+      <div className="hidden sm:block">
+        <MarqueeRow items={TECH_ITEMS} />
+      </div>
+    </>
   )
 }
