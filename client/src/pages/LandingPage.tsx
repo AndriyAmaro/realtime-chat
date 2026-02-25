@@ -679,10 +679,11 @@ export default function LandingPage() {
       {/* CTA Final */}
       <section className="relative overflow-hidden py-20 sm:py-28">
         <div className="absolute inset-x-0 top-0 mx-auto h-[2px] max-w-6xl bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
-        {/* Gradient orbs — Pulse teal palette */}
+        {/* Gradient orbs — Pulse teal palette (same as Architecture) */}
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[var(--primary-500)]/[0.10] blur-[100px] dark:bg-[var(--primary-500)]/[0.16]" />
-          <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-[#2DD1B1]/[0.08] blur-[100px] dark:bg-[#2DD1B1]/[0.14]" />
+          <div className="bg-primary-500/15 dark:bg-primary-500/20 absolute top-0 left-1/4 h-96 w-96 rounded-full blur-[120px]" />
+          <div className="bg-primary-500/10 dark:bg-primary-500/15 absolute right-1/4 bottom-0 h-80 w-80 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2DD1B1]/[0.08] blur-[100px] dark:bg-[#2DD1B1]/[0.14]" />
         </div>
 
         <div className="relative mx-auto max-w-2xl px-4 sm:px-6">
