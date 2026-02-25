@@ -223,24 +223,34 @@ function TechCard({ name, color, icon }: TechItem) {
   )
 }
 
-export function TechMarquee() {
+const ROW_1 = TECH_ITEMS.slice(0, 5)
+const ROW_2 = TECH_ITEMS.slice(5)
+
+function MarqueeRow({ items, reverse }: { items: TechItem[]; reverse?: boolean }) {
+  const trackClass = reverse ? 'tech-marquee-track-reverse' : 'tech-marquee-track'
   return (
     <div className="tech-marquee relative overflow-hidden py-2">
       <div className="flex">
-        <div className="tech-marquee-track flex shrink-0 items-center gap-5 pr-5">
-          {TECH_ITEMS.map((item) => (
+        <div className={`${trackClass} flex shrink-0 items-center gap-5 pr-5`}>
+          {items.map((item) => (
             <TechCard key={item.name} {...item} />
           ))}
         </div>
-        <div
-          className="tech-marquee-track flex shrink-0 items-center gap-5 pr-5"
-          aria-hidden="true"
-        >
-          {TECH_ITEMS.map((item) => (
+        <div className={`${trackClass} flex shrink-0 items-center gap-5 pr-5`} aria-hidden="true">
+          {items.map((item) => (
             <TechCard key={`dup-${item.name}`} {...item} />
           ))}
         </div>
       </div>
+    </div>
+  )
+}
+
+export function TechMarquee() {
+  return (
+    <div className="space-y-3">
+      <MarqueeRow items={ROW_1} />
+      <MarqueeRow items={ROW_2} reverse />
     </div>
   )
 }
