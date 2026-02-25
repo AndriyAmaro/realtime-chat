@@ -149,7 +149,7 @@ export function HeroBackground() {
       </div>
 
       {/* Small chat bubble — center left area */}
-      <div className="animate-float-delayed absolute top-auto bottom-[24%] left-[3%] opacity-[0.10] sm:top-[55%] sm:bottom-auto sm:left-[20%] dark:opacity-[0.18]">
+      <div className="animate-float-delayed absolute top-auto bottom-[28%] left-[3%] opacity-[0.10] sm:top-[55%] sm:bottom-auto sm:left-[20%] dark:opacity-[0.18]">
         <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[var(--primary-500)]">
           <path
             d="M6 6h20a2 2 0 012 2v12a2 2 0 01-2 2H14l-6 4v-4H6a2 2 0 01-2-2V8a2 2 0 012-2z"
