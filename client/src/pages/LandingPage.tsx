@@ -104,6 +104,80 @@ function CountUp({ end, duration = 1.5 }: { end: number; duration?: number }) {
   )
 }
 
+function FeatureCard({ feature, index }: { feature: (typeof FEATURES)[number]; index: number }) {
+  return (
+    <div
+      className={`scroll-reveal stagger-${index + 1} glass card-glow group relative overflow-hidden rounded-2xl p-6 shadow-sm ring-1 ring-[var(--primary-500)]/10 transition-all hover:-translate-y-1 dark:shadow-none dark:ring-[var(--primary-500)]/15`}
+    >
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--primary-500)]/[0.05] via-[var(--primary-500)]/[0.02] to-[#2DD1B1]/[0.04] dark:from-[var(--primary-500)]/[0.08] dark:via-[var(--primary-500)]/[0.03] dark:to-[#2DD1B1]/[0.06]" />
+      <div className="animate-float-slow pointer-events-none absolute right-3 bottom-3 text-[var(--primary-500)] opacity-[0.04] transition-opacity group-hover:opacity-[0.07] dark:opacity-[0.06] dark:group-hover:opacity-[0.10]">
+        <feature.icon className="h-14 w-14" />
+      </div>
+      <div className="relative">
+        <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--primary-500)]/10 text-[var(--primary-500)] shadow-sm ring-1 ring-[var(--primary-500)]/10 transition-all group-hover:bg-[var(--primary-500)] group-hover:text-white group-hover:shadow-[var(--primary-500)]/20 group-hover:shadow-md">
+          <feature.icon className="h-5 w-5" />
+        </div>
+        <h3 className="text-sm font-semibold text-[var(--text-primary)]">{feature.title}</h3>
+        <p className="mt-2 text-xs leading-relaxed text-[var(--text-muted)]">
+          {feature.description}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function FeaturesCarousel() {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [activePage, setActivePage] = useState(0)
+  const totalPages = Math.ceil(FEATURES.length / 2)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const onScroll = () => {
+      const page = Math.round(el.scrollLeft / el.clientWidth)
+      setActivePage(page)
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const scrollToPage = (page: number) => {
+    scrollRef.current?.scrollTo({ left: page * scrollRef.current.clientWidth, behavior: 'smooth' })
+  }
+
+  return (
+    <div className="sm:hidden">
+      <div
+        ref={scrollRef}
+        className="scrollbar-hide flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-2"
+      >
+        {Array.from({ length: totalPages }, (_, pageIdx) => (
+          <div key={pageIdx} className="grid w-full shrink-0 snap-center grid-cols-2 gap-3">
+            {FEATURES.slice(pageIdx * 2, pageIdx * 2 + 2).map((feature, i) => (
+              <FeatureCard key={feature.title} feature={feature} index={pageIdx * 2 + i} />
+            ))}
+          </div>
+        ))}
+      </div>
+      {/* Dots */}
+      <div className="mt-4 flex justify-center gap-2">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => scrollToPage(i)}
+            className={`h-2 rounded-full transition-all ${
+              i === activePage ? 'w-6 bg-[var(--primary-500)]' : 'w-2 bg-[var(--primary-500)]/25'
+            }`}
+            aria-label={`Página ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function LandingPage() {
   const sectionsRef = useRef<HTMLDivElement>(null)
 
@@ -220,33 +294,15 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Desktop grid */}
+          <div className="hidden gap-5 sm:grid sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map((feature, i) => (
-              <div
-                key={feature.title}
-                className={`scroll-reveal stagger-${i + 1} glass card-glow group relative overflow-hidden rounded-2xl p-6 shadow-sm ring-1 ring-[var(--primary-500)]/10 transition-all hover:-translate-y-1 dark:shadow-none dark:ring-[var(--primary-500)]/15`}
-              >
-                <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
-                {/* Gradient background — Pulse primary */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--primary-500)]/[0.05] via-[var(--primary-500)]/[0.02] to-[#2DD1B1]/[0.04] dark:from-[var(--primary-500)]/[0.08] dark:via-[var(--primary-500)]/[0.03] dark:to-[#2DD1B1]/[0.06]" />
-                {/* Watermark icon */}
-                <div className="animate-float-slow pointer-events-none absolute right-3 bottom-3 text-[var(--primary-500)] opacity-[0.04] transition-opacity group-hover:opacity-[0.07] dark:opacity-[0.06] dark:group-hover:opacity-[0.10]">
-                  <feature.icon className="h-14 w-14" />
-                </div>
-                <div className="relative">
-                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--primary-500)]/10 text-[var(--primary-500)] shadow-sm ring-1 ring-[var(--primary-500)]/10 transition-all group-hover:bg-[var(--primary-500)] group-hover:text-white group-hover:shadow-[var(--primary-500)]/20 group-hover:shadow-md">
-                    <feature.icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-[var(--text-muted)]">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
+              <FeatureCard key={feature.title} feature={feature} index={i} />
             ))}
           </div>
+
+          {/* Mobile carousel — 2 columns per page */}
+          <FeaturesCarousel />
         </div>
       </section>
 
