@@ -65,17 +65,19 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
         {/* Branding */}
         <div className="mb-8 text-center">
           <div className="mb-4 inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] p-3 shadow-lg backdrop-blur-sm">
-            <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-white">
+            <svg viewBox="0 0 64 64" fill="none" className="h-9 w-9">
               <path
-                d="M6 6h20a2 2 0 012 2v12a2 2 0 01-2 2H14l-6 4v-4H6a2 2 0 01-2-2V8a2 2 0 012-2z"
-                fill="currentColor"
+                d="M12 2H52A10 10 0 0 1 62 12V32A10 10 0 0 1 52 42H22L10 58L14 42A10 10 0 0 1 2 32V12A10 10 0 0 1 12 2Z"
+                fill="white"
                 fillOpacity="0.2"
-                stroke="currentColor"
-                strokeWidth="1.5"
               />
-              <circle cx="12" cy="14" r="1.2" fill="currentColor" />
-              <circle cx="16" cy="14" r="1.2" fill="currentColor" />
-              <circle cx="20" cy="14" r="1.2" fill="currentColor" />
+              <polyline
+                points="8,22 16,22 20,22 24,8 30,36 34,14 37,22 44,22 56,22"
+                stroke="white"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
           <h2 className="auth-shimmer-text text-2xl font-bold tracking-tight">Realtime Chat</h2>
