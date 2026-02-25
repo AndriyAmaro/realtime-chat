@@ -655,8 +655,8 @@ export default function LandingPage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="relative border-t border-[var(--border-default)] py-20 sm:py-28">
-        <div className="scroll-reveal mx-auto mb-8 h-[2px] max-w-2xl bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
+      <section className="relative py-20 sm:py-28">
+        <div className="absolute inset-x-0 top-0 mx-auto h-[2px] max-w-2xl bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
 
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div className="scroll-reveal mb-14 text-center">
