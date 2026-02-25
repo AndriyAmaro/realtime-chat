@@ -673,20 +673,6 @@ export default function LandingPage() {
             </svg>
           </div>
 
-          {/* Express terminal small — top center-right */}
-          <div className="animate-float-slow absolute top-[8%] right-[18%] opacity-[0.1] dark:opacity-[0.18]">
-            <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#68A063]">
-              <path
-                d="M6 8l6 6-6 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path d="M16 22h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </div>
-
           {/* PostgreSQL cylinder small — left mid */}
           <div className="animate-float absolute top-[35%] left-[18%] opacity-[0.1] dark:opacity-[0.18]">
             <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#4169E1]">
