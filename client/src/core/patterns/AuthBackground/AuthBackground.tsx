@@ -64,7 +64,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         {/* Chat bubble — top left */}
         <div className="animate-float-slow absolute top-[8%] left-[4%] opacity-[0.08]">
-          <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-white">
+          <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-white">
             <path
               d="M6 6h20a2 2 0 012 2v12a2 2 0 01-2 2H14l-6 4v-4H6a2 2 0 01-2-2V8a2 2 0 012-2z"
               fill="currentColor"
@@ -80,7 +80,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
 
         {/* @ symbol — mid left */}
         <div className="animate-float-delayed absolute top-[38%] left-[3%] opacity-[0.07]">
-          <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-white">
+          <svg viewBox="0 0 32 32" fill="none" className="h-11 w-11 text-white">
             <circle cx="16" cy="16" r="12" stroke="currentColor" strokeWidth="1.3" />
             <circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth="1.3" />
             <path
@@ -94,7 +94,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
 
         {/* Bell — bottom left */}
         <div className="animate-float absolute bottom-[12%] left-[5%] opacity-[0.07]">
-          <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-white">
+          <svg viewBox="0 0 32 32" fill="none" className="h-12 w-12 text-white">
             <path
               d="M16 4a8 8 0 018 8c0 4 2 6 2 8H6c0-2 2-4 2-8a8 8 0 018-8z"
               fill="currentColor"
@@ -113,7 +113,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
 
         {/* Emoji — lower left */}
         <div className="animate-float-slow absolute bottom-[35%] left-[2%] opacity-[0.06]">
-          <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 text-white">
+          <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-white">
             <circle
               cx="16"
               cy="16"
@@ -136,7 +136,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
 
         {/* Paper plane — top right */}
         <div className="animate-float absolute top-[12%] right-[3%] opacity-[0.08]">
-          <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-white">
+          <svg viewBox="0 0 32 32" fill="none" className="h-13 w-13 text-white">
             <path
               d="M4 4l24 12L4 28l4-12L4 4z"
               fill="currentColor"
@@ -151,7 +151,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
 
         {/* Hashtag — mid right */}
         <div className="animate-float-delayed absolute top-[42%] right-[2%] opacity-[0.07]">
-          <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-white">
+          <svg viewBox="0 0 32 32" fill="none" className="h-11 w-11 text-white">
             <path
               d="M12 4l-2 24M22 4l-2 24M4 12h24M4 20h24"
               stroke="currentColor"
@@ -163,7 +163,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
 
         {/* Double check — upper right */}
         <div className="animate-float-slow absolute top-[25%] right-[6%] opacity-[0.06]">
-          <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7 text-white">
+          <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-white">
             <path
               d="M4 16l5 5L19 9"
               stroke="currentColor"
@@ -184,7 +184,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
 
         {/* Double bubbles — bottom right */}
         <div className="animate-float absolute right-[4%] bottom-[10%] opacity-[0.07]">
-          <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-white">
+          <svg viewBox="0 0 32 32" fill="none" className="h-13 w-13 text-white">
             <path
               d="M4 5h16a2 2 0 012 2v8a2 2 0 01-2 2h-6l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"
               fill="currentColor"
@@ -207,24 +207,12 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
       <div className="absolute inset-0 flex flex-col items-center justify-center px-10">
         {/* Branding */}
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/90 p-3.5 shadow-lg ring-4 ring-white/20 ring-offset-0">
+          <div className="mb-4 inline-flex items-center justify-center rounded-2xl border border-white/20 bg-[#1ACFAE]/30 p-3.5 shadow-lg ring-4 ring-white/15 ring-offset-0 backdrop-blur-sm">
             <svg viewBox="0 0 64 64" fill="none" className="h-12 w-12">
-              <defs>
-                <linearGradient
-                  id="auth-logo-g"
-                  x1="2"
-                  y1="2"
-                  x2="62"
-                  y2="58"
-                  gradientUnits="userSpaceOnUse"
-                >
-                  <stop stopColor="#2DD1B1" />
-                  <stop offset="1" stopColor="#0D7768" />
-                </linearGradient>
-              </defs>
               <path
                 d="M12 2H52A10 10 0 0 1 62 12V32A10 10 0 0 1 52 42H22L10 58L14 42A10 10 0 0 1 2 32V12A10 10 0 0 1 12 2Z"
-                fill="url(#auth-logo-g)"
+                fill="white"
+                fillOpacity="0.25"
               />
               <polyline
                 points="8,22 16,22 20,22 24,8 30,36 34,14 37,22 44,22 56,22"
