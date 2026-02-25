@@ -307,7 +307,8 @@ export default function LandingPage() {
       </section>
 
       {/* Architecture */}
-      <section className="relative overflow-hidden border-t border-[var(--border-default)] py-20 sm:py-28">
+      <section className="relative overflow-hidden py-20 sm:py-28">
+        <div className="absolute inset-x-0 top-0 mx-auto h-[2px] max-w-6xl bg-gradient-to-r from-transparent via-[var(--primary-500)] to-transparent" />
         {/* Gradient orbs background — Pulse teal palette */}
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
           <div className="bg-primary-500/15 dark:bg-primary-500/20 absolute top-0 left-1/4 h-96 w-96 rounded-full blur-[120px]" />
