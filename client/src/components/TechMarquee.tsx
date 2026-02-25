@@ -209,7 +209,7 @@ const TECH_ITEMS: TechItem[] = [
 
 function TechCard({ name, color, icon }: TechItem) {
   return (
-    <div className="glass card-glow flex shrink-0 items-center gap-3 rounded-xl px-5 py-3.5 transition-transform hover:scale-[1.03]">
+    <div className="glass card-glow flex shrink-0 items-center gap-3 rounded-xl px-5 py-3.5 shadow-sm ring-1 ring-black/[0.06] transition-transform hover:scale-[1.03] dark:shadow-none dark:ring-white/[0.06]">
       <div style={{ color }} className="flex items-center justify-center">
         {icon}
       </div>
@@ -224,13 +224,13 @@ export function TechMarquee() {
   return (
     <div className="tech-marquee relative overflow-hidden py-2">
       <div className="flex">
-        <div className="animate-marquee flex shrink-0 items-center gap-5 pr-5 [animation-duration:40s]">
+        <div className="tech-marquee-track flex shrink-0 items-center gap-5 pr-5">
           {TECH_ITEMS.map((item) => (
             <TechCard key={item.name} {...item} />
           ))}
         </div>
         <div
-          className="animate-marquee flex shrink-0 items-center gap-5 pr-5 [animation-duration:40s]"
+          className="tech-marquee-track flex shrink-0 items-center gap-5 pr-5"
           aria-hidden="true"
         >
           {TECH_ITEMS.map((item) => (

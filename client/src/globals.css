@@ -560,7 +560,10 @@ body {
   mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
-.tech-marquee:hover .animate-marquee {
+.tech-marquee-track {
+  animation: marquee 40s linear infinite;
+}
+.tech-marquee:hover .tech-marquee-track {
   animation-play-state: paused;
 }
 
@@ -682,7 +685,8 @@ body {
   .animate-hero-orb-1,
   .animate-hero-orb-2,
   .animate-hero-orb-3,
-  .animate-hero-logo {
+  .animate-hero-logo,
+  .tech-marquee-track {
     animation: none;
   }
   /* ECG: remove dasharray so full static path is visible */
