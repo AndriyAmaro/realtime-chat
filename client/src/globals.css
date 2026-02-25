@@ -580,6 +580,15 @@ body {
   display: none;
 }
 
+/* Activity bar marquee */
+.activity-marquee {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+.activity-marquee-track {
+  animation: marquee 35s linear infinite;
+}
+
 /* Perspective */
 .perspective-1200 { perspective: 1200px; }
 .rotate-x-2 { transform: rotateX(2deg); }
@@ -713,7 +722,8 @@ body {
   .animate-hero-title,
   .animate-hero-title-delay,
   .tech-marquee-track,
-  .tech-marquee-track-reverse {
+  .tech-marquee-track-reverse,
+  .activity-marquee-track {
     animation: none;
   }
   /* ECG: remove dasharray so full static path is visible */
