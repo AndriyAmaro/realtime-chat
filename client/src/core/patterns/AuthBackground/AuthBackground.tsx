@@ -80,7 +80,7 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
               />
             </svg>
           </div>
-          <h2 className="auth-shimmer-text text-2xl font-bold tracking-tight">Realtime Chat</h2>
+          <h2 className="auth-shimmer-text text-3xl font-bold tracking-tight">Realtime Chat</h2>
           <p className="mt-2 text-sm font-medium text-white/40">Conecte-se em tempo real</p>
         </div>
 
@@ -89,7 +89,10 @@ export function AuthBackground({ className }: AuthBackgroundProps) {
           {/* Glow behind card */}
           <div className="absolute -inset-6 rounded-3xl bg-white/[0.03] blur-2xl" />
 
-          <div className="relative rounded-2xl border border-white/[0.15] bg-white/[0.07] shadow-[0_8px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+          <div className="relative overflow-hidden rounded-2xl border border-white/[0.15] bg-white/[0.07] shadow-[0_8px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+            {/* Gradient accent bar */}
+            <div className="h-[3px] bg-gradient-to-r from-white/10 via-white/40 to-white/10" />
+
             {/* Header */}
             <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3.5">
               <div className="relative h-9 w-9 rounded-full bg-gradient-to-br from-white/30 to-white/10">
