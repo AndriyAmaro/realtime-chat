@@ -198,8 +198,96 @@ export default function LandingPage() {
       </section>
 
       {/* Architecture */}
-      <section className="relative border-t border-[var(--border-default)] py-20 sm:py-28">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <section className="relative overflow-hidden border-t border-[var(--border-default)] py-20 sm:py-28">
+        {/* Floating tech icons background */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          {/* React atom — top left */}
+          <div className="animate-float-slow absolute top-[12%] left-[6%] opacity-[0.04] dark:opacity-[0.07]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-16 w-16 text-[#61DAFB]">
+              <circle cx="16" cy="16" r="2.5" fill="currentColor" />
+              <g stroke="currentColor" strokeWidth="0.8">
+                <ellipse cx="16" cy="16" rx="12" ry="4.5" />
+                <ellipse cx="16" cy="16" rx="12" ry="4.5" transform="rotate(60 16 16)" />
+                <ellipse cx="16" cy="16" rx="12" ry="4.5" transform="rotate(120 16 16)" />
+              </g>
+            </svg>
+          </div>
+
+          {/* Express terminal — right side */}
+          <div className="animate-float-delayed absolute top-[20%] right-[5%] opacity-[0.04] dark:opacity-[0.07]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-[#68A063]">
+              <path
+                d="M6 8l6 6-6 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path d="M16 22h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </div>
+
+          {/* PostgreSQL cylinder — bottom left */}
+          <div className="animate-float absolute bottom-[10%] left-[8%] opacity-[0.04] dark:opacity-[0.07]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-14 w-14 text-[#4169E1]">
+              <ellipse cx="16" cy="8" rx="10" ry="4" stroke="currentColor" strokeWidth="1.2" />
+              <path
+                d="M6 8v16c0 2.2 4.5 4 10 4s10-1.8 10-4V8"
+                stroke="currentColor"
+                strokeWidth="1.2"
+              />
+              <ellipse
+                cx="16"
+                cy="16"
+                rx="10"
+                ry="4"
+                stroke="currentColor"
+                strokeWidth="0.8"
+                opacity="0.4"
+              />
+            </svg>
+          </div>
+
+          {/* React atom small — bottom right */}
+          <div className="animate-float-delayed absolute right-[10%] bottom-[18%] opacity-[0.03] dark:opacity-[0.06]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#61DAFB]">
+              <circle cx="16" cy="16" r="2.5" fill="currentColor" />
+              <g stroke="currentColor" strokeWidth="0.8">
+                <ellipse cx="16" cy="16" rx="12" ry="4.5" />
+                <ellipse cx="16" cy="16" rx="12" ry="4.5" transform="rotate(60 16 16)" />
+                <ellipse cx="16" cy="16" rx="12" ry="4.5" transform="rotate(120 16 16)" />
+              </g>
+            </svg>
+          </div>
+
+          {/* Express terminal small — top center-right */}
+          <div className="animate-float-slow absolute top-[8%] right-[30%] opacity-[0.03] dark:opacity-[0.05]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#68A063]">
+              <path
+                d="M6 8l6 6-6 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path d="M16 22h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </div>
+
+          {/* PostgreSQL cylinder small — top left area */}
+          <div className="animate-float absolute top-[30%] left-[20%] opacity-[0.03] dark:opacity-[0.05]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#4169E1]">
+              <ellipse cx="16" cy="8" rx="10" ry="4" stroke="currentColor" strokeWidth="1.2" />
+              <path
+                d="M6 8v16c0 2.2 4.5 4 10 4s10-1.8 10-4V8"
+                stroke="currentColor"
+                strokeWidth="1.2"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
           <div className="scroll-reveal mb-14 text-center">
             <h2 className="text-2xl font-bold sm:text-3xl">
               <span className="animate-gradient bg-gradient-to-r from-[var(--primary-500)] via-[#8b5cf6] to-[var(--primary-500)] bg-clip-text text-transparent">
