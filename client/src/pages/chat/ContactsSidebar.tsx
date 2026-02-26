@@ -74,6 +74,7 @@ export function ContactsSidebar({ onUserClick }: ContactsSidebarProps) {
             results={filteredSearch}
             isLoading={isSearching}
             onAdd={(userId) => sendRequest.mutate(userId)}
+            onUserClick={onUserClick}
             pendingMutationId={sendRequest.variables}
             isSending={sendRequest.isPending}
           />
@@ -132,12 +133,14 @@ function SearchResults({
   results,
   isLoading,
   onAdd,
+  onUserClick,
   pendingMutationId,
   isSending,
 }: {
   results: SearchUser[]
   isLoading: boolean
   onAdd: (userId: string) => void
+  onUserClick: (userId: string) => void
   pendingMutationId: string | undefined
   isSending: boolean
 }) {
@@ -167,11 +170,19 @@ function SearchResults({
           key={user.id}
           className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-[var(--bg-subtle)]"
         >
-          <Avatar size="xs" src={user.avatar ?? undefined} initials={user.name} alt={user.name} />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-[var(--text-primary)]">{user.name}</p>
-            {user.bio && <p className="truncate text-xs text-[var(--text-muted)]">{user.bio}</p>}
-          </div>
+          <button
+            type="button"
+            className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left"
+            onClick={() => onUserClick(user.id)}
+          >
+            <Avatar size="xs" src={user.avatar ?? undefined} initials={user.name} alt={user.name} />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-[var(--text-primary)] hover:underline">
+                {user.name}
+              </p>
+              {user.bio && <p className="truncate text-xs text-[var(--text-muted)]">{user.bio}</p>}
+            </div>
+          </button>
           <Button
             variant="primary"
             size="xs"
