@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { roomService } from '@services/room.service'
 import type { CreateRoomPayload } from '@services/room.service'
+import type { Room } from '@/types/room'
 
 // ============ QUERY KEYS ============
 
@@ -77,7 +78,20 @@ export function useLeaveRoom() {
 
   return useMutation({
     mutationFn: (roomId: string) => roomService.leaveRoom(roomId),
-    onSuccess: () => {
+    onMutate: async (roomId) => {
+      await queryClient.cancelQueries({ queryKey: roomKeys.myRooms() })
+      const previousRooms = queryClient.getQueryData<Room[]>(roomKeys.myRooms())
+      queryClient.setQueryData<Room[]>(roomKeys.myRooms(), (old) =>
+        old?.filter((r) => r.id !== roomId)
+      )
+      return { previousRooms }
+    },
+    onError: (_err, _roomId, context) => {
+      if (context?.previousRooms) {
+        queryClient.setQueryData(roomKeys.myRooms(), context.previousRooms)
+      }
+    },
+    onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: roomKeys.myRooms() })
     },
   })
@@ -88,7 +102,22 @@ export function useDeleteRoom() {
 
   return useMutation({
     mutationFn: (roomId: string) => roomService.deleteRoom(roomId),
-    onSuccess: () => {
+    onMutate: async (roomId) => {
+      await queryClient.cancelQueries({ queryKey: roomKeys.myRooms() })
+      const previousRooms = queryClient.getQueryData<Room[]>(roomKeys.myRooms())
+      queryClient.setQueryData<Room[]>(roomKeys.myRooms(), (old) =>
+        old?.filter((r) => r.id !== roomId)
+      )
+      queryClient.removeQueries({ queryKey: roomKeys.detail(roomId) })
+      queryClient.removeQueries({ queryKey: roomKeys.members(roomId) })
+      return { previousRooms }
+    },
+    onError: (_err, _roomId, context) => {
+      if (context?.previousRooms) {
+        queryClient.setQueryData(roomKeys.myRooms(), context.previousRooms)
+      }
+    },
+    onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: roomKeys.myRooms() })
     },
   })
