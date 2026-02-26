@@ -295,225 +295,207 @@ export default function LandingPage() {
         <div className="absolute inset-x-0 bottom-0 border-t border-[var(--primary-500)]/10">
           <div className="activity-marquee relative overflow-hidden py-3">
             <div className="flex">
-              <div className="activity-marquee-track flex shrink-0 items-center gap-8 pr-8">
-                <ActivityItem
-                  icon={
-                    <span className="relative flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                    </span>
-                  }
-                  text="12 usuários online"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <path
-                        d="M3 3h10a1 1 0 011 1v6a1 1 0 01-1 1H7l-3 2v-2H3a1 1 0 01-1-1V4a1 1 0 011-1z"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                      />
-                    </svg>
-                  }
-                  text="847 mensagens enviadas"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <path
-                        d="M5.5 2l-1 12M10.5 2l-1 12M2 6h12M2 10h12"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  }
-                  text="6 salas ativas"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <path
-                        d="M2 8l4 4L14 4"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M6.5 8l4 4L14 4"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        opacity="0.5"
-                      />
-                    </svg>
-                  }
-                  text="Confirmação de leitura"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <polygon
-                        points="8,1 10,6 16,6.5 11.5,10.5 13,16 8,13 3,16 4.5,10.5 0,6.5 6,6"
-                        fill="currentColor"
-                        fillOpacity="0.3"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  }
-                  text="99.9% uptime"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.2" />
-                      <path
-                        d="M8 4v4l3 2"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  }
-                  text="Latência < 50ms"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <path
-                        d="M8 1l2 5h5l-4 3.5 1.5 5L8 11.5 3.5 14.5 5 9.5 1 6h5z"
-                        fill="currentColor"
-                        fillOpacity="0.3"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  }
-                  text="29 fases de deploy"
-                />
-              </div>
-              <div
-                className="activity-marquee-track flex shrink-0 items-center gap-8 pr-8"
-                aria-hidden="true"
-              >
-                <ActivityItem
-                  icon={
-                    <span className="relative flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                    </span>
-                  }
-                  text="12 usuários online"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <path
-                        d="M3 3h10a1 1 0 011 1v6a1 1 0 01-1 1H7l-3 2v-2H3a1 1 0 01-1-1V4a1 1 0 011-1z"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                      />
-                    </svg>
-                  }
-                  text="847 mensagens enviadas"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <path
-                        d="M5.5 2l-1 12M10.5 2l-1 12M2 6h12M2 10h12"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  }
-                  text="6 salas ativas"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <path
-                        d="M2 8l4 4L14 4"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M6.5 8l4 4L14 4"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        opacity="0.5"
-                      />
-                    </svg>
-                  }
-                  text="Confirmação de leitura"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <polygon
-                        points="8,1 10,6 16,6.5 11.5,10.5 13,16 8,13 3,16 4.5,10.5 0,6.5 6,6"
-                        fill="currentColor"
-                        fillOpacity="0.3"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  }
-                  text="99.9% uptime"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.2" />
-                      <path
-                        d="M8 4v4l3 2"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  }
-                  text="Latência < 50ms"
-                />
-                <ActivityDivider />
-                <ActivityItem
-                  icon={
-                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
-                      <path
-                        d="M8 1l2 5h5l-4 3.5 1.5 5L8 11.5 3.5 14.5 5 9.5 1 6h5z"
-                        fill="currentColor"
-                        fillOpacity="0.3"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  }
-                  text="29 fases de deploy"
-                />
-              </div>
+              {[false, true].map((isDuplicate) => (
+                <div
+                  key={isDuplicate ? 'dup' : 'main'}
+                  className="activity-marquee-track flex shrink-0 items-center gap-8 pr-8"
+                  aria-hidden={isDuplicate || undefined}
+                >
+                  {/* Tempo real */}
+                  <ActivityItem
+                    icon={
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                      </span>
+                    }
+                    text="Mensagens em tempo real"
+                  />
+                  <ActivityDivider />
+                  {/* Voz */}
+                  <ActivityItem
+                    icon={
+                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
+                        <rect
+                          x="5"
+                          y="1"
+                          width="6"
+                          height="9"
+                          rx="3"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                        />
+                        <path
+                          d="M2 8a6 6 0 0012 0M8 14v2"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    }
+                    text="Mensagens de voz"
+                  />
+                  <ActivityDivider />
+                  {/* Pinned */}
+                  <ActivityItem
+                    icon={
+                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
+                        <path
+                          d="M5 1l1 4-3 3h4l1 7 1-7h4l-3-3 1-4"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    }
+                    text="Mensagens fixadas"
+                  />
+                  <ActivityDivider />
+                  {/* Reações */}
+                  <ActivityItem
+                    icon={
+                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
+                        <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.2" />
+                        <path
+                          d="M5 10a4 4 0 006 0"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                        />
+                        <circle cx="5.5" cy="6.5" r="0.8" fill="currentColor" />
+                        <circle cx="10.5" cy="6.5" r="0.8" fill="currentColor" />
+                      </svg>
+                    }
+                    text="Reações com emoji"
+                  />
+                  <ActivityDivider />
+                  {/* Read receipts */}
+                  <ActivityItem
+                    icon={
+                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
+                        <path
+                          d="M2 8l4 4L14 4"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M6.5 8l4 4L14 4"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          opacity="0.5"
+                        />
+                      </svg>
+                    }
+                    text="Confirmação de leitura"
+                  />
+                  <ActivityDivider />
+                  {/* Upload */}
+                  <ActivityItem
+                    icon={
+                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
+                        <path
+                          d="M8 10V2m0 0L5 5m3-3l3 3"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M2 10v3a1 1 0 001 1h10a1 1 0 001-1v-3"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    }
+                    text="Upload de arquivos"
+                  />
+                  <ActivityDivider />
+                  {/* Eventos */}
+                  <ActivityItem
+                    icon={
+                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
+                        <rect
+                          x="1"
+                          y="3"
+                          width="14"
+                          height="12"
+                          rx="2"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                        />
+                        <path
+                          d="M1 7h14M5 1v4M11 1v4"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    }
+                    text="Eventos e calendário"
+                  />
+                  <ActivityDivider />
+                  {/* Amizades */}
+                  <ActivityItem
+                    icon={
+                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
+                        <circle cx="6" cy="5" r="3" stroke="currentColor" strokeWidth="1.2" />
+                        <path
+                          d="M1 14a5 5 0 0110 0"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M12 5l2 2 2-2"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          opacity="0.6"
+                        />
+                        <path
+                          d="M14 7v-4"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          opacity="0.6"
+                        />
+                      </svg>
+                    }
+                    text="Sistema de amizades"
+                  />
+                  <ActivityDivider />
+                  {/* Salas privadas */}
+                  <ActivityItem
+                    icon={
+                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
+                        <rect
+                          x="3"
+                          y="7"
+                          width="10"
+                          height="8"
+                          rx="2"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                        />
+                        <path
+                          d="M5 7V5a3 3 0 016 0v2"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    }
+                    text="Salas privadas"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
