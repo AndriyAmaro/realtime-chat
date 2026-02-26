@@ -9,6 +9,7 @@ export const messageRepository = {
     content: string
     type: MessageType
     fileUrl?: string
+    duration?: number
     userId: string
     roomId: string
     replyToId?: string
@@ -19,6 +20,7 @@ export const messageRepository = {
         content: data.content,
         type: data.type,
         fileUrl: data.fileUrl,
+        duration: data.duration,
         userId: data.userId,
         roomId: data.roomId,
         replyToId: data.replyToId,
@@ -130,6 +132,7 @@ const messageSelect = {
   content: true,
   type: true,
   fileUrl: true,
+  duration: true,
   editedAt: true,
   deletedAt: true,
   userId: true,

@@ -126,6 +126,7 @@ export interface MessagePayload {
   content: string
   type: MessageType
   fileUrl: string | null
+  duration: number | null
   editedAt: string | null
   deletedAt: string | null
   userId: string
@@ -156,6 +157,7 @@ export interface SendMessagePayload {
   content: string
   type?: MessageType
   fileUrl?: string
+  duration?: number
   replyToId?: string
   clientId?: string
 }

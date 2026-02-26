@@ -1,6 +1,6 @@
 // ============ SOCKET EVENT TYPES (mirrors server/src/types/socket.ts) ============
 
-export type MessageType = 'TEXT' | 'IMAGE' | 'FILE'
+export type MessageType = 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE'
 
 // ============ SERVER → CLIENT EVENTS ============
 
@@ -98,6 +98,7 @@ export interface MessagePayload {
   content: string
   type: MessageType
   fileUrl: string | null
+  duration: number | null
   editedAt: string | null
   deletedAt: string | null
   userId: string
@@ -128,6 +129,7 @@ export interface SendMessagePayload {
   content: string
   type?: MessageType
   fileUrl?: string
+  duration?: number
   replyToId?: string
   clientId?: string
 }

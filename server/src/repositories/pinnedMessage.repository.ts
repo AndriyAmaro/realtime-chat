@@ -14,6 +14,7 @@ const pinnedSelect = {
       content: true,
       type: true,
       fileUrl: true,
+      duration: true,
       editedAt: true,
       deletedAt: true,
       userId: true,

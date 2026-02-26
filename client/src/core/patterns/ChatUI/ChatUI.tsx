@@ -11,6 +11,7 @@ import {
   Clock,
   Image as ImageIcon,
   File,
+  Mic,
   X,
   MoreVertical,
   Download,
@@ -108,9 +109,10 @@ export type MessagePosition = 'sent' | 'received'
 export interface ChatAttachment {
   id: string
   name: string
-  type: 'image' | 'file'
+  type: 'image' | 'file' | 'voice'
   url?: string
   size?: number
+  duration?: number
 }
 
 export interface ChatUser {
@@ -264,6 +266,13 @@ function handleDownload(url: string, filename: string, e: React.MouseEvent) {
       // Fallback: open in new tab
       window.open(url, '_blank')
     })
+}
+
+// Format voice duration as MM:SS
+function formatVoiceDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${String(s).padStart(2, '0')}`
 }
 
 // Chat Message Component
@@ -441,6 +450,38 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
                         >
                           <Download size={14} />
                         </a>
+                      </div>
+                    ) : attachment.type === 'voice' && attachment.url ? (
+                      <div
+                        key={attachment.id}
+                        className={cn(
+                          'flex items-center gap-3 rounded-lg p-2.5',
+                          position === 'sent' ? 'bg-white/10' : 'bg-[var(--bg-emphasis)]'
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            'flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
+                            position === 'sent'
+                              ? 'bg-white/20 text-white'
+                              : 'bg-[var(--primary-500)]/15 text-[var(--primary-500)]'
+                          )}
+                        >
+                          <Mic size={14} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          {attachment.duration != null && (
+                            <span className="mb-1 block text-xs opacity-70">
+                              {formatVoiceDuration(attachment.duration)}
+                            </span>
+                          )}
+                          <audio
+                            controls
+                            preload="metadata"
+                            src={attachment.url}
+                            className="h-8 w-full max-w-[240px]"
+                          />
+                        </div>
                       </div>
                     ) : (
                       <div

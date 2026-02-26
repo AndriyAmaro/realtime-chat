@@ -28,6 +28,7 @@ export function registerMessageHandlers(io: TypedServer, socket: TypedSocket): v
         content: data.content,
         type: data.type,
         fileUrl: data.fileUrl,
+        duration: data.duration,
         userId,
         roomId: data.roomId,
         replyToId: data.replyToId,

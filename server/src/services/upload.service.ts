@@ -8,8 +8,10 @@ import { AppError } from '../errors/index.js'
 // ============ CONSTANTS ============
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+const ALLOWED_AUDIO_TYPES = ['audio/webm', 'audio/ogg', 'audio/mpeg', 'audio/wav', 'audio/mp4']
 const ALLOWED_FILE_TYPES = [
   ...ALLOWED_IMAGE_TYPES,
+  ...ALLOWED_AUDIO_TYPES,
   'application/pdf',
   'text/plain',
   'application/msword',

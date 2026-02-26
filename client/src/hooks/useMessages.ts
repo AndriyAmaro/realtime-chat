@@ -17,7 +17,13 @@ interface UseMessagesReturn {
   isLoadingHistory: boolean
   isRateLimited: boolean
   sendMessage: (content: string, replyToId?: string) => void
-  sendFileMessage: (content: string, fileUrl: string, type: MessageType, replyToId?: string) => void
+  sendFileMessage: (
+    content: string,
+    fileUrl: string,
+    type: MessageType,
+    replyToId?: string,
+    duration?: number
+  ) => void
   editMessage: (messageId: string, content: string) => void
   deleteMessage: (messageId: string) => void
   toggleReaction: (messageId: string, emoji: string) => void
@@ -270,7 +276,13 @@ export function useMessages({
   )
 
   const sendFileMessage = useCallback(
-    (content: string, fileUrl: string, type: MessageType, replyToId?: string) => {
+    (
+      content: string,
+      fileUrl: string,
+      type: MessageType,
+      replyToId?: string,
+      duration?: number
+    ) => {
       if (!socket?.connected || !userId) return
 
       const clientId = crypto.randomUUID()
@@ -279,6 +291,7 @@ export function useMessages({
         content,
         type,
         fileUrl,
+        duration,
         replyToId,
         clientId,
       }

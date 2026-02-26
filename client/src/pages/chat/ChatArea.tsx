@@ -9,6 +9,7 @@ import { useMessages } from '@hooks/useMessages'
 import { useTyping } from '@hooks/useTyping'
 import { useReadReceipts } from '@hooks/useReadReceipts'
 import { usePinnedMessages } from '@hooks/usePinnedMessages'
+import { useVoiceRecorder } from '@hooks/useVoiceRecorder'
 import { useRoomMembers, useRoom } from '@hooks/useRooms'
 import { uploadFile } from '@services/upload.service'
 import { MessageActionMenu } from './MessageActionMenu'
@@ -16,7 +17,7 @@ import { PinnedMessagesBar } from './PinnedMessagesBar'
 import { ReplyBar } from './ReplyBar'
 import { ReactionPicker } from './ReactionPicker'
 import { InputEmojiPicker } from './InputEmojiPicker'
-import { RefreshCw, WifiOff } from 'lucide-react'
+import { Mic, RefreshCw, Send, Square, WifiOff } from 'lucide-react'
 import type { MessagePayload } from '@/types/socket'
 import type {
   ChatMessageData,
@@ -67,6 +68,13 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
   const { data: members } = useRoomMembers(roomId)
   const currentMember = members?.find((m) => m.userId === userId)
   const canManage = room?.ownerId === userId || currentMember?.role === 'ADMIN'
+  const {
+    isRecording,
+    duration: recordingDuration,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+  } = useVoiceRecorder()
 
   const [isUploading, setIsUploading] = useState(false)
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
@@ -185,6 +193,26 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
 
   function handleEmojiSelect(emoji: string) {
     setInputValue((prev) => prev + emoji)
+  }
+
+  async function handleVoiceSend() {
+    const blob = await stopRecording()
+    if (!blob) return
+
+    setIsUploading(true)
+    try {
+      const file = new File([blob], 'voice-message.webm', { type: blob.type })
+      const result = await uploadFile(file)
+      sendFileMessage('Mensagem de voz', result.url, 'VOICE', undefined, recordingDuration)
+
+      requestAnimationFrame(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+      })
+    } catch (err) {
+      console.error('[voice] Failed to upload voice message:', err)
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   // ============ ACTION HANDLERS ============
@@ -502,19 +530,61 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
       {/* Reply bar */}
       {replyingTo && <ReplyBar replyingTo={replyingTo} onCancel={() => setReplyingTo(null)} />}
 
-      {/* Input */}
-      <ChatInput
-        value={inputValue}
-        onSubmit={handleSubmit}
-        onChange={handleInputChange}
-        placeholder="Digite uma mensagem..."
-        disabled={isUploading || isRateLimited}
-        showEmoji
-        showAttach
-        emojiPickerSlot={
-          <InputEmojiPicker onSelect={handleEmojiSelect} disabled={isUploading || isRateLimited} />
-        }
-      />
+      {/* Voice recording bar */}
+      {isRecording ? (
+        <div className="flex items-center gap-3 border-t border-[var(--border-default)] bg-[var(--bg-subtle)] px-4 py-3">
+          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[var(--error-base)]" />
+          <span className="flex-1 text-sm font-medium text-[var(--text-primary)]">
+            {formatDuration(recordingDuration)}
+          </span>
+          <button
+            type="button"
+            onClick={cancelRecording}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-muted)] hover:text-[var(--error-base)]"
+            aria-label="Cancelar gravação"
+          >
+            <Square size={16} />
+          </button>
+          <button
+            type="button"
+            onClick={handleVoiceSend}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--primary-500)] text-white transition-colors hover:bg-[var(--primary-600)]"
+            aria-label="Enviar mensagem de voz"
+          >
+            <Send size={16} />
+          </button>
+        </div>
+      ) : (
+        /* Input */
+        <div className="flex items-end gap-1 border-t border-[var(--border-default)]">
+          <div className="min-w-0 flex-1">
+            <ChatInput
+              value={inputValue}
+              onSubmit={handleSubmit}
+              onChange={handleInputChange}
+              placeholder="Digite uma mensagem..."
+              disabled={isUploading || isRateLimited}
+              showEmoji
+              showAttach
+              emojiPickerSlot={
+                <InputEmojiPicker
+                  onSelect={handleEmojiSelect}
+                  disabled={isUploading || isRateLimited}
+                />
+              }
+            />
+          </div>
+          <button
+            type="button"
+            onClick={startRecording}
+            disabled={isUploading || isRateLimited}
+            className="mr-2 mb-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-muted)] hover:text-[var(--primary-500)] disabled:opacity-50"
+            aria-label="Gravar mensagem de voz"
+          >
+            <Mic size={18} />
+          </button>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       <Modal
@@ -544,6 +614,12 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
 
 // ============ HELPERS ============
 
+function formatDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
 function toChatMessage(
   msg: MessagePayload,
   currentUserId: string | undefined,
@@ -558,8 +634,12 @@ function toChatMessage(
           {
             id: msg.id,
             name: msg.content,
-            type: (msg.type === 'IMAGE' ? 'image' : 'file') as 'image' | 'file',
+            type: (msg.type === 'IMAGE' ? 'image' : msg.type === 'VOICE' ? 'voice' : 'file') as
+              | 'image'
+              | 'file'
+              | 'voice',
             url: msg.fileUrl,
+            duration: msg.duration ?? undefined,
           },
         ]
       : undefined
@@ -588,7 +668,7 @@ function toChatMessage(
 
   return {
     id: msg.id,
-    content: msg.type === 'TEXT' || isDeleted ? msg.content : '',
+    content: msg.type === 'TEXT' || isDeleted ? msg.content : msg.type === 'VOICE' ? '' : '',
     timestamp: msg.createdAt,
     position: isSent ? 'sent' : 'received',
     status,

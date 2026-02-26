@@ -24,6 +24,7 @@ enum MessageType {
   TEXT
   IMAGE
   FILE
+  VOICE
 }
 
 enum FriendshipStatus {
@@ -95,6 +96,7 @@ model Message {
   content   String
   type      MessageType @default(TEXT)
   fileUrl   String?     @map("file_url")
+  duration  Int?
   isRead    Boolean     @default(false) @map("is_read")
   editedAt  DateTime?   @map("edited_at")
   deletedAt DateTime?   @map("deleted_at")

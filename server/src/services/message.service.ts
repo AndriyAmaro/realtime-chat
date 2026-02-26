@@ -16,6 +16,7 @@ export const messageService = {
     content: string
     type?: MessageType
     fileUrl?: string
+    duration?: number
     userId: string
     roomId: string
     replyToId?: string
@@ -47,6 +48,7 @@ export const messageService = {
       content: data.content,
       type: data.type ?? 'TEXT',
       fileUrl: data.fileUrl,
+      duration: data.duration,
       userId: data.userId,
       roomId: data.roomId,
       replyToId: data.replyToId,
@@ -200,6 +202,7 @@ type RawMessage = {
   content: string
   type: MessageType
   fileUrl: string | null
+  duration: number | null
   editedAt: Date | null
   deletedAt: Date | null
   userId: string
@@ -217,6 +220,7 @@ export function formatMessage(message: RawMessage): MessagePayload {
     content: message.deletedAt ? '' : message.content,
     type: message.type,
     fileUrl: message.deletedAt ? null : message.fileUrl,
+    duration: message.duration,
     editedAt: message.editedAt?.toISOString() ?? null,
     deletedAt: message.deletedAt?.toISOString() ?? null,
     userId: message.userId,
