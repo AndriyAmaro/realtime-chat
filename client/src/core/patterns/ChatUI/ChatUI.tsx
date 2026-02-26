@@ -13,6 +13,7 @@ import {
   File,
   X,
   MoreVertical,
+  Download,
 } from 'lucide-react'
 
 // ============================================================================
@@ -243,6 +244,27 @@ const MessageStatusIcon: React.FC<{ status?: MessageStatus }> = ({ status }) => 
   }
 }
 
+// Download helper — works cross-origin by fetching as blob
+function handleDownload(url: string, filename: string, e: React.MouseEvent) {
+  e.preventDefault()
+  fetch(url)
+    .then((res) => res.blob())
+    .then((blob) => {
+      const blobUrl = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(blobUrl)
+    })
+    .catch(() => {
+      // Fallback: open in new tab
+      window.open(url, '_blank')
+    })
+}
+
 // Chat Message Component
 const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
   (
@@ -374,34 +396,72 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
                 <div className="mb-2 space-y-2">
                   {message.attachments.map((attachment) =>
                     attachment.type === 'image' && attachment.url ? (
-                      <a
+                      <div
                         key={attachment.id}
-                        href={attachment.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block overflow-hidden rounded-lg"
+                        className="group/img relative inline-block overflow-hidden rounded-lg"
                       >
-                        <img
-                          src={attachment.url}
-                          alt={attachment.name}
-                          className="max-h-72 max-w-full rounded-lg object-contain"
-                          loading="lazy"
-                        />
-                      </a>
+                        <a
+                          href={attachment.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block"
+                        >
+                          <img
+                            src={attachment.url}
+                            alt={attachment.name}
+                            className="max-h-72 max-w-full rounded-lg object-contain"
+                            loading="lazy"
+                          />
+                        </a>
+                        <a
+                          href={attachment.url}
+                          download={attachment.name}
+                          className={cn(
+                            'absolute right-2 bottom-2 flex h-8 w-8 items-center justify-center rounded-full shadow-lg backdrop-blur-sm transition-all duration-150',
+                            'opacity-0 group-hover/img:opacity-100',
+                            'bg-black/50 text-white hover:bg-black/70'
+                          )}
+                          aria-label={`Baixar ${attachment.name}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDownload(attachment.url!, attachment.name, e)
+                          }}
+                        >
+                          <Download size={14} />
+                        </a>
+                      </div>
                     ) : (
-                      <a
+                      <div
                         key={attachment.id}
-                        href={attachment.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className={cn(
-                          'flex items-center gap-2 rounded-lg p-2 transition-colors hover:opacity-80',
+                          'flex items-center gap-2 rounded-lg p-2 transition-colors',
                           position === 'sent' ? 'bg-white/10' : 'bg-[var(--bg-emphasis)]'
                         )}
                       >
-                        <File size={16} />
-                        <span className="truncate text-sm underline">{attachment.name}</span>
-                      </a>
+                        <File size={16} className="shrink-0" />
+                        <a
+                          href={attachment.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="min-w-0 flex-1 truncate text-sm underline hover:opacity-80"
+                        >
+                          {attachment.name}
+                        </a>
+                        <a
+                          href={attachment.url}
+                          download={attachment.name}
+                          className={cn(
+                            'flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors',
+                            position === 'sent' ? 'hover:bg-white/10' : 'hover:bg-[var(--bg-muted)]'
+                          )}
+                          aria-label={`Baixar ${attachment.name}`}
+                          onClick={(e) => {
+                            handleDownload(attachment.url!, attachment.name, e)
+                          }}
+                        >
+                          <Download size={14} />
+                        </a>
+                      </div>
                     )
                   )}
                 </div>
