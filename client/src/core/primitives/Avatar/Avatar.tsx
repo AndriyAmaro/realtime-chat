@@ -61,6 +61,11 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
   ({ className, size = 'md', status = 'none', src, alt, initials, fallback, ...props }, ref) => {
     const [imageError, setImageError] = React.useState(false)
 
+    // Reset error state when src changes (new avatar uploaded, etc.)
+    React.useEffect(() => {
+      setImageError(false)
+    }, [src])
+
     const showImage = src && !imageError
     const showInitials = !showImage && initials
     const showFallback = !showImage && !showInitials
