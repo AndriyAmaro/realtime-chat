@@ -1110,6 +1110,186 @@ export default function LandingPage() {
               />
             </svg>
           </div>
+
+          {/* ── Desktop-only feature icons ── */}
+
+          {/* Microphone (voice) — left 18% top 20% */}
+          <div className="animate-float absolute top-[20%] left-[18%] hidden opacity-[0.12] lg:block dark:opacity-[0.20]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[#2DD1B1]">
+              <rect
+                x="10"
+                y="4"
+                width="12"
+                height="16"
+                rx="6"
+                fill="currentColor"
+                fillOpacity="0.1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <path
+                d="M6 18a10 10 0 0020 0"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+              <path d="M16 28v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+            </svg>
+          </div>
+
+          {/* Pin (pinned messages) — right 22% top 18% */}
+          <div className="animate-float-slow absolute top-[18%] right-[22%] hidden opacity-[0.10] lg:block dark:opacity-[0.18]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-[var(--primary-500)]">
+              <path
+                d="M10 2l2 8-6 6h8l2 14 2-14h8l-6-6 2-8"
+                fill="currentColor"
+                fillOpacity="0.1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+
+          {/* Calendar (events) — left 3% bottom 25% */}
+          <div className="animate-float-delayed absolute bottom-[25%] left-[3%] hidden opacity-[0.12] lg:block dark:opacity-[0.20]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-11 w-11 text-[#2DD1B1]">
+              <rect
+                x="3"
+                y="6"
+                width="26"
+                height="22"
+                rx="3"
+                fill="currentColor"
+                fillOpacity="0.1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <path d="M3 13h26" stroke="currentColor" strokeWidth="1.3" />
+              <path
+                d="M10 3v6M22 3v6"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+              <circle cx="16" cy="21" r="2" fill="currentColor" fillOpacity="0.3" />
+            </svg>
+          </div>
+
+          {/* Shield check (security) — right 3% bottom 18% */}
+          <div className="animate-float absolute right-[3%] bottom-[18%] hidden opacity-[0.10] lg:block dark:opacity-[0.18]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-10 w-10 text-[var(--primary-500)]">
+              <path
+                d="M16 2L4 8v8c0 8 5 15 12 18 7-3 12-10 12-18V8z"
+                fill="currentColor"
+                fillOpacity="0.1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M11 16l3 3 7-7"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+
+          {/* Upload (file sharing) — left 25% bottom 8% */}
+          <div className="animate-float-slow absolute bottom-[8%] left-[25%] hidden opacity-[0.10] lg:block dark:opacity-[0.18]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[#2DD1B1]">
+              <path
+                d="M16 20V6m0 0l-5 5m5-5l5 5"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M4 20v6a2 2 0 002 2h20a2 2 0 002-2v-6"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+
+          {/* Users (friends) — right 25% top 5% */}
+          <div className="animate-float-delayed absolute top-[5%] right-[30%] hidden opacity-[0.10] lg:block dark:opacity-[0.18]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-9 w-9 text-[var(--primary-500)]">
+              <circle
+                cx="12"
+                cy="10"
+                r="5"
+                fill="currentColor"
+                fillOpacity="0.1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <path
+                d="M2 28a10 10 0 0120 0"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+              <circle cx="24" cy="11" r="4" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
+              <path
+                d="M22 28a8 8 0 018 0"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                opacity="0.5"
+              />
+            </svg>
+          </div>
+
+          {/* Lock (private rooms) — left 15% bottom 40% */}
+          <div className="animate-float absolute bottom-[40%] left-[2%] hidden opacity-[0.10] lg:block dark:opacity-[0.18]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[#2DD1B1]">
+              <rect
+                x="6"
+                y="14"
+                width="20"
+                height="14"
+                rx="3"
+                fill="currentColor"
+                fillOpacity="0.1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <path
+                d="M10 14v-4a6 6 0 0112 0v4"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+              <circle cx="16" cy="21" r="2" fill="currentColor" fillOpacity="0.3" />
+            </svg>
+          </div>
+
+          {/* Double check (read receipts) — right 15% top 55% */}
+          <div className="animate-float-slow absolute top-[60%] right-[15%] hidden opacity-[0.10] lg:block dark:opacity-[0.18]">
+            <svg viewBox="0 0 32 32" fill="none" className="h-8 w-8 text-[var(--primary-500)]">
+              <path
+                d="M4 16l6 6L26 8"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M12 16l6 6L26 8"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.4"
+              />
+            </svg>
+          </div>
         </div>
 
         <div className="relative mx-auto max-w-2xl px-4 sm:px-6">
