@@ -362,7 +362,7 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex-1 space-y-4 overflow-y-auto p-4"
+        className="chat-wallpaper flex-1 space-y-4 overflow-y-auto p-4"
       >
         {isLoadingHistory && (
           <div className="flex justify-center py-2">
