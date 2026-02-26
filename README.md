@@ -15,6 +15,28 @@ Full-stack realtime chat application with rooms, voice messages, pinned messages
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/chat-light.jpeg" alt="Chat - Light Mode" width="100%">
+</p>
+<p align="center"><em>Real-time chat with emoji reactions, read receipts, room info panel, events, and member management</em></p>
+
+<p align="center">
+  <img src="docs/screenshots/chat-dark.jpeg" alt="Chat - Dark Mode" width="49%">
+  <img src="docs/screenshots/auth-dark.jpeg" alt="Authentication" width="49%">
+</p>
+<p align="center">
+  <em>Dark mode chat view &nbsp;·&nbsp; Login page with chat preview and social auth</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/landing-dark.jpeg" alt="Landing Page" width="100%">
+</p>
+<p align="center"><em>Landing page with feature marquee and dark/light theme toggle</em></p>
+
+---
+
 ## Features
 
 ### Core
