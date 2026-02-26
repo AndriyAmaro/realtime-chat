@@ -5,7 +5,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-Full-stack realtime chat application with rooms, typing indicators, read receipts, emoji reactions, offline queue, and structured observability. Built to demonstrate senior-level architecture across frontend, backend, DevOps, and system design.
+Full-stack realtime chat application with rooms, voice messages, pinned messages, emoji reactions, read receipts, typing indicators, friend system, room events with RSVP, offline queue, and structured observability. Built to demonstrate senior-level architecture across frontend, backend, DevOps, and system design.
 
 ---
 
@@ -22,9 +22,14 @@ Full-stack realtime chat application with rooms, typing indicators, read receipt
 - Real-time messaging via WebSocket (Socket.io)
 - Public and private rooms with invite codes
 - JWT authentication with auto-refresh tokens
-- User profiles with avatar upload
-- File and image sharing (5MB max)
 - Full-text message search with keyword highlighting
+- User profiles with avatar upload
+
+### Voice & Media
+
+- Voice messages with in-browser recording (MediaRecorder API, WebM/Opus)
+- File and image sharing (5MB max, drag & drop)
+- Inline audio player with duration display
 
 ### Real-Time
 
@@ -34,6 +39,13 @@ Full-stack realtime chat application with rooms, typing indicators, read receipt
 - Emoji reactions (toggle pattern, aggregated by emoji)
 - Edit and delete messages (soft delete)
 - Reply threads with quoted preview
+- Pinned messages with collapsible banner (admin/owner)
+
+### Social
+
+- Friend system (send, accept, decline requests)
+- Room events & calendar with RSVP (accept/decline invites)
+- Member management with role-based permissions (owner, admin, member)
 
 ### Resilience
 
@@ -146,9 +158,9 @@ realtime-chat/
 │   │   ├── core/            # Pulse Design System (40+ components)
 │   │   ├── components/      # App-specific components
 │   │   ├── pages/           # Route pages (auth, chat, landing)
-│   │   ├── hooks/           # Custom hooks (useMessages, useSocket, etc.)
+│   │   ├── hooks/           # 17 custom hooks (useMessages, useVoiceRecorder, etc.)
 │   │   ├── services/        # API clients + socket manager
-│   │   └── store/           # Zustand stores (auth, room, notification)
+│   │   └── store/           # Zustand stores (auth, notification)
 │   └── index.html
 ├── server/                  # Express 5 + TypeScript
 │   ├── src/
@@ -156,8 +168,8 @@ realtime-chat/
 │   │   ├── controllers/     # HTTP request handlers
 │   │   ├── services/        # Business logic
 │   │   ├── repositories/    # Prisma database queries
-│   │   ├── events/          # Socket.io event handlers
-│   │   ├── middleware/       # Auth, validation, rate limiting, logging
+│   │   ├── events/          # Socket.io event handlers (5 modules)
+│   │   ├── middleware/       # 9 middleware (auth, validation, rate limiting, logging)
 │   │   ├── routes/          # Express route definitions
 │   │   └── errors/          # Domain error classes
 │   └── prisma/              # Schema + migrations
@@ -176,9 +188,22 @@ realtime-chat/
 
 Interactive Swagger UI available at [`/api/docs`](https://server-production-f308.up.railway.app/api/docs).
 
-- **24 REST endpoints** across 6 route groups (Auth, Rooms, Members, Messages, Uploads, Admin)
-- **18 Socket.io events** for real-time communication
-- **37 automated tests** (Vitest) across 4 test suites
+- **28 REST endpoints** across 8 route groups (Auth, Rooms, Members, Messages, Events, Friendships, Uploads, Admin)
+- **32 Socket.io events** (19 server→client + 13 client→server)
+
+---
+
+## Key Metrics
+
+| Metric | Value |
+|--------|-------|
+| Prisma Models | 10 |
+| REST API Endpoints | 28 |
+| Socket.io Events | 32 |
+| Custom React Hooks | 17 |
+| Design System Components | 40+ |
+| Middleware Stack | 9 |
+| Docker Services | 5 |
 
 ---
 
