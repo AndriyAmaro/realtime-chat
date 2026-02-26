@@ -200,6 +200,7 @@ Interactive Swagger UI available at [`/api/docs`](https://server-production-f308
 | Prisma Models | 10 |
 | REST API Endpoints | 28 |
 | Socket.io Events | 32 |
+| Automated Tests | 98 |
 | Custom React Hooks | 17 |
 | Design System Components | 40+ |
 | Middleware Stack | 9 |
