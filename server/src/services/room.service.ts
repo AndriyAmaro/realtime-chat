@@ -1,5 +1,6 @@
 import { randomBytes } from 'crypto'
 import { roomRepository, roomMemberRepository } from '../repositories/room.repository.js'
+import { userRepository } from '../repositories/user.repository.js'
 import { NotFoundError, ForbiddenError, ConflictError } from '../errors/index.js'
 import type { CreateRoomInput, UpdateRoomInput, ListRoomsQuery } from '../types/room.js'
 import type { Role } from '../generated/prisma/client.js'
@@ -217,6 +218,22 @@ export const roomService = {
     }
 
     await roomMemberRepository.removeMember(member.userId, roomId)
+  },
+
+  /** Add member to room (admin/owner only) */
+  async addMember(roomId: string, targetUserId: string, requestingUserId: string) {
+    const room = await roomRepository.findById(roomId)
+    if (!room) throw new NotFoundError('Sala')
+
+    assertAdminOrOwner(room, requestingUserId)
+
+    const targetUser = await userRepository.findById(targetUserId)
+    if (!targetUser) throw new NotFoundError('Usuário')
+
+    const existing = await roomMemberRepository.findMembership(targetUserId, roomId)
+    if (existing) throw new ConflictError('Usuário já é membro desta sala')
+
+    return roomMemberRepository.addMember(targetUserId, roomId)
   },
 
   /** Regenerate invite code (admin/owner only) */

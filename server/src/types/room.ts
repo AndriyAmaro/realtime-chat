@@ -45,6 +45,10 @@ export const memberIdParamSchema = z.object({
   memberId: z.string().uuid('ID de membro inválido'),
 })
 
+export const addMemberSchema = z.object({
+  userId: z.string().uuid('ID de usuário inválido'),
+})
+
 export const listRoomsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(20),
@@ -57,4 +61,5 @@ export type CreateRoomInput = z.infer<typeof createRoomSchema>
 export type UpdateRoomInput = z.infer<typeof updateRoomSchema>
 export type JoinRoomInput = z.infer<typeof joinRoomSchema>
 export type UpdateMemberRoleInput = z.infer<typeof updateMemberRoleSchema>
+export type AddMemberInput = z.infer<typeof addMemberSchema>
 export type ListRoomsQuery = z.infer<typeof listRoomsQuerySchema>

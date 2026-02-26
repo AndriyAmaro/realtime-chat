@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { roomService } from '@services/room.service'
 import type { CreateRoomPayload } from '@services/room.service'
-import type { Room } from '@/types/room'
+import type { Room, RoomMember } from '@/types/room'
 
 // ============ QUERY KEYS ============
 
@@ -119,6 +119,41 @@ export function useDeleteRoom() {
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: roomKeys.myRooms() })
+    },
+  })
+}
+
+export function useAddMember(roomId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (userId: string) => roomService.addMember(roomId, userId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: roomKeys.members(roomId) })
+    },
+  })
+}
+
+export function useRemoveMember(roomId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (memberId: string) => roomService.removeMember(roomId, memberId),
+    onMutate: async (memberId) => {
+      await queryClient.cancelQueries({ queryKey: roomKeys.members(roomId) })
+      const previousMembers = queryClient.getQueryData<RoomMember[]>(roomKeys.members(roomId))
+      queryClient.setQueryData<RoomMember[]>(roomKeys.members(roomId), (old) =>
+        old?.filter((m) => m.id !== memberId)
+      )
+      return { previousMembers }
+    },
+    onError: (_err, _memberId, context) => {
+      if (context?.previousMembers) {
+        queryClient.setQueryData(roomKeys.members(roomId), context.previousMembers)
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: roomKeys.members(roomId) })
     },
   })
 }

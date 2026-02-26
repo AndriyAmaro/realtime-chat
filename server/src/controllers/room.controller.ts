@@ -6,6 +6,7 @@ import type {
   UpdateRoomInput,
   JoinRoomInput,
   UpdateMemberRoleInput,
+  AddMemberInput,
   ListRoomsQuery,
 } from '../types/room.js'
 
@@ -125,6 +126,17 @@ export const roomController = {
   },
 
   /** DELETE /rooms/:roomId/members/:memberId */
+  /** POST /rooms/:roomId/members */
+  async addMember(req: Request, res: Response) {
+    const { userId: requestingUserId } = (req as AuthenticatedRequest).user
+    const { roomId } = validatedParams<{ roomId: string }>(res)
+    const { userId: targetUserId } = req.body as AddMemberInput
+
+    const member = await roomService.addMember(roomId, targetUserId, requestingUserId)
+
+    res.status(201).json({ success: true, data: member })
+  },
+
   async removeMember(req: Request, res: Response) {
     const { userId } = (req as AuthenticatedRequest).user
     const { roomId, memberId } = validatedParams<{ roomId: string; memberId: string }>(res)

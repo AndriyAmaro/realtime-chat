@@ -65,6 +65,14 @@ export const roomService = {
     return api.get<RoomMember[]>(`/rooms/${roomId}/members`)
   },
 
+  addMember(roomId: string, userId: string) {
+    return api.post<RoomMember>(`/rooms/${roomId}/members`, { userId })
+  },
+
+  removeMember(roomId: string, memberId: string) {
+    return api.delete<void>(`/rooms/${roomId}/members/${memberId}`)
+  },
+
   regenerateInviteCode(roomId: string) {
     return api.post<{ id: string; inviteCode: string }>(`/rooms/${roomId}/invite-code`)
   },

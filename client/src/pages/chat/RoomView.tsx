@@ -12,7 +12,10 @@ import {
   useLeaveRoom,
   useDeleteRoom,
   useRegenerateInviteCode,
+  useAddMember,
+  useRemoveMember,
 } from '@hooks/useRooms'
+import { useUserSearch } from '@hooks/useFriends'
 import { useAuthStore } from '@store/auth.store'
 import { useMediaQuery } from '@hooks/useMediaQuery'
 import {
@@ -30,6 +33,8 @@ import {
   RefreshCw,
   KeyRound,
   Fingerprint,
+  X,
+  UserPlus,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useSocket } from '@hooks/useSocket'
@@ -245,11 +250,16 @@ export function RoomView({ roomId }: RoomViewProps) {
               <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
                 Membros — {memberCount}
               </h4>
+              {canManage && <AddMemberSection roomId={roomId} existingMembers={members} />}
               <MembersList
                 members={members}
                 ownerId={room.ownerId}
                 getUserStatus={getUserStatus}
                 onUserClick={setProfileUserId}
+                canManage={canManage}
+                isOwner={isOwner}
+                currentUserId={userId}
+                roomId={roomId}
               />
             </div>
           </div>
@@ -289,11 +299,16 @@ export function RoomView({ roomId }: RoomViewProps) {
                 <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
                   Membros — {memberCount}
                 </h4>
+                {canManage && <AddMemberSection roomId={roomId} existingMembers={members} />}
                 <MembersList
                   members={members}
                   ownerId={room.ownerId}
                   getUserStatus={getUserStatus}
                   onUserClick={setProfileUserId}
+                  canManage={canManage}
+                  isOwner={isOwner}
+                  currentUserId={userId}
+                  roomId={roomId}
                 />
               </div>
             </Drawer.Body>
@@ -424,6 +439,121 @@ const RoomInfoSection = memo(function RoomInfoSection({
   )
 })
 
+// ============ ADD MEMBER SECTION ============
+
+interface AddMemberSectionProps {
+  roomId: string
+  existingMembers: RoomMember[] | undefined
+}
+
+function AddMemberSection({ roomId, existingMembers }: AddMemberSectionProps) {
+  const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const { data: results, isLoading } = useUserSearch(search)
+  const addMember = useAddMember(roomId)
+
+  const existingUserIds = new Set(existingMembers?.map((m) => m.userId))
+  const filtered = results?.filter((u) => !existingUserIds.has(u.id))
+
+  function handleAdd(userId: string) {
+    addMember.mutate(userId, {
+      onSuccess: () => {
+        setSearch('')
+      },
+    })
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="mb-2 flex w-full items-center gap-2 rounded-md border border-dashed border-[var(--border-default)] px-2 py-2 text-xs font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--bg-subtle)] hover:text-[var(--text-primary)]"
+      >
+        <UserPlus className="h-3.5 w-3.5" />
+        Adicionar membro
+      </button>
+    )
+  }
+
+  return (
+    <div className="mb-3 rounded-lg border border-[var(--border-default)] bg-[var(--bg-subtle)] p-2">
+      <div className="mb-2 flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute top-1/2 left-2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-muted)]" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar usuário..."
+            className="h-8 w-full rounded-md border border-[var(--border-default)] bg-[var(--bg-base)] pr-2 pl-7 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--primary-base)] focus:outline-none"
+            autoFocus
+          />
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setOpen(false)
+            setSearch('')
+          }}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-emphasis)] hover:text-[var(--text-primary)]"
+          aria-label="Fechar busca"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+
+      {isLoading && search.length >= 2 && (
+        <div className="flex items-center justify-center py-3">
+          <Spinner size="sm" />
+        </div>
+      )}
+
+      {filtered && filtered.length > 0 && (
+        <div className="max-h-40 space-y-0.5 overflow-y-auto">
+          {filtered.map((user) => (
+            <div
+              key={user.id}
+              className="flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-[var(--bg-base)]"
+            >
+              <Avatar
+                fallback={user.name.slice(0, 2).toUpperCase()}
+                src={user.avatar ?? undefined}
+                size="xs"
+              />
+              <span className="flex-1 truncate text-xs text-[var(--text-primary)]">
+                {user.name}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={() => handleAdd(user.id)}
+                disabled={addMember.isPending}
+                aria-label={`Adicionar ${user.name}`}
+                className="h-6 w-6"
+              >
+                <UserPlus className="h-3 w-3" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {search.length >= 2 && !isLoading && filtered?.length === 0 && (
+        <p className="py-2 text-center text-xs text-[var(--text-muted)]">
+          Nenhum usuário encontrado
+        </p>
+      )}
+
+      {search.length > 0 && search.length < 2 && (
+        <p className="py-2 text-center text-xs text-[var(--text-muted)]">
+          Digite pelo menos 2 caracteres
+        </p>
+      )}
+    </div>
+  )
+}
+
 // ============ MEMBERS LIST ============
 
 interface MembersListProps {
@@ -431,6 +561,10 @@ interface MembersListProps {
   ownerId: string
   getUserStatus: (userId: string, fallback: string) => string
   onUserClick?: (userId: string) => void
+  canManage?: boolean
+  isOwner?: boolean
+  currentUserId?: string | null
+  roomId: string
 }
 
 const MembersList = memo(function MembersList({
@@ -438,25 +572,53 @@ const MembersList = memo(function MembersList({
   ownerId,
   getUserStatus,
   onUserClick,
+  canManage,
+  isOwner,
+  currentUserId,
+  roomId,
 }: MembersListProps) {
+  const removeMember = useRemoveMember(roomId)
+
+  function canRemove(member: RoomMember): boolean {
+    if (!canManage) return false
+    // Can't remove yourself
+    if (member.userId === currentUserId) return false
+    // Can't remove the owner
+    if (member.userId === ownerId) return false
+    // Owner can remove anyone else
+    if (isOwner) return true
+    // Admin can only remove MEMBER role (not other admins)
+    if (member.role === 'ADMIN') return false
+    return true
+  }
+
+  function handleRemove(member: RoomMember) {
+    if (!window.confirm(`Remover ${member.user.name} da sala?`)) return
+    removeMember.mutate(member.id)
+  }
+
   return (
     <div className="space-y-1">
       {members?.map((member) => (
-        <button
+        <div
           key={member.id}
-          type="button"
-          onClick={() => onUserClick?.(member.userId)}
-          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-[var(--bg-subtle)]"
+          className="group/member flex w-full items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-[var(--bg-subtle)]"
         >
-          <Avatar
-            fallback={member.user.name.slice(0, 2).toUpperCase()}
-            src={member.user.avatar ?? undefined}
-            size="xs"
-            status={statusToAvatarStatus(getUserStatus(member.userId, member.user.status))}
-          />
-          <span className="flex-1 truncate text-sm text-[var(--text-primary)]">
-            {member.user.name}
-          </span>
+          <button
+            type="button"
+            onClick={() => onUserClick?.(member.userId)}
+            className="flex min-w-0 flex-1 items-center gap-2 text-left"
+          >
+            <Avatar
+              fallback={member.user.name.slice(0, 2).toUpperCase()}
+              src={member.user.avatar ?? undefined}
+              size="xs"
+              status={statusToAvatarStatus(getUserStatus(member.userId, member.user.status))}
+            />
+            <span className="flex-1 truncate text-sm text-[var(--text-primary)]">
+              {member.user.name}
+            </span>
+          </button>
           {member.userId === ownerId && (
             <Crown className="text-warning-base h-3.5 w-3.5 shrink-0" />
           )}
@@ -465,7 +627,18 @@ const MembersList = memo(function MembersList({
               admin
             </Badge>
           )}
-        </button>
+          {canRemove(member) && (
+            <button
+              type="button"
+              onClick={() => handleRemove(member)}
+              disabled={removeMember.isPending}
+              className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-[var(--text-muted)] opacity-0 transition-all group-hover/member:opacity-100 hover:bg-[var(--bg-emphasis)] hover:text-[var(--error-base)] disabled:opacity-50"
+              aria-label={`Remover ${member.user.name}`}
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
       ))}
     </div>
   )

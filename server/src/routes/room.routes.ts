@@ -8,6 +8,7 @@ import {
   updateRoomSchema,
   joinRoomSchema,
   updateMemberRoleSchema,
+  addMemberSchema,
   roomIdParamSchema,
   memberIdParamSchema,
   listRoomsQuerySchema,
@@ -68,6 +69,13 @@ router.post('/:roomId/leave', validate({ params: roomIdParamSchema }), roomContr
 
 // GET /rooms/:roomId/members
 router.get('/:roomId/members', validate({ params: roomIdParamSchema }), roomController.listMembers)
+
+// POST /rooms/:roomId/members — add member (admin/owner only)
+router.post(
+  '/:roomId/members',
+  validate({ params: roomIdParamSchema, body: addMemberSchema }),
+  roomController.addMember
+)
 
 // PATCH /rooms/:roomId/members/:memberId
 router.patch(
