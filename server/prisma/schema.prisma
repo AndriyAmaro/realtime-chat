@@ -51,6 +51,7 @@ model User {
   messageReactions MessageReaction[]
   sentRequests     Friendship[]       @relation("FriendshipSender")
   receivedRequests Friendship[]       @relation("FriendshipReceiver")
+  pinnedMessages   PinnedMessage[]    @relation("PinnedByUser")
 
   @@map("users")
 }
@@ -65,9 +66,10 @@ model Room {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  owner    User         @relation("RoomOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  members  RoomMember[]
-  messages Message[]
+  owner          User            @relation("RoomOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members        RoomMember[]
+  messages       Message[]
+  pinnedMessages PinnedMessage[]
 
   @@map("rooms")
 }
@@ -104,9 +106,10 @@ model Message {
 
   user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   room      Room               @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  replyTo   Message?           @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
-  replies   Message[]          @relation("MessageReplies")
-  reactions MessageReaction[]
+  replyTo        Message?           @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies        Message[]          @relation("MessageReplies")
+  reactions      MessageReaction[]
+  pinnedMessages PinnedMessage[]
 
   @@index([roomId, createdAt])
   @@index([userId])
@@ -142,4 +145,20 @@ model Friendship {
   @@unique([senderId, receiverId])
   @@index([receiverId])
   @@map("friendships")
+}
+
+model PinnedMessage {
+  id        String   @id @default(uuid())
+  messageId String   @map("message_id")
+  roomId    String   @map("room_id")
+  pinnedBy  String   @map("pinned_by")
+  pinnedAt  DateTime @default(now()) @map("pinned_at")
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  room    Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  pinner  User    @relation("PinnedByUser", fields: [pinnedBy], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, roomId])
+  @@index([roomId])
+  @@map("pinned_messages")
 }

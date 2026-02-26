@@ -8,8 +8,11 @@ import { useSocket } from '@hooks/useSocket'
 import { useMessages } from '@hooks/useMessages'
 import { useTyping } from '@hooks/useTyping'
 import { useReadReceipts } from '@hooks/useReadReceipts'
+import { usePinnedMessages } from '@hooks/usePinnedMessages'
+import { useRoomMembers, useRoom } from '@hooks/useRooms'
 import { uploadFile } from '@services/upload.service'
 import { MessageActionMenu } from './MessageActionMenu'
+import { PinnedMessagesBar } from './PinnedMessagesBar'
 import { ReplyBar } from './ReplyBar'
 import { ReactionPicker } from './ReactionPicker'
 import { InputEmojiPicker } from './InputEmojiPicker'
@@ -55,6 +58,15 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
     userId,
     messageCount: messages.length,
   })
+  const { pinnedMessages, pinMessage, unpinMessage, isPinned } = usePinnedMessages(
+    socket,
+    roomId,
+    isConnected
+  )
+  const { data: room } = useRoom(roomId)
+  const { data: members } = useRoomMembers(roomId)
+  const currentMember = members?.find((m) => m.userId === userId)
+  const canManage = room?.ownerId === userId || currentMember?.role === 'ADMIN'
 
   const [isUploading, setIsUploading] = useState(false)
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
@@ -193,6 +205,12 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
         case 'reply':
           setReplyingTo(msg)
           break
+        case 'pin':
+          pinMessage(msg.id)
+          break
+        case 'unpin':
+          unpinMessage(msg.id)
+          break
         case 'react':
           // If chatMsg.content is an emoji from quick reactions, toggle it directly
           if (
@@ -207,7 +225,7 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
           break
       }
     },
-    [messages, toggleReaction]
+    [messages, toggleReaction, pinMessage, unpinMessage]
   )
 
   function handleEditSave() {
@@ -295,6 +313,23 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
         </div>
       )}
 
+      {/* Pinned messages bar */}
+      <PinnedMessagesBar
+        pinnedMessages={pinnedMessages}
+        canManage={!!canManage}
+        onNavigate={(messageId) => {
+          const el = document.getElementById(`msg-${messageId}`)
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            el.classList.add('animate-pulse', 'bg-[var(--warning-base)]/10')
+            setTimeout(() => {
+              el.classList.remove('animate-pulse', 'bg-[var(--warning-base)]/10')
+            }, 1500)
+          }
+        }}
+        onUnpin={(messageId) => unpinMessage(messageId)}
+      />
+
       {/* Messages area */}
       <div
         ref={scrollContainerRef}
@@ -379,6 +414,8 @@ export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatArea
                         <MessageActionMenu
                           message={msg}
                           isOwnMessage={msg.position === 'sent'}
+                          canManage={!!canManage}
+                          isPinned={isPinned(msg.id)}
                           onAction={handleMessageAction}
                         />
                       ) : undefined

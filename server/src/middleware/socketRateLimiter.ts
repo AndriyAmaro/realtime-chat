@@ -56,4 +56,5 @@ export const rateLimiters = {
   messageDelete: createSocketRateLimiter({ maxRequests: 5, windowMs: 10_000 }),
   messageReact: createSocketRateLimiter({ maxRequests: 10, windowMs: 5_000 }),
   typingStart: createSocketRateLimiter({ maxRequests: 3, windowMs: 2_000 }),
+  messagePin: createSocketRateLimiter({ maxRequests: 5, windowMs: 5_000 }),
 }

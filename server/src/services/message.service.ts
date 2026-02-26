@@ -211,7 +211,7 @@ type RawMessage = {
   reactions: { emoji: string; userId: string }[]
 }
 
-function formatMessage(message: RawMessage): MessagePayload {
+export function formatMessage(message: RawMessage): MessagePayload {
   return {
     id: message.id,
     content: message.deletedAt ? '' : message.content,

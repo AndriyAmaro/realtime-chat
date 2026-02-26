@@ -1,19 +1,27 @@
 import { DropdownMenu } from '@core/organisms/DropdownMenu'
-import { MoreVertical, Pencil, Trash2, Reply, Smile } from 'lucide-react'
+import { MoreVertical, Pencil, Trash2, Reply, Smile, Pin, PinOff } from 'lucide-react'
 import { cn } from '@shared/utils/cn'
 import type { ChatMessageData } from '@core/patterns/ChatUI/ChatUI'
 
-type MessageAction = 'edit' | 'delete' | 'reply' | 'react'
+type MessageAction = 'edit' | 'delete' | 'reply' | 'react' | 'pin' | 'unpin'
 
 interface MessageActionMenuProps {
   message: ChatMessageData
   isOwnMessage: boolean
+  canManage?: boolean
+  isPinned?: boolean
   onAction: (action: MessageAction, message: ChatMessageData) => void
 }
 
 const QUICK_EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🔥']
 
-export function MessageActionMenu({ message, isOwnMessage, onAction }: MessageActionMenuProps) {
+export function MessageActionMenu({
+  message,
+  isOwnMessage,
+  canManage,
+  isPinned,
+  onAction,
+}: MessageActionMenuProps) {
   const isTextMessage =
     !message.attachments || message.attachments.length === 0 || message.content.trim() !== ''
 
@@ -60,6 +68,20 @@ export function MessageActionMenu({ message, isOwnMessage, onAction }: MessageAc
           <Smile size={16} className="mr-2" />
           Reagir
         </DropdownMenu.Item>
+
+        {/* Pin/Unpin — admin/owner only */}
+        {canManage &&
+          (isPinned ? (
+            <DropdownMenu.Item onClick={() => onAction('unpin', message)}>
+              <PinOff size={16} className="mr-2" />
+              Desafixar
+            </DropdownMenu.Item>
+          ) : (
+            <DropdownMenu.Item onClick={() => onAction('pin', message)}>
+              <Pin size={16} className="mr-2" />
+              Fixar mensagem
+            </DropdownMenu.Item>
+          ))}
 
         {/* Edit — own TEXT messages only */}
         {isOwnMessage && isTextMessage && (

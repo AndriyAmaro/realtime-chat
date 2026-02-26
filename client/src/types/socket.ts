@@ -14,6 +14,8 @@ export interface ServerToClientEvents {
     messageId: string
     reactions: ReactionGroup[]
   }) => void
+  'message:pinned': (data: { roomId: string; message: MessagePayload; pinnedBy: string }) => void
+  'message:unpinned': (data: { roomId: string; messageId: string }) => void
 
   'room:joined': (data: { roomId: string; userId: string; userName: string }) => void
   'room:left': (data: { roomId: string; userId: string; userName: string }) => void
@@ -63,6 +65,19 @@ export interface ClientToServerEvents {
   'message:react': (
     data: { roomId: string; messageId: string; emoji: string },
     callback: (response: MessageAck) => void
+  ) => void
+
+  'message:pin': (
+    data: { roomId: string; messageId: string },
+    callback: (response: MessageAck) => void
+  ) => void
+  'message:unpin': (
+    data: { roomId: string; messageId: string },
+    callback: (response: MessageAck) => void
+  ) => void
+  'pinned:fetch': (
+    data: { roomId: string },
+    callback: (response: { success: boolean; messages?: MessagePayload[]; error?: string }) => void
   ) => void
 
   'message:sync': (

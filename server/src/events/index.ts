@@ -1,5 +1,6 @@
 import { registerRoomHandlers } from './room.handler.js'
 import { registerMessageHandlers } from './message.handler.js'
+import { registerPinnedHandlers } from './pinned.handler.js'
 import { registerStatusHandlers } from './status.handler.js'
 import { registerReadHandlers } from './read.handler.js'
 import { roomMemberRepository } from '../repositories/room.repository.js'
@@ -40,6 +41,9 @@ export function registerSocketHandlers(io: TypedServer, socket: TypedSocket): vo
 
   // Messages (send/history)
   registerMessageHandlers(io, socket)
+
+  // Pinned messages
+  registerPinnedHandlers(io, socket)
 
   // Online/offline status (disconnect handler runs AFTER registry removal above)
   registerStatusHandlers(io, socket)
