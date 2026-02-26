@@ -107,9 +107,10 @@ export const authService = {
       throw new AuthError('User not found')
     }
 
-    const data: { name?: string; avatar?: string | null } = {}
+    const data: { name?: string; avatar?: string | null; bio?: string | null } = {}
     if (input.name !== undefined) data.name = input.name
     if (input.avatar !== undefined) data.avatar = input.avatar
+    if (input.bio !== undefined) data.bio = input.bio
 
     return userRepository.updateProfile(userId, data)
   },

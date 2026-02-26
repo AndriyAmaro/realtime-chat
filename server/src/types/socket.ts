@@ -46,6 +46,13 @@ export interface ServerToClientEvents {
     receipts: { userId: string; readAt: string | null }[]
   }) => void
 
+  // Friends
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  'friend:request_received': (data: { friendship: any }) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  'friend:request_accepted': (data: { friendship: any }) => void
+  'friend:removed': (data: { friendshipId: string; userId: string }) => void
+
   // Error
   error: (data: { message: string }) => void
 }

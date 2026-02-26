@@ -5,6 +5,7 @@ interface User {
   name: string
   email: string
   avatar: string | null
+  bio: string | null
   status?: string
   createdAt?: string
 }
@@ -29,6 +30,7 @@ interface LoginPayload {
 interface UpdateProfilePayload {
   name?: string
   avatar?: string | null
+  bio?: string | null
 }
 
 interface ChangePasswordPayload {

@@ -3,6 +3,8 @@ import healthRouter from './health.js'
 import authRouter from './auth.routes.js'
 import roomRouter from './room.routes.js'
 import uploadRouter from './upload.routes.js'
+import friendshipRouter from './friendship.routes.js'
+import userRouter from './user.routes.js'
 import { adminRouter } from './admin.routes.js'
 
 const router = Router()
@@ -18,6 +20,12 @@ router.use('/rooms', roomRouter)
 
 // Upload routes (file uploads)
 router.use('/uploads', uploadRouter)
+
+// Friendship routes (friend requests, list friends)
+router.use('/friends', friendshipRouter)
+
+// User routes (search, profile)
+router.use('/users', userRouter)
 
 // Admin routes (metrics, errors — protected)
 router.use('/admin', adminRouter)

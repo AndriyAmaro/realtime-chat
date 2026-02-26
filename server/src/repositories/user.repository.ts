@@ -14,6 +14,7 @@ export const userRepository = {
         name: true,
         email: true,
         avatar: true,
+        bio: true,
         status: true,
         createdAt: true,
       },
@@ -28,6 +29,7 @@ export const userRepository = {
         name: true,
         email: true,
         avatar: true,
+        bio: true,
         status: true,
         createdAt: true,
       },
@@ -41,7 +43,7 @@ export const userRepository = {
     })
   },
 
-  updateProfile(id: string, data: { name?: string; avatar?: string | null }) {
+  updateProfile(id: string, data: { name?: string; avatar?: string | null; bio?: string | null }) {
     return prisma.user.update({
       where: { id },
       data,
@@ -50,6 +52,7 @@ export const userRepository = {
         name: true,
         email: true,
         avatar: true,
+        bio: true,
         status: true,
         createdAt: true,
       },
@@ -74,6 +77,39 @@ export const userRepository = {
     return prisma.user.findUnique({
       where: { email },
       select: { id: true, name: true, email: true, password: true },
+    })
+  },
+
+  findByIdPublic(id: string) {
+    return prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatar: true,
+        bio: true,
+        status: true,
+        createdAt: true,
+      },
+    })
+  },
+
+  searchByName(query: string, excludeUserId: string) {
+    return prisma.user.findMany({
+      where: {
+        id: { not: excludeUserId },
+        name: { contains: query, mode: 'insensitive' },
+      },
+      select: {
+        id: true,
+        name: true,
+        avatar: true,
+        bio: true,
+        status: true,
+      },
+      take: 20,
+      orderBy: { name: 'asc' },
     })
   },
 }

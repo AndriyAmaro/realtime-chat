@@ -40,6 +40,7 @@ function createUserRecord(overrides: Record<string, unknown> = {}) {
     email: 'test@example.com',
     password: '$2a$12$hashedpassword',
     avatar: null,
+    bio: null,
     status: 'OFFLINE' as const,
     createdAt: new Date('2026-01-01'),
     updatedAt: new Date('2026-01-01'),

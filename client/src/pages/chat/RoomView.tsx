@@ -36,6 +36,7 @@ import { useSocket } from '@hooks/useSocket'
 import { useOnlineStatus } from '@hooks/useOnlineStatus'
 import { ChatArea } from './ChatArea'
 import { MessageSearch } from './MessageSearch'
+import { UserProfileDrawer } from './UserProfileDrawer'
 import type { RoomMember } from '@/types/room'
 
 interface RoomViewProps {
@@ -55,6 +56,7 @@ export function RoomView({ roomId }: RoomViewProps) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [membersOpen, setMembersOpen] = useState(false)
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null)
+  const [profileUserId, setProfileUserId] = useState<string | null>(null)
 
   const isMobile = !useMediaQuery('(min-width: 768px)')
   const isDesktop = useMediaQuery('(min-width: 1024px)')
@@ -210,7 +212,11 @@ export function RoomView({ roomId }: RoomViewProps) {
 
       {/* Content: chat + inline panels */}
       <div className="flex flex-1 overflow-hidden">
-        <ChatArea roomId={roomId} highlightedMessageId={highlightedMessageId} />
+        <ChatArea
+          roomId={roomId}
+          highlightedMessageId={highlightedMessageId}
+          onUserClick={setProfileUserId}
+        />
 
         {/* Desktop: inline search panel */}
         {isDesktop && searchOpen && (
@@ -239,7 +245,12 @@ export function RoomView({ roomId }: RoomViewProps) {
               <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
                 Membros — {memberCount}
               </h4>
-              <MembersList members={members} ownerId={room.ownerId} getUserStatus={getUserStatus} />
+              <MembersList
+                members={members}
+                ownerId={room.ownerId}
+                getUserStatus={getUserStatus}
+                onUserClick={setProfileUserId}
+              />
             </div>
           </div>
         )}
@@ -282,12 +293,16 @@ export function RoomView({ roomId }: RoomViewProps) {
                   members={members}
                   ownerId={room.ownerId}
                   getUserStatus={getUserStatus}
+                  onUserClick={setProfileUserId}
                 />
               </div>
             </Drawer.Body>
           </Drawer.Content>
         </Drawer>
       )}
+
+      {/* User Profile Drawer */}
+      <UserProfileDrawer userId={profileUserId} onClose={() => setProfileUserId(null)} />
     </div>
   )
 }
@@ -415,17 +430,24 @@ interface MembersListProps {
   members: RoomMember[] | undefined
   ownerId: string
   getUserStatus: (userId: string, fallback: string) => string
+  onUserClick?: (userId: string) => void
 }
 
 const MembersList = memo(function MembersList({
   members,
   ownerId,
   getUserStatus,
+  onUserClick,
 }: MembersListProps) {
   return (
     <div className="space-y-1">
       {members?.map((member) => (
-        <div key={member.id} className="flex items-center gap-2 rounded-md px-2 py-1.5">
+        <button
+          key={member.id}
+          type="button"
+          onClick={() => onUserClick?.(member.userId)}
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-[var(--bg-subtle)]"
+        >
           <Avatar
             fallback={member.user.name.slice(0, 2).toUpperCase()}
             src={member.user.avatar ?? undefined}
@@ -443,7 +465,7 @@ const MembersList = memo(function MembersList({
               admin
             </Badge>
           )}
-        </div>
+        </button>
       ))}
     </div>
   )

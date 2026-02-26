@@ -25,9 +25,10 @@ import type {
 interface ChatAreaProps {
   roomId: string
   highlightedMessageId?: string | null
+  onUserClick?: (userId: string) => void
 }
 
-export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
+export function ChatArea({ roomId, highlightedMessageId, onUserClick }: ChatAreaProps) {
   const userId = useAuthStore((s) => s.user?.id)
   const { socket, isConnected, connectError, isReconnecting, reconnectAttempt, reconnectMax } =
     useSocket()
@@ -372,6 +373,7 @@ export function ChatArea({ roomId, highlightedMessageId }: ChatAreaProps) {
                     showStatus
                     onReactionClick={handleReactionClick}
                     onReplyClick={handleReplyClick}
+                    onUserClick={onUserClick}
                     actionMenuSlot={
                       !msg.isDeleted ? (
                         <MessageActionMenu

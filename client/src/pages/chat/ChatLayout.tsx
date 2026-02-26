@@ -10,12 +10,14 @@ import { authService } from '@services/auth.service'
 import { useSocket } from '@hooks/useSocket'
 import { useToast } from '@hooks/useToast'
 import { useNotifications } from '@hooks/useNotifications'
+import { useFriendNotifications } from '@hooks/useFriendNotifications'
 import { useMediaQuery } from '@hooks/useMediaQuery'
 import { LogOut, PanelLeftClose, PanelLeft, Volume2, VolumeX } from 'lucide-react'
 import { Logo } from '@components/Logo'
 import { RoomSidebar } from './RoomSidebar'
 import { RoomView } from './RoomView'
 import { ProfileModal } from './ProfileModal'
+import { UserProfileDrawer } from './UserProfileDrawer'
 import { setActiveRoomId } from '@hooks/useActiveRoomId'
 
 export default function ChatLayout() {
@@ -27,6 +29,7 @@ export default function ChatLayout() {
   const toggleSound = useNotificationStore((s) => s.toggleSound)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [profileUserId, setProfileUserId] = useState<string | null>(null)
 
   const isMobile = !useMediaQuery('(min-width: 768px)')
 
@@ -40,6 +43,7 @@ export default function ChatLayout() {
   const { socket, isConnected } = useSocket()
   const { toasts, addToast, dismissToast } = useToast()
   useNotifications({ socket, isConnected, addToast })
+  useFriendNotifications({ socket, isConnected, addToast })
 
   async function handleLogout() {
     try {
@@ -122,7 +126,7 @@ export default function ChatLayout() {
             </main>
           ) : (
             <div className="flex-1 overflow-hidden">
-              <RoomSidebar />
+              <RoomSidebar onUserClick={setProfileUserId} />
             </div>
           )
         ) : (
@@ -130,7 +134,7 @@ export default function ChatLayout() {
           <>
             {sidebarOpen && (
               <aside className="w-72 shrink-0 border-r border-[var(--border-default)] lg:w-80">
-                <RoomSidebar />
+                <RoomSidebar onUserClick={setProfileUserId} />
               </aside>
             )}
             <main className="flex flex-1 flex-col overflow-hidden">
@@ -155,6 +159,9 @@ export default function ChatLayout() {
           </>
         )}
       </div>
+
+      {/* User Profile Drawer (from contacts tab) */}
+      <UserProfileDrawer userId={profileUserId} onClose={() => setProfileUserId(null)} />
 
       {/* Profile Modal */}
       <ProfileModal

@@ -1,4 +1,5 @@
 import { userRepository } from '../repositories/user.repository.js'
+import { friendshipRepository } from '../repositories/friendship.repository.js'
 import { socketRegistry } from '../services/socketRegistry.js'
 import { getOnlineUserIds } from './room.handler.js'
 import { createChildLogger } from '../config/logger.js'
@@ -15,7 +16,7 @@ export function registerStatusHandlers(io: TypedServer, socket: TypedSocket): vo
   const { userId } = socket.data
 
   // Mark user as ONLINE on connect
-  setUserOnline(socket)
+  setUserOnline(io, socket)
 
   // Mark user as OFFLINE on disconnect (if no other active sockets)
   socket.on('disconnect', async () => {
@@ -33,6 +34,9 @@ export function registerStatusHandlers(io: TypedServer, socket: TypedSocket): vo
           const onlineUserIds = await getOnlineUserIds(io, roomId)
           io.to(roomId).emit('room:members_online', { roomId, userIds: onlineUserIds })
         }
+
+        // Notify friends about offline status
+        await notifyFriendsStatus(io, userId, 'OFFLINE')
       }
     } catch (err) {
       log.error({ err, userId }, 'Failed to handle disconnect status')
@@ -42,7 +46,7 @@ export function registerStatusHandlers(io: TypedServer, socket: TypedSocket): vo
 
 // ============ HELPERS ============
 
-async function setUserOnline(socket: TypedSocket): Promise<void> {
+async function setUserOnline(io: TypedServer, socket: TypedSocket): Promise<void> {
   const { userId } = socket.data
 
   try {
@@ -53,7 +57,30 @@ async function setUserOnline(socket: TypedSocket): Promise<void> {
       if (roomId === socket.id) continue // skip default room
       socket.to(roomId).emit('user:status', { userId, status: 'ONLINE' })
     }
+
+    // Notify friends about online status
+    await notifyFriendsStatus(io, userId, 'ONLINE')
   } catch (err) {
     log.error({ err, userId }, 'Failed to set user online')
+  }
+}
+
+async function notifyFriendsStatus(
+  io: TypedServer,
+  userId: string,
+  status: 'ONLINE' | 'OFFLINE'
+): Promise<void> {
+  try {
+    const friendships = await friendshipRepository.findFriends(userId)
+
+    for (const friendship of friendships) {
+      const friendId = friendship.senderId === userId ? friendship.receiverId : friendship.senderId
+
+      for (const sid of socketRegistry.getSocketIds(friendId)) {
+        io.to(sid).emit('user:status', { userId, status })
+      }
+    }
+  } catch (err) {
+    log.error({ err, userId }, 'Failed to notify friends about status change')
   }
 }

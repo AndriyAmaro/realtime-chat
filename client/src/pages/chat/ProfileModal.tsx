@@ -26,6 +26,7 @@ const profileSchema = z.object({
     .string()
     .min(2, 'Nome deve ter pelo menos 2 caracteres')
     .max(50, 'Nome deve ter no máximo 50 caracteres'),
+  bio: z.string().max(300, 'Bio deve ter no máximo 300 caracteres').optional().or(z.literal('')),
 })
 
 const passwordSchema = z
@@ -66,7 +67,7 @@ export function ProfileModal({ open, onOpenChange, onSuccess, onError }: Profile
 
   const profileForm = useFormWithSchema({
     schema: profileSchema,
-    defaultValues: { name: user?.name ?? '' },
+    defaultValues: { name: user?.name ?? '', bio: user?.bio ?? '' },
   })
 
   const passwordForm = useFormWithSchema({
@@ -114,6 +115,7 @@ export function ProfileModal({ open, onOpenChange, onSuccess, onError }: Profile
 
       await updateProfile.mutateAsync({
         name: values.name,
+        bio: values.bio || null,
         ...(avatarUrl !== undefined ? { avatar: avatarUrl } : {}),
       })
 
@@ -234,6 +236,30 @@ export function ProfileModal({ open, onOpenChange, onSuccess, onError }: Profile
                       />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              </ControlledField>
+
+              {/* Bio */}
+              <ControlledField name="bio" control={profileForm.control}>
+                {({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bio</FormLabel>
+                    <FormControl>
+                      <textarea
+                        {...field}
+                        placeholder="Conte um pouco sobre você..."
+                        maxLength={300}
+                        rows={3}
+                        className="w-full resize-none rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--primary-500)] focus:ring-2 focus:ring-[var(--primary-500)]/20 focus:outline-none"
+                      />
+                    </FormControl>
+                    <div className="flex items-center justify-between">
+                      <FormMessage />
+                      <span className="text-[11px] text-[var(--text-muted)]">
+                        {field.value?.length ?? 0}/300
+                      </span>
+                    </div>
                   </FormItem>
                 )}
               </ControlledField>

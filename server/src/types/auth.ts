@@ -28,6 +28,7 @@ export const updateProfileSchema = z.object({
     .trim()
     .optional(),
   avatar: z.string().max(500, 'Avatar URL too long').nullable().optional(),
+  bio: z.string().max(300, 'Bio deve ter no máximo 300 caracteres').nullable().optional(),
 })
 
 export const changePasswordSchema = z.object({

@@ -160,6 +160,7 @@ export interface ChatMessageProps
   onMessageAction?: (action: string, message: ChatMessageData) => void
   onReactionClick?: (messageId: string, emoji: string) => void
   onReplyClick?: (messageId: string) => void
+  onUserClick?: (userId: string) => void
   actionMenuSlot?: React.ReactNode
 }
 
@@ -278,6 +279,7 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
       onMessageAction,
       onReactionClick,
       onReplyClick,
+      onUserClick,
       actionMenuSlot,
       ...props
     },
@@ -337,7 +339,8 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
             fallback={message.user.name.charAt(0)}
             size="sm"
             alt={message.user.name}
-            className="shrink-0"
+            className={cn('shrink-0', onUserClick && 'cursor-pointer')}
+            onClick={onUserClick && message.user ? () => onUserClick(message.user!.id) : undefined}
           />
         )}
 
@@ -350,7 +353,16 @@ const ChatMessage = React.forwardRef<HTMLDivElement, ChatMessageProps>(
         >
           {/* User Name for received messages */}
           {position === 'received' && message.user && (
-            <span className="text-xs font-medium text-[var(--text-muted)]">
+            <span
+              className={cn(
+                'text-xs font-medium text-[var(--text-muted)]',
+                onUserClick &&
+                  'cursor-pointer transition-colors hover:text-[var(--text-primary)] hover:underline'
+              )}
+              onClick={
+                onUserClick && message.user ? () => onUserClick(message.user!.id) : undefined
+              }
+            >
               {message.user.name}
             </span>
           )}

@@ -26,6 +26,12 @@ enum MessageType {
   FILE
 }
 
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
 // ============ MODELS ============
 
 model User {
@@ -34,6 +40,7 @@ model User {
   password  String
   name      String
   avatar    String?
+  bio       String?  @db.VarChar(300)
   status    Status   @default(OFFLINE)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -42,6 +49,8 @@ model User {
   rooms            RoomMember[]
   ownedRooms       Room[]             @relation("RoomOwner")
   messageReactions MessageReaction[]
+  sentRequests     Friendship[]       @relation("FriendshipSender")
+  receivedRequests Friendship[]       @relation("FriendshipReceiver")
 
   @@map("users")
 }
@@ -117,4 +126,20 @@ model MessageReaction {
   @@unique([userId, messageId, emoji])
   @@index([messageId])
   @@map("message_reactions")
+}
+
+model Friendship {
+  id         String           @id @default(uuid())
+  senderId   String           @map("sender_id")
+  receiverId String           @map("receiver_id")
+  status     FriendshipStatus @default(PENDING)
+  createdAt  DateTime         @default(now()) @map("created_at")
+  updatedAt  DateTime         @updatedAt @map("updated_at")
+
+  sender   User @relation("FriendshipSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("FriendshipReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@index([receiverId])
+  @@map("friendships")
 }
