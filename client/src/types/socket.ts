@@ -40,6 +40,15 @@ export interface ServerToClientEvents {
   'friend:request_accepted': (data: { friendship: any }) => void
   'friend:removed': (data: { friendshipId: string; userId: string }) => void
 
+  // Events
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  'event:created': (data: { roomId: string; event: any }) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  'event:updated': (data: { roomId: string; event: any }) => void
+  'event:cancelled': (data: { roomId: string; eventId: string }) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  'event:rsvp': (data: { roomId: string; eventId: string; invite: any }) => void
+
   error: (data: { message: string }) => void
 }
 

@@ -33,6 +33,21 @@ enum FriendshipStatus {
   DECLINED
 }
 
+enum EventStatus {
+  SCHEDULED
+  CANCELLED
+
+  @@map("event_status")
+}
+
+enum InviteResponse {
+  PENDING
+  ACCEPTED
+  DECLINED
+
+  @@map("invite_response")
+}
+
 // ============ MODELS ============
 
 model User {
@@ -53,6 +68,8 @@ model User {
   sentRequests     Friendship[]       @relation("FriendshipSender")
   receivedRequests Friendship[]       @relation("FriendshipReceiver")
   pinnedMessages   PinnedMessage[]    @relation("PinnedByUser")
+  createdEvents    Event[]            @relation("CreatedEvents")
+  eventInvites     EventInvite[]      @relation("EventInvites")
 
   @@map("users")
 }
@@ -71,6 +88,7 @@ model Room {
   members        RoomMember[]
   messages       Message[]
   pinnedMessages PinnedMessage[]
+  events         Event[]
 
   @@map("rooms")
 }
@@ -163,4 +181,40 @@ model PinnedMessage {
   @@unique([messageId, roomId])
   @@index([roomId])
   @@map("pinned_messages")
+}
+
+model Event {
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  startTime   DateTime    @map("start_time")
+  endTime     DateTime    @map("end_time")
+  roomId      String      @map("room_id")
+  createdBy   String      @map("created_by")
+  status      EventStatus @default(SCHEDULED)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  room    Room          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  creator User          @relation("CreatedEvents", fields: [createdBy], references: [id], onDelete: Cascade)
+  invites EventInvite[]
+
+  @@index([roomId, startTime])
+  @@map("events")
+}
+
+model EventInvite {
+  id          String         @id @default(uuid())
+  eventId     String         @map("event_id")
+  userId      String         @map("user_id")
+  status      InviteResponse @default(PENDING)
+  respondedAt DateTime?      @map("responded_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation("EventInvites", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([userId])
+  @@map("event_invites")
 }

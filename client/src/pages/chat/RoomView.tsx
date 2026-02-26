@@ -42,6 +42,7 @@ import { useOnlineStatus } from '@hooks/useOnlineStatus'
 import { ChatArea } from './ChatArea'
 import { MessageSearch } from './MessageSearch'
 import { UserProfileDrawer } from './UserProfileDrawer'
+import { EventsSection } from './EventsSection'
 import type { RoomMember } from '@/types/room'
 
 interface RoomViewProps {
@@ -247,6 +248,10 @@ export function RoomView({ roomId }: RoomViewProps) {
             </div>
             <div className="mx-4 border-t border-[var(--border-default)]" />
             <div className="p-4">
+              <EventsSection roomId={roomId} canManage={canManage} />
+            </div>
+            <div className="mx-4 border-t border-[var(--border-default)]" />
+            <div className="p-4">
               <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
                 Membros — {memberCount}
               </h4>
@@ -294,6 +299,8 @@ export function RoomView({ roomId }: RoomViewProps) {
                 isPrivate={room.isPrivate}
                 canManage={canManage}
               />
+              <div className="border-t border-[var(--border-default)]" />
+              <EventsSection roomId={roomId} canManage={canManage} />
               <div className="border-t border-[var(--border-default)]" />
               <div>
                 <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
