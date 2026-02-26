@@ -1,11 +1,11 @@
 # Scaling Strategy
 
-> Como escalar o Realtime Chat de centenas para centenas de milhares de usuários simultâneos.
-> Cada tier inclui o que mudar, por que, e custo estimado.
+> How to scale Realtime Chat from hundreds to hundreds of thousands of concurrent users.
+> Each tier includes what to change, why, and estimated cost.
 
 ---
 
-## Current Architecture (MVP — até 500 usuários simultâneos)
+## Current Architecture (MVP — up to 500 concurrent users)
 
 ```
 ┌─────────┐     ┌──────────────┐     ┌────────────┐
@@ -14,24 +14,24 @@
 └─────────┘     └──────────────┘     └────────────┘
 ```
 
-**Capacidade atual:**
-- 1 server Node.js = ~10K WebSocket connections (limitado por RAM)
-- PostgreSQL sem connection pooling = ~100 concurrent connections
-- Uploads no disco local = limitado pelo storage do container
-- Rate limiting in-memory (HTTP + Socket) = não compartilhado entre instâncias
+**Current capacity:**
+- 1 Node.js server = ~10K WebSocket connections (limited by RAM)
+- PostgreSQL without connection pooling = ~100 concurrent connections
+- Uploads on local disk = limited by container storage
+- Rate limiting in-memory (HTTP + Socket) = not shared between instances
 - Socket registry in-memory (`Map<userId, Set<socketId>>`) = O(1) online check
-- Offline message queue (client-side) + idempotency dedup (clientId) para resiliência
-- Structured logging (Pino) com request ID correlation + JSON em prod
-- In-memory metrics (HTTP + socket) + error tracking por fingerprint
-- Graceful shutdown com Prisma disconnect + health check 503
+- Offline message queue (client-side) + idempotency dedup (clientId) for resilience
+- Structured logging (Pino) with request ID correlation + JSON in prod
+- In-memory metrics (HTTP + socket) + error tracking by fingerprint
+- Graceful shutdown with Prisma disconnect + health check 503
 
-**Custo:** ~$10/mês (Railway Hobby + Vercel Free)
+**Cost:** ~$10/month (Railway Hobby + Vercel Free)
 
 ---
 
-## Tier 1: 1K–5K usuários simultâneos
+## Tier 1: 1K–5K concurrent users
 
-### O que adicionar:
+### What to add:
 
 **1. Redis (Session + Cache + Pub/Sub)**
 ```
@@ -48,12 +48,12 @@
                 └──────────────┘
 ```
 
-**Por que:**
-- Cache de queries frequentes (lista de salas, perfis) → reduz DB load em 60-80%
-- Online status em Redis (SADD/SREM) em vez de memória → preparado para múltiplos servers
-- Rate limiting compartilhado (Redis INCR + EXPIRE) → funciona com horizontal scaling
+**Why:**
+- Cache frequent queries (room lists, profiles) → reduces DB load by 60-80%
+- Online status in Redis (SADD/SREM) instead of memory → ready for multiple servers
+- Shared rate limiting (Redis INCR + EXPIRE) → works with horizontal scaling
 
-**Implementação:**
+**Implementation:**
 ```typescript
 // Cache hierarchy
 const rooms = await redis.get(`user:${userId}:rooms`)
@@ -69,15 +69,15 @@ if (count === 1) await redis.expire(`ratelimit:${userId}:messages`, 5)
 if (count > 10) throw new RateLimitError()
 ```
 
-**Custo:** ~$25/mês (+$5 Redis)
+**Cost:** ~$25/month (+$5 Redis)
 
 ---
 
-## Tier 2: 5K–50K usuários simultâneos
+## Tier 2: 5K–50K concurrent users
 
-### O que adicionar:
+### What to add:
 
-**1. Horizontal Scaling (múltiplos servers)**
+**1. Horizontal Scaling (multiple servers)**
 ```
                     ┌──────────────┐
               ┌────►│  Server 1    │────┐
@@ -92,11 +92,11 @@ if (count > 10) throw new RateLimitError()
                     └──────────────┘         └────────────┘
 ```
 
-**2. Socket.io com Redis Adapter**
+**2. Socket.io with Redis Adapter**
 
-O problema: User A está no Server 1, User B no Server 2. Quando A envia mensagem, o `io.to(room)` só emite para connections do Server 1.
+The problem: User A is on Server 1, User B on Server 2. When A sends a message, `io.to(room)` only emits to connections on Server 1.
 
-A solução: `@socket.io/redis-adapter` faz pub/sub entre servers via Redis.
+The solution: `@socket.io/redis-adapter` does pub/sub between servers via Redis.
 
 ```typescript
 import { createAdapter } from '@socket.io/redis-adapter'
@@ -106,37 +106,37 @@ const pubClient = createClient({ url: REDIS_URL })
 const subClient = pubClient.duplicate()
 
 io.adapter(createAdapter(pubClient, subClient))
-// Agora io.to("room:123").emit() funciona cross-server
+// Now io.to("room:123").emit() works cross-server
 ```
 
 **3. Connection Pooling (PgBouncer)**
-- App connections → PgBouncer (pool de 20) → PostgreSQL
-- Sem PgBouncer: 3 servers × 10 connections = 30 DB connections
-- Com PgBouncer: 3 servers → PgBouncer (20 pooled) → PostgreSQL
+- App connections → PgBouncer (pool of 20) → PostgreSQL
+- Without PgBouncer: 3 servers × 10 connections = 30 DB connections
+- With PgBouncer: 3 servers → PgBouncer (20 pooled) → PostgreSQL
 
 **4. Read Replica**
-- Queries de leitura (listar salas, histórico, busca) → Read Replica
-- Queries de escrita (criar mensagem, join room) → Primary
-- Prisma suporta nativamente via `$extends` com read replicas
+- Read queries (list rooms, history, search) → Read Replica
+- Write queries (create message, join room) → Primary
+- Prisma natively supports this via `$extends` with read replicas
 
-**5. CDN para Uploads (S3/R2)**
+**5. CDN for Uploads (S3/R2)**
 ```typescript
-// Em vez de disco local:
+// Instead of local disk:
 const s3 = new S3Client({ region: 'us-east-1' })
 const url = await getSignedUrl(s3, new PutObjectCommand({
   Bucket: 'chat-uploads',
   Key: `avatars/${userId}/${filename}`,
 }))
-// Client faz upload direto para S3 (não passa pelo server)
+// Client uploads directly to S3 (doesn't go through server)
 ```
 
-**Custo:** ~$100-200/mês
+**Cost:** ~$100-200/month
 
 ---
 
-## Tier 3: 50K–100K+ usuários simultâneos
+## Tier 3: 50K–100K+ concurrent users
 
-### O que adicionar:
+### What to add:
 
 **1. Message Queue (BullMQ + Redis)**
 ```
@@ -150,11 +150,11 @@ const url = await getSignedUrl(s3, new PutObjectCommand({
                                       └────────────┘
 ```
 
-**Por que:** Operações demoradas não devem bloquear o request. Enviar email de notificação, gerar thumbnail de imagem, processar analytics — tudo vai para fila.
+**Why:** Long-running operations should not block the request. Sending notification emails, generating image thumbnails, processing analytics — all go to a queue.
 
 **2. Database Partitioning**
 
-Mensagens são append-only e a tabela cresce infinitamente. Particionar por data:
+Messages are append-only and the table grows indefinitely. Partition by date:
 
 ```sql
 -- Partition by month
@@ -172,9 +172,9 @@ CREATE TABLE messages_2026_02 PARTITION OF messages
   FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');
 ```
 
-Queries recentes (últimos 30 dias) = fast. Histórico antigo = slower, mas acessível.
+Recent queries (last 30 days) = fast. Old history = slower, but accessible.
 
-**3. Microservices (se realmente necessário)**
+**3. Microservices (if truly necessary)**
 
 ```
 ┌─ API Gateway ──────────────────────────────────┐
@@ -195,26 +195,26 @@ Queries recentes (últimos 30 dias) = fast. Histórico antigo = slower, mas aces
 └────────────────────────────────────────────────┘
 ```
 
-**Quando migrar para microservices:**
-- Quando times diferentes trabalham em features diferentes
-- Quando uma parte do sistema precisa escalar independentemente (chat vs auth)
-- NUNCA prematuramente — complexidade operacional é 10x maior
+**When to migrate to microservices:**
+- When different teams work on different features
+- When a part of the system needs to scale independently (chat vs auth)
+- NEVER prematurely — operational complexity is 10x higher
 
-**Custo:** ~$500-1000/mês
+**Cost:** ~$500-1000/month
 
 ---
 
 ## Scaling Decision Matrix
 
-| Métrica | Threshold | Ação |
+| Metric | Threshold | Action |
 |---|---|---|
-| DB connections > 80% pool | 80 connections | Adicionar PgBouncer |
-| Response time p95 > 500ms | Consistente | Adicionar Redis cache |
-| WebSocket connections > 8K/server | 8.000 | Horizontal scaling + Redis adapter |
-| Messages/min > 10K | 10.000 | Message queue (BullMQ) |
+| DB connections > 80% pool | 80 connections | Add PgBouncer |
+| Response time p95 > 500ms | Consistent | Add Redis cache |
+| WebSocket connections > 8K/server | 8,000 | Horizontal scaling + Redis adapter |
+| Messages/min > 10K | 10,000 | Message queue (BullMQ) |
 | DB size > 50GB | 50 GB | Table partitioning |
-| Upload storage > 100GB | 100 GB | Migrar para S3/R2 |
-| Read queries > 80% total | 80% | Adicionar read replica |
+| Upload storage > 100GB | 100 GB | Migrate to S3/R2 |
+| Read queries > 80% total | 80% | Add read replica |
 
 ---
 
@@ -222,17 +222,22 @@ Queries recentes (últimos 30 dias) = fast. Histórico antigo = slower, mas aces
 
 | Feature | Stack | Notes |
 |---|---|---|
-| **Auth** | JWT + refresh token | Cookie-free (Vercel proxy compat) |
-| **Rooms** | CRUD + members | Join/leave + admin role |
-| **Messages** | Socket.io realtime | TEXT, IMAGE, FILE types |
+| **Auth** | JWT + refresh token | Cookie-free option (Vercel proxy compat) |
+| **Rooms** | CRUD + members | Join/leave + admin roles + invite codes |
+| **Messages** | Socket.io realtime | TEXT, IMAGE, FILE, VOICE types |
+| **Voice messages** | MediaRecorder + Multer | Record, upload, playback with duration |
 | **Read receipts** | Socket.io events | Per-room last-read tracking |
 | **Typing indicators** | Socket.io events | Debounced, per-room |
 | **Search** | Prisma `contains` | In-room full-text search |
-| **Edit messages** | Socket.io + soft update | Author-only, TEXT-only, shows "(editado)" |
+| **Edit messages** | Socket.io + soft update | Author-only, TEXT-only, shows "(edited)" |
 | **Delete messages** | Socket.io + soft delete | Author or admin, shows placeholder |
 | **Replies** | Self-referencing FK | Quote preview above bubble |
 | **Reactions** | Toggle pattern + aggregation | Emoji chips with count, unique per user+message+emoji |
+| **Friendships** | Request/accept/decline | Socket notifications, auto-accept reverse requests |
+| **Pinned messages** | Admin/owner only | Pin/unpin with room-wide list |
+| **Events/Calendar** | CRUD + invites + RSVP | Room events with invite system |
 | **File uploads** | Multer + static serve | Image preview + file download |
+| **Chat wallpapers** | Client-side themes | Customizable chat backgrounds |
 | **Offline queue** | Client-side queue + idempotency | Exponential backoff retry, clientId dedup |
 | **Reconnection sync** | `message:sync` socket event | Fetches missed messages since last timestamp |
 | **Socket rate limiting** | Per-event in-memory counters | 10 msg/5s, 5 edit/5s, 3 typing/2s |
@@ -249,9 +254,9 @@ Queries recentes (últimos 30 dias) = fast. Histórico antigo = slower, mas aces
 
 | Feature | Why Not |
 |---|---|
-| **Microservices** | Complexidade operacional não justificada para 1 dev. Monolito modular (3 layers) é mais produtivo. |
-| **Kubernetes** | Over-engineering para < 100K users. Railway auto-scales containers. |
-| **GraphQL** | REST é mais simples de demonstrar e documentar (Swagger). Chat não tem query flexibility needs. |
-| **E2E Encryption** | Foco é arquitetura backend, não criptografia. Documentado em `/docs/decisions.md#adr-008`. |
-| **WebRTC** | Seria necessário para vídeo/voz. Para texto, Socket.io é suficiente e mais simples. |
-| **Elasticsearch** | Full-text search com Prisma `contains` é suficiente até ~1M mensagens. |
+| **Microservices** | Operational complexity not justified for 1 developer. Modular monolith (3 layers) is more productive. |
+| **Kubernetes** | Over-engineering for < 100K users. Railway auto-scales containers. |
+| **GraphQL** | REST is simpler to demonstrate and document (Swagger). Chat doesn't have query flexibility needs. |
+| **E2E Encryption** | Focus is backend architecture, not cryptography. Documented in `/docs/decisions.md#adr-008`. |
+| **WebRTC** | Would be needed for video/voice calls. For text, Socket.io is sufficient and simpler. |
+| **Elasticsearch** | Full-text search with Prisma `contains` is sufficient up to ~1M messages. |

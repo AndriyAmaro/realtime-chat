@@ -1,6 +1,6 @@
 # Architecture Overview
 
-> Visão técnica da arquitetura do Realtime Chat — como os componentes se conectam e por quê.
+> Technical overview of Realtime Chat's architecture — how the components connect and why.
 
 ---
 
@@ -39,7 +39,7 @@
 │  │  Express 5 Server (Node.js 22)                        │          │
 │  │  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  │          │
 │  │  │  REST API   │  │  Socket.io   │  │  Static     │  │          │
-│  │  │  22 routes  │  │  18 events   │  │  /uploads   │  │          │
+│  │  │  28 routes  │  │  32 events   │  │  /uploads   │  │          │
 │  │  └──────┬──────┘  └──────┬───────┘  └─────────────┘  │          │
 │  │         │                │                            │          │
 │  │  ┌──────┴────────────────┴──────────────────┐         │          │
@@ -55,7 +55,7 @@
 │  ┌─────────────────────┴─────────────────────────────────┐          │
 │  │  PostgreSQL 16 (Managed)                              │          │
 │  │  Private network: postgres.railway.internal:5432      │          │
-│  │  4 tables, 3 enums, 5 indexes                         │          │
+│  │  10 models, 6 enums, 8+ indexes                       │          │
 │  └───────────────────────────────────────────────────────┘          │
 └──────────────────────────────────────────────────────────────────────┘
 ```
@@ -79,42 +79,51 @@ HTTP Request / Socket Event
                        ▼
 ┌─────────────────────────────────────────────────┐
 │  CONTROLLER LAYER (Routes + Controllers)        │
-│  - Extrair dados do request (body, params)      │
-│  - Chamar o service adequado                    │
-│  - Formatar response (status code + JSON)       │
-│  - ZERO lógica de negócio                       │
+│  - Extract data from request (body, params)     │
+│  - Call the appropriate service                 │
+│  - Format response (status code + JSON)         │
+│  - ZERO business logic                          │
 │                                                 │
-│  auth.controller.ts  → 7 handlers              │
-│  room.controller.ts  → 13 handlers             │
-│  upload.controller.ts → 1 handler               │
-│  message.controller.ts → 1 handler              │
+│  auth.controller.ts     → 7 handlers            │
+│  room.controller.ts     → 13 handlers           │
+│  message.controller.ts  → 3 handlers            │
+│  upload.controller.ts   → 1 handler             │
+│  friendship.controller  → 7 handlers            │
+│  event.controller.ts    → 5 handlers            │
+│  pinned.controller.ts   → 3 handlers            │
 └──────────────────────┬──────────────────────────┘
                        │
                        ▼
 ┌─────────────────────────────────────────────────┐
 │  SERVICE LAYER                                  │
-│  - TODA lógica de negócio vive aqui             │
-│  - Validações de permissão                      │
-│  - Orquestração de operações                    │
-│  - Testável sem HTTP (unit tests puros)         │
+│  - ALL business logic lives here                │
+│  - Permission validations                       │
+│  - Operation orchestration                      │
+│  - Testable without HTTP (pure unit tests)      │
 │                                                 │
-│  auth.service.ts    → register, login, profile  │
-│  room.service.ts    → CRUD, join, leave, roles  │
-│  message.service.ts → send, history, search     │
-│  upload.service.ts  → multer config, file types │
+│  auth.service.ts        → register, login, JWT  │
+│  room.service.ts        → CRUD, join, leave     │
+│  message.service.ts     → send, history, search │
+│  friendship.service.ts  → requests, accept      │
+│  pinned.service.ts      → pin, unpin, list      │
+│  event.service.ts       → CRUD, invites, RSVP   │
+│  upload.service.ts      → multer config, types  │
 └──────────────────────┬──────────────────────────┘
                        │
                        ▼
 ┌─────────────────────────────────────────────────┐
 │  REPOSITORY LAYER                               │
-│  - ÚNICO ponto de acesso ao banco               │
-│  - Queries Prisma tipadas                       │
-│  - Retorna dados puros (sem formatação HTTP)    │
+│  - SINGLE access point to the database          │
+│  - Typed Prisma queries                         │
+│  - Returns raw data (no HTTP formatting)        │
 │                                                 │
-│  user.repository.ts    → findByEmail, create..  │
-│  room.repository.ts    → CRUD + memberships     │
-│  message.repository.ts → create, findByRoom..   │
-│  roomMember.repository → join, leave, roles     │
+│  user.repository.ts       → findByEmail, create │
+│  room.repository.ts       → CRUD + memberships  │
+│  message.repository.ts    → create, findByRoom  │
+│  friendship.repository.ts → requests, status    │
+│  pinnedMessage.repository → pin, unpin, find    │
+│  event.repository.ts      → CRUD + invites      │
+│  reaction.repository.ts   → toggle, aggregate   │
 └──────────────────────┬──────────────────────────┘
                        │
                        ▼
@@ -251,12 +260,16 @@ User A types "Hello" and hits Enter
 │  └──────────────────────────────────────────────────────┘ │
 │                                                           │
 │  ┌─ Real-time Layer ────────────────────────────────────┐ │
-│  │  useSocket()        → connection + auth              │ │
-│  │  useMessages()      → send, receive, history         │ │
-│  │  useTyping()        → typing indicators              │ │
-│  │  useOnlineStatus()  → user presence                  │ │
-│  │  useReadReceipts()  → read indicators (✓✓)           │ │
-│  │  useNotifications() → unread counts, sounds, toasts  │ │
+│  │  useSocket()          → connection + auth             │ │
+│  │  useMessages()        → send, receive, history        │ │
+│  │  useTyping()          → typing indicators             │ │
+│  │  useOnlineStatus()    → user presence                 │ │
+│  │  useReadReceipts()    → read indicators (✓✓)          │ │
+│  │  useNotifications()   → unread counts, sounds, toasts │ │
+│  │  useReactions()       → emoji reactions (toggle)      │ │
+│  │  useVoiceRecorder()   → voice message recording       │ │
+│  │  useFriendship()      → friend requests, status       │ │
+│  │  useEvents()          → room events, RSVP             │ │
 │  └──────────────────────────────────────────────────────┘ │
 │                                                           │
 │  ┌─ UI Layer (Pulse Design System) ─────────────────────┐ │
@@ -282,51 +295,83 @@ User A types "Hello" and hits Enter
 │ password         │     │ name             │
 │ name             │     │ description      │
 │ avatar           │     │ is_private       │
-│ status (enum)    │     │ invite_code (UQ) │
-│ created_at       │     │ created_at       │
-│ updated_at       │     │ updated_at       │
-└────────┬─────────┘     └────────┬─────────┘
-         │                        │
+│ bio              │     │ invite_code (UQ) │
+│ status (enum)    │     │ created_at       │
+│ created_at       │     │ updated_at       │
+│ updated_at       │     └────────┬─────────┘
+└────────┬─────────┘              │
          │    ┌───────────────────┘
          │    │
          ▼    ▼
-┌──────────────────┐
-│  room_members    │
-├──────────────────┤
-│ id        (PK)   │
-│ user_id   (FK)   │──► users.id
-│ room_id   (FK)   │──► rooms.id
-│ role (enum)      │    ADMIN | MEMBER
-│ joined_at        │
-│ last_read_at     │    (for read receipts)
-│                  │
-│ @@unique(user_id,│
-│          room_id)│
-└──────────────────┘
-         │
-         │
-         ▼
-┌──────────────────┐
-│    messages      │
-├──────────────────┤
-│ id        (PK)   │
-│ content          │
-│ type (enum)      │    TEXT | IMAGE | FILE
-│ file_url         │
-│ is_read          │
-│ user_id   (FK)   │──► users.id
-│ room_id   (FK)   │──► rooms.id
-│ created_at       │
-│                  │
-│ @@index(room_id, │    (cursor pagination)
-│     created_at)  │
-│ @@index(user_id) │
-└──────────────────┘
+┌──────────────────┐     ┌──────────────────┐
+│  room_members    │     │    messages      │
+├──────────────────┤     ├──────────────────┤
+│ id        (PK)   │     │ id        (PK)   │
+│ user_id   (FK)   │     │ content          │
+│ room_id   (FK)   │     │ type (enum)      │  TEXT | IMAGE | FILE | VOICE
+│ role (enum)      │     │ file_url         │
+│ joined_at        │     │ duration         │  (for voice messages)
+│ last_read_at     │     │ edited_at        │
+│                  │     │ deleted_at       │  (soft delete)
+│ @@unique(user_id,│     │ client_id  (UQ)  │  (idempotency key)
+│          room_id)│     │ user_id   (FK)   │
+└──────────────────┘     │ room_id   (FK)   │
+                         │ reply_to_id (FK) │  (self-referencing)
+                         │ created_at       │
+                         │                  │
+                         │ @@index(room_id, │  (cursor pagination)
+                         │     created_at)  │
+                         └──────────────────┘
+
+┌──────────────────┐     ┌──────────────────┐
+│message_reactions │     │  friendships     │
+├──────────────────┤     ├──────────────────┤
+│ id        (PK)   │     │ id        (PK)   │
+│ emoji            │     │ sender_id (FK)   │
+│ user_id   (FK)   │     │ receiver_id (FK) │
+│ message_id (FK)  │     │ status (enum)    │  PENDING | ACCEPTED | DECLINED
+│                  │     │ created_at       │
+│ @@unique(user_id,│     │ updated_at       │
+│  message_id,     │     │                  │
+│  emoji)          │     │ @@unique(sender, │
+└──────────────────┘     │      receiver)   │
+                         └──────────────────┘
+
+┌──────────────────┐     ┌──────────────────┐
+│pinned_messages   │     │     events       │
+├──────────────────┤     ├──────────────────┤
+│ id        (PK)   │     │ id        (PK)   │
+│ message_id (FK)  │     │ title            │
+│ room_id   (FK)   │     │ description      │
+│ pinned_by (FK)   │     │ start_time       │
+│ pinned_at        │     │ end_time         │
+│                  │     │ room_id   (FK)   │
+│ @@unique(message,│     │ created_by (FK)  │
+│      room_id)    │     │ status (enum)    │  SCHEDULED | CANCELLED
+└──────────────────┘     │ created_at       │
+                         └────────┬─────────┘
+                                  │
+                         ┌────────┴─────────┐
+                         │  event_invites   │
+                         ├──────────────────┤
+                         │ id        (PK)   │
+                         │ event_id  (FK)   │
+                         │ user_id   (FK)   │
+                         │ status (enum)    │  PENDING | ACCEPTED | DECLINED
+                         │ responded_at     │
+                         │ created_at       │
+                         │                  │
+                         │ @@unique(event,  │
+                         │      user_id)    │
+                         └──────────────────┘
 
 Enums:
-  Status      → ONLINE | OFFLINE | AWAY
-  Role        → ADMIN | MEMBER
-  MessageType → TEXT | IMAGE | FILE
+  UserStatus    → ONLINE | OFFLINE | AWAY
+  Role          → ADMIN | MEMBER
+  MessageType   → TEXT | IMAGE | FILE | VOICE
+  FriendStatus  → PENDING | ACCEPTED | DECLINED
+  EventStatus   → SCHEDULED | CANCELLED
+  InviteStatus  → PENDING | ACCEPTED | DECLINED
 ```
 
 ---
@@ -346,7 +391,8 @@ realtime-chat/
 │   │   │   ├── auth/                # LoginPage, RegisterPage
 │   │   │   └── chat/                # ChatLayout, RoomSidebar, RoomView,
 │   │   │                            # ProfileModal, CreateRoomModal...
-│   │   ├── hooks/                   # useSocket, useMessages, useTyping...
+│   │   ├── hooks/                   # useSocket, useMessages, useTyping,
+│   │   │                            # useReactions, useFriendship, useEvents...
 │   │   ├── services/                # api.ts, auth.service, room.service...
 │   │   ├── store/                   # auth.store, room.store, notification.store
 │   │   └── types/                   # room.ts, shared types
@@ -356,10 +402,15 @@ realtime-chat/
 ├── server/                          # Backend (Express 5 + TypeScript)
 │   ├── src/
 │   │   ├── config/                  # env.ts, database.ts, socket.ts, swagger.ts
-│   │   ├── controllers/             # auth, room, message, upload controllers
-│   │   ├── services/                # auth, room, message, upload services
-│   │   ├── repositories/            # user, room, roomMember, message repos
-│   │   ├── routes/                  # auth, room, message, upload, health routes
+│   │   ├── controllers/             # auth, room, message, friendship, event,
+│   │   │                            # pinned, upload controllers
+│   │   ├── services/                # auth, room, message, friendship, event,
+│   │   │                            # pinned, upload services
+│   │   │   └── __tests__/           # 98 unit tests (Vitest)
+│   │   ├── repositories/            # user, room, message, friendship, event,
+│   │   │                            # pinnedMessage, reaction repositories
+│   │   ├── routes/                  # auth, room, message, friendship, event,
+│   │   │                            # pinned, upload, health routes
 │   │   ├── events/                  # Socket.io event handlers
 │   │   ├── middleware/              # auth, validate, rateLimiter, errorHandler...
 │   │   ├── errors/                  # AppError, AuthError, NotFoundError...
@@ -367,7 +418,7 @@ realtime-chat/
 │   │   ├── utils/                   # jwt.ts
 │   │   └── app.ts                   # Server entry point
 │   ├── prisma/
-│   │   ├── schema.prisma            # Database schema
+│   │   ├── schema.prisma            # Database schema (10 models)
 │   │   ├── migrations/              # Versioned migrations
 │   │   └── seed.ts                  # Demo data
 │   └── tsconfig.json

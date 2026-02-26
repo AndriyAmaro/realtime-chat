@@ -1,130 +1,134 @@
 # Why I Built This
 
-> A reflexão técnica por trás do projeto — o que eu queria demonstrar, quais trade-offs aceitei, e o que aprendi.
+> The technical reflection behind the project — what I wanted to demonstrate, which trade-offs I accepted, and what I learned.
 
 ---
 
-## O Problema
+## The Problem
 
-A maioria dos projetos "portfolio" de desenvolvedores são CRUDs com autenticação. Você vê o repositório e encontra: todo app, blog com markdown, e-commerce com carrinho. Todos demonstram as mesmas habilidades: formulários, REST API, banco de dados.
+Most developer "portfolio" projects are CRUDs with authentication. You look at the repository and find: todo app, markdown blog, e-commerce with cart. They all demonstrate the same skills: forms, REST API, database.
 
-**Chat em tempo real é diferente.** Ele exige domínio de conceitos que CRUDs não tocam:
+**Real-time chat is different.** It requires mastery of concepts that CRUDs never touch:
 
-- **WebSocket** — comunicação bidirecional persistente, não request-response
-- **Event-driven architecture** — handlers de eventos, broadcasts, rooms
-- **Concurrent state** — múltiplos usuários modificando dados simultaneamente
-- **Optimistic UI** — mostrar resultado antes da confirmação do server
-- **Resilience** — reconexão, estado inconsistente, race conditions
+- **WebSocket** — persistent bidirectional communication, not request-response
+- **Event-driven architecture** — event handlers, broadcasts, rooms
+- **Concurrent state** — multiple users modifying data simultaneously
+- **Optimistic UI** — showing results before server confirmation
+- **Resilience** — reconnection, inconsistent state, race conditions
 
-Eu queria um projeto que, quando um recrutador técnico abrisse o código, pensasse: *"Esse dev entende sistemas distribuídos, não só CRUD."*
+I wanted a project that, when a technical recruiter opens the code, thinks: *"This dev understands distributed systems, not just CRUD."*
 
 ---
 
-## O que eu queria demonstrar
+## What I Wanted to Demonstrate
 
-### 1. Arquitetura Backend de 3 Camadas
+### 1. 3-Layer Backend Architecture
 ```
 Controller → Service → Repository
 ```
-Não é só separação de pastas — é separação de **responsabilidades**:
-- Controller: ZERO lógica de negócio. Só extrai dados do request e formata response.
-- Service: TODA lógica de negócio. Testável sem HTTP.
-- Repository: Único ponto de acesso ao banco. Prisma queries tipadas.
+It's not just folder separation — it's separation of **responsibilities**:
+- Controller: ZERO business logic. Only extracts data from the request and formats the response.
+- Service: ALL business logic. Testable without HTTP.
+- Repository: Single access point to the database. Typed Prisma queries.
 
-**Por que importa:** Em produção, quando algo quebra, você sabe EXATAMENTE onde o bug está. Se é um erro de validação → controller. Se é uma regra de negócio errada → service. Se a query está lenta → repository.
+**Why it matters:** In production, when something breaks, you know EXACTLY where the bug is. If it's a validation error → controller. If it's a wrong business rule → service. If the query is slow → repository.
 
-### 2. Tipagem End-to-End
+### 2. End-to-End Type Safety
 ```
 Prisma Schema → Generated Types → Service Types → API Response → Frontend Types
 ```
-Do banco ao componente React, **tudo é tipado**. Mudou o schema do Prisma? O TypeScript compiler te diz TODOS os lugares que precisam ser atualizados. Zero `any`. Zero `as unknown`.
+From the database to the React component, **everything is typed**. Changed the Prisma schema? The TypeScript compiler tells you ALL the places that need updating. Zero `any`. Zero `as unknown`.
 
 ### 3. Real-time Event Architecture
 ```
-Socket.io Events: 18 eventos tipados
-├── Autenticação no handshake (JWT)
+Socket.io Events: 32 typed events
+├── Authentication on handshake (JWT)
 ├── Rooms (join, leave, members)
-├── Messages (send, receive, history)
+├── Messages (send, receive, history, edit, delete)
 ├── Typing indicators (start, stop)
 ├── Read receipts (✓✓)
 ├── Online status (presence)
+├── Reactions (toggle emoji)
+├── Voice messages (send, receive)
+├── Friendships (request, accept, remove)
+├── Events (create, invite, RSVP)
+├── Pinned messages (pin, unpin)
 └── Notifications (unread, sound, toast)
 ```
-Cada evento tem tipos de payload definidos em `types/socket.ts`. O server e o client compartilham a mesma interface de eventos.
+Each event has payload types defined in `types/socket.ts`. The server and client share the same event interface.
 
-### 4. Design System Reutilizável
-40+ componentes adaptados do meu design system Pulse (originalmente para Next.js). Demonstra que sei criar e consumir componentes que seguem padrões: compound components, CVA para variantes, composição sobre herança.
+### 4. Reusable Design System
+40+ components adapted from my Pulse design system (originally for Next.js). Demonstrates that I know how to create and consume components following patterns: compound components, CVA for variants, composition over inheritance.
 
-### 5. DevOps Completo
-- Docker Compose com 5 serviços orquestrados
-- CI/CD com GitHub Actions (lint → typecheck → test → build)
-- Deploy automatizado (Vercel + Railway)
-- Health check endpoint com status de dependências
+### 5. Complete DevOps
+- Docker Compose with 5 orchestrated services
+- CI/CD with GitHub Actions (lint → typecheck → test → build)
+- Automated deployment (Vercel + Railway)
+- Health check endpoint with dependency status
 
 ---
 
-## Trade-offs que aceitei conscientemente
+## Trade-offs I Consciously Accepted
 
-| Decisão | Trade-off | Justificativa |
+| Decision | Trade-off | Justification |
 |---|---|---|
-| **Sem E2E encryption** | Admin pode ler mensagens | Foco é arquitetura, não criptografia. Documentado em `/docs/decisions.md` |
-| **Sem Redis** | Cache e pub/sub in-memory | Para < 500 users, Redis é overhead. Documentado plano de scaling em `/docs/scaling.md` |
-| **Sem microservices** | Monolito | Para 1 dev, monolito modular (3 layers) é 10x mais produtivo |
-| **Uploads no disco** | Não persiste entre deploys no Railway | Para demo. Em produção: S3/R2 |
-| **Sem E2E tests** | Cobertura limitada a unit + integration | Playwright seria o próximo passo. 37 testes cobrem a lógica crítica |
-| **Sem rate limiting por user no WebSocket** | Possível spam | Implementação planejada na Fase 25 |
+| **No E2E encryption** | Admin can read messages | Focus is architecture, not cryptography. Documented in `/docs/decisions.md` |
+| **No Redis** | In-memory cache and pub/sub | For < 500 users, Redis is overhead. Scaling plan documented in `/docs/scaling.md` |
+| **No microservices** | Monolith | For 1 developer, modular monolith (3 layers) is 10x more productive |
+| **Uploads on disk** | Doesn't persist between Railway deploys | For demo. In production: S3/R2 |
+| **No E2E tests** | Coverage limited to unit tests | Playwright would be the next step. 98 tests cover the critical logic |
+| **No per-user WebSocket rate limiting** | Possible spam | In-memory rate limiting implemented per event type |
 
 ---
 
-## O que faria diferente com mais tempo
+## What I Would Do Differently with More Time
 
-1. **Redis para cache + pub/sub** — horizontal scaling de WebSocket com `@socket.io/redis-adapter`
-2. **E2E tests com Playwright** — fluxos completos: register → create room → send message → receive
-3. **Message queue (BullMQ)** — processar notificações push e emails de forma assíncrona
-4. **Storybook** — documentação visual interativa dos 40+ componentes
-5. **E2E encryption** — Web Crypto API para chats 1:1 (ECDH + AES-GCM)
-6. **Image optimization** — thumbnails gerados no upload, lazy loading com blur placeholder
-7. **Internacionalização (i18n)** — suporte a múltiplos idiomas com react-intl
+1. **Redis for cache + pub/sub** — horizontal WebSocket scaling with `@socket.io/redis-adapter`
+2. **E2E tests with Playwright** — complete flows: register → create room → send message → receive
+3. **Message queue (BullMQ)** — process push notifications and emails asynchronously
+4. **Storybook** — interactive visual documentation of the 40+ components
+5. **E2E encryption** — Web Crypto API for 1:1 chats (ECDH + AES-GCM)
+6. **Image optimization** — thumbnails generated on upload, lazy loading with blur placeholder
+7. **Internationalization (i18n)** — multi-language support with react-intl
 
 ---
 
-## Métricas do Projeto
+## Project Metrics
 
-| Métrica | Valor |
+| Metric | Value |
 |---|---|
-| Fases de desenvolvimento | 29 (22 concluídas) |
-| Componentes de UI (Pulse Design System) | 40+ |
-| REST API endpoints | 22 |
-| Socket.io events | 18 |
-| Prisma models | 4 |
-| Middleware | 6 |
-| Testes automatizados | 37 |
-| Stores Zustand | 3 |
-| Custom hooks | 10 |
-| Lines of code (estimated) | ~8.000 |
+| UI Components (Pulse Design System) | 40+ |
+| REST API endpoints | 28 |
+| Socket.io events | 32 |
+| Prisma models | 10 |
+| Middleware | 9 |
+| Automated tests | 98 |
+| Zustand stores | 3 |
+| Custom hooks | 17 |
+| Docker services | 5 |
 
 ---
 
-## Lições Aprendidas
+## Lessons Learned
 
 ### Prisma 7 + CJS Compatibility
-Prisma 7 gera código com `import.meta.url` que não funciona em CommonJS. No Docker, precisei de `sed` post-build para substituir por equivalente CJS. **Lição:** sempre testar o build em container antes de deployar.
+Prisma 7 generates code with `import.meta.url` that doesn't work in CommonJS. In Docker, I needed `sed` post-build to replace it with a CJS equivalent. **Lesson:** always test the build in a container before deploying.
 
 ### Express 5 Read-Only Params
-Express 5 mudou `req.params` e `req.query` para read-only. Dados validados pelo Zod não podem ser re-atribuídos ao request. **Solução:** usar `res.locals.validated` para passar dados validados do middleware para o controller.
+Express 5 changed `req.params` and `req.query` to read-only. Data validated by Zod cannot be reassigned to the request. **Solution:** use `res.locals.validated` to pass validated data from middleware to controller.
 
 ### React 19 + Zustand
-React 19 Strict Mode renderiza componentes duas vezes em dev. Com Zustand, é seguro porque as stores são externas ao React tree. Mas `setState` dentro de `useEffect` causa warnings — usei o "adjust state during render" pattern.
+React 19 Strict Mode renders components twice in dev. With Zustand, it's safe because stores are external to the React tree. But `setState` inside `useEffect` causes warnings — I used the "adjust state during render" pattern.
 
-### Socket.io + Múltiplas Abas
-Um mesmo usuário pode ter múltiplas abas abertas (= múltiplos sockets). O status "ONLINE" precisa considerar `userSockets.size > 0`, não apenas um socket individual. Só marcar OFFLINE quando a **última** aba fecha.
+### Socket.io + Multiple Tabs
+A single user can have multiple tabs open (= multiple sockets). The "ONLINE" status needs to consider `userSockets.size > 0`, not just an individual socket. Only mark as OFFLINE when the **last** tab closes.
 
-### Design System Cross-Framework
-Adaptar componentes de Next.js para React/Vite exigiu: remover `next/image`, `next/link`, `next-themes`, e substituir por equivalentes nativos. **Lição:** design systems devem ser framework-agnostic — depender de features do framework acopla os componentes.
+### Cross-Framework Design System
+Adapting components from Next.js to React/Vite required: removing `next/image`, `next/link`, `next-themes`, and replacing them with native equivalents. **Lesson:** design systems should be framework-agnostic — depending on framework features couples the components.
 
 ---
 
-## Stack Técnica Completa
+## Full Tech Stack
 
 **Frontend:** React 19 · TypeScript 5.9 · Vite 7 · Tailwind CSS 4 · Radix UI · React Query · Zustand · Socket.io Client · React Hook Form + Zod
 
@@ -132,4 +136,4 @@ Adaptar componentes de Next.js para React/Vite exigiu: remover `next/image`, `ne
 
 **DevOps:** Docker · Docker Compose · GitHub Actions · Vercel · Railway · Nginx
 
-**Testing:** Vitest · React Testing Library · Supertest patterns
+**Testing:** Vitest · React Testing Library · 98 unit tests across 6 service test suites
