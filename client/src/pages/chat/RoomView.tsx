@@ -1,14 +1,36 @@
-import { memo, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { Avatar } from '@core/primitives/Avatar'
 import { Badge } from '@core/primitives/Badge'
 import { Button } from '@core/primitives/Button'
 import { Spinner } from '@core/primitives/Spinner'
 import { EmptyState } from '@core/patterns/EmptyState'
 import { Drawer } from '@core/organisms/Drawer/Drawer'
-import { useRoom, useRoomMembers, useLeaveRoom, useDeleteRoom } from '@hooks/useRooms'
+import { SimpleTooltip } from '@core/primitives/Tooltip'
+import {
+  useRoom,
+  useRoomMembers,
+  useLeaveRoom,
+  useDeleteRoom,
+  useRegenerateInviteCode,
+} from '@hooks/useRooms'
 import { useAuthStore } from '@store/auth.store'
 import { useMediaQuery } from '@hooks/useMediaQuery'
-import { Hash, Lock, Users, Crown, LogOut, Trash2, Circle, Search, ArrowLeft } from 'lucide-react'
+import {
+  Hash,
+  Lock,
+  Users,
+  Crown,
+  LogOut,
+  Trash2,
+  Circle,
+  Search,
+  ArrowLeft,
+  Copy,
+  Check,
+  RefreshCw,
+  KeyRound,
+  Fingerprint,
+} from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useSocket } from '@hooks/useSocket'
 import { useOnlineStatus } from '@hooks/useOnlineStatus'
@@ -62,6 +84,8 @@ export function RoomView({ roomId }: RoomViewProps) {
   }
 
   const isOwner = room.ownerId === userId
+  const currentMember = members?.find((m) => m.userId === userId)
+  const canManage = isOwner || currentMember?.role === 'ADMIN'
   const memberCount = members?.length ?? room._count?.members ?? 0
 
   async function handleLeave() {
@@ -201,7 +225,16 @@ export function RoomView({ roomId }: RoomViewProps) {
 
         {/* Desktop: inline members panel */}
         {isDesktop && !searchOpen && (
-          <div className="w-60 shrink-0 border-l border-[var(--border-default)]">
+          <div className="w-60 shrink-0 overflow-y-auto border-l border-[var(--border-default)]">
+            <div className="p-4">
+              <RoomInfoSection
+                roomId={roomId}
+                inviteCode={room.inviteCode}
+                isPrivate={room.isPrivate}
+                canManage={canManage}
+              />
+            </div>
+            <div className="mx-4 border-t border-[var(--border-default)]" />
             <div className="p-4">
               <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
                 Membros — {memberCount}
@@ -231,10 +264,26 @@ export function RoomView({ roomId }: RoomViewProps) {
         <Drawer open={membersOpen} onOpenChange={setMembersOpen}>
           <Drawer.Content side="right" size="sm">
             <Drawer.Header>
-              <Drawer.Title>Membros — {memberCount}</Drawer.Title>
+              <Drawer.Title>Sala</Drawer.Title>
             </Drawer.Header>
-            <Drawer.Body className="p-4">
-              <MembersList members={members} ownerId={room.ownerId} getUserStatus={getUserStatus} />
+            <Drawer.Body className="space-y-4 p-4">
+              <RoomInfoSection
+                roomId={roomId}
+                inviteCode={room.inviteCode}
+                isPrivate={room.isPrivate}
+                canManage={canManage}
+              />
+              <div className="border-t border-[var(--border-default)]" />
+              <div>
+                <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
+                  Membros — {memberCount}
+                </h4>
+                <MembersList
+                  members={members}
+                  ownerId={room.ownerId}
+                  getUserStatus={getUserStatus}
+                />
+              </div>
             </Drawer.Body>
           </Drawer.Content>
         </Drawer>
@@ -242,6 +291,123 @@ export function RoomView({ roomId }: RoomViewProps) {
     </div>
   )
 }
+
+// ============ COPY BUTTON ============
+
+function CopyButton({ value, label }: { value: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = useCallback(async () => {
+    await navigator.clipboard.writeText(value)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }, [value])
+
+  return (
+    <SimpleTooltip content={copied ? 'Copiado!' : `Copiar ${label}`} side="top">
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="group/copy relative flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-all duration-150 hover:bg-[var(--bg-emphasis)]"
+        aria-label={`Copiar ${label}`}
+      >
+        <Copy
+          className={`h-3.5 w-3.5 text-[var(--text-muted)] transition-all duration-200 group-hover/copy:text-[var(--text-primary)] ${copied ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+        />
+        <Check
+          className={`absolute h-3.5 w-3.5 text-[var(--success-base)] transition-all duration-200 ${copied ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
+        />
+      </button>
+    </SimpleTooltip>
+  )
+}
+
+// ============ ROOM INFO SECTION ============
+
+interface RoomInfoSectionProps {
+  roomId: string
+  inviteCode?: string
+  isPrivate: boolean
+  canManage: boolean
+}
+
+const RoomInfoSection = memo(function RoomInfoSection({
+  roomId,
+  inviteCode,
+  isPrivate,
+  canManage,
+}: RoomInfoSectionProps) {
+  const regenerate = useRegenerateInviteCode()
+
+  return (
+    <div className="space-y-3">
+      <h4 className="text-xs font-semibold tracking-wider text-[var(--text-muted)] uppercase">
+        Informações da sala
+      </h4>
+
+      {/* Room ID */}
+      <div className="group rounded-lg border border-[var(--border-default)] bg-[var(--bg-subtle)] p-3 transition-colors duration-150 hover:border-[var(--border-strong)]">
+        <div className="mb-1.5 flex items-center gap-1.5">
+          <Fingerprint className="h-3 w-3 text-[var(--text-muted)]" />
+          <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)] uppercase">
+            ID da sala
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <code className="min-w-0 flex-1 truncate font-mono text-xs text-[var(--text-secondary)]">
+            {roomId}
+          </code>
+          <CopyButton value={roomId} label="ID" />
+        </div>
+      </div>
+
+      {/* Invite Code — only for private rooms, visible to owner/admin */}
+      {isPrivate && canManage && inviteCode && (
+        <div className="group rounded-lg border border-[var(--border-default)] bg-[var(--bg-subtle)] p-3 transition-colors duration-150 hover:border-[var(--border-strong)]">
+          <div className="mb-1.5 flex items-center gap-1.5">
+            <KeyRound className="h-3 w-3 text-[var(--text-muted)]" />
+            <span className="text-[10px] font-medium tracking-wider text-[var(--text-muted)] uppercase">
+              Código de convite
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <code className="min-w-0 flex-1 truncate font-mono text-sm font-semibold tracking-widest text-[var(--text-primary)]">
+              {inviteCode}
+            </code>
+            <CopyButton value={inviteCode} label="código" />
+          </div>
+          <div className="mt-2 border-t border-[var(--border-default)] pt-2">
+            <SimpleTooltip content="Gera um novo código e invalida o anterior" side="bottom">
+              <button
+                type="button"
+                onClick={() => regenerate.mutate(roomId)}
+                disabled={regenerate.isPending}
+                className="flex items-center gap-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors duration-150 hover:text-[var(--text-primary)] disabled:opacity-50"
+              >
+                <RefreshCw className={`h-3 w-3 ${regenerate.isPending ? 'animate-spin' : ''}`} />
+                {regenerate.isPending ? 'Regenerando...' : 'Regenerar código'}
+              </button>
+            </SimpleTooltip>
+          </div>
+        </div>
+      )}
+
+      {/* Hint for non-private rooms */}
+      {!isPrivate && (
+        <p className="text-[11px] leading-relaxed text-[var(--text-muted)]">
+          Sala pública — qualquer pessoa pode entrar com o ID acima.
+        </p>
+      )}
+
+      {/* Hint for private rooms where user is NOT admin */}
+      {isPrivate && !canManage && (
+        <p className="text-[11px] leading-relaxed text-[var(--text-muted)]">
+          Sala privada — peça o código de convite ao administrador.
+        </p>
+      )}
+    </div>
+  )
+})
 
 // ============ MEMBERS LIST ============
 

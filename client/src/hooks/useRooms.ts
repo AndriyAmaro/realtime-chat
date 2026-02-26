@@ -93,3 +93,14 @@ export function useDeleteRoom() {
     },
   })
 }
+
+export function useRegenerateInviteCode() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (roomId: string) => roomService.regenerateInviteCode(roomId),
+    onSuccess: (_data, roomId) => {
+      void queryClient.invalidateQueries({ queryKey: roomKeys.detail(roomId) })
+    },
+  })
+}
