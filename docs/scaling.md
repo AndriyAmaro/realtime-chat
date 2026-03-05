@@ -1,11 +1,19 @@
 # Scaling Strategy
 
-> How to scale Realtime Chat from hundreds to hundreds of thousands of concurrent users.
+> How to scale Pulse Chat from hundreds to hundreds of thousands of concurrent users.
 > Each tier includes what to change, why, and estimated cost.
 
 ---
 
-## Current Architecture (MVP — up to 500 concurrent users)
+## Overview
+
+<div align="center">
+  <img src="../assets/diagram-scaling.svg" alt="Scaling Strategy" width="100%" />
+</div>
+
+---
+
+## Current Architecture (MVP · up to 500 concurrent users)
 
 ```
 ┌─────────┐     ┌──────────────┐     ┌────────────┐
@@ -150,7 +158,7 @@ const url = await getSignedUrl(s3, new PutObjectCommand({
                                       └────────────┘
 ```
 
-**Why:** Long-running operations should not block the request. Sending notification emails, generating image thumbnails, processing analytics — all go to a queue.
+**Why:** Long-running operations should not block the request. Sending notification emails, generating image thumbnails, processing analytics ·all go to a queue.
 
 **2. Database Partitioning**
 
@@ -198,7 +206,7 @@ Recent queries (last 30 days) = fast. Old history = slower, but accessible.
 **When to migrate to microservices:**
 - When different teams work on different features
 - When a part of the system needs to scale independently (chat vs auth)
-- NEVER prematurely — operational complexity is 10x higher
+- NEVER prematurely ·operational complexity is 10x higher
 
 **Cost:** ~$500-1000/month
 

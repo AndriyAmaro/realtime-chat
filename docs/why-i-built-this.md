@@ -1,6 +1,6 @@
 # Why I Built This
 
-> The technical reflection behind the project — what I wanted to demonstrate, which trade-offs I accepted, and what I learned.
+> The technical reflection behind the project ·what I wanted to demonstrate, which trade-offs I accepted, and what I learned.
 
 ---
 
@@ -10,11 +10,11 @@ Most developer "portfolio" projects are CRUDs with authentication. You look at t
 
 **Real-time chat is different.** It requires mastery of concepts that CRUDs never touch:
 
-- **WebSocket** — persistent bidirectional communication, not request-response
-- **Event-driven architecture** — event handlers, broadcasts, rooms
-- **Concurrent state** — multiple users modifying data simultaneously
-- **Optimistic UI** — showing results before server confirmation
-- **Resilience** — reconnection, inconsistent state, race conditions
+- **WebSocket** ·persistent bidirectional communication, not request-response
+- **Event-driven architecture** ·event handlers, broadcasts, rooms
+- **Concurrent state** ·multiple users modifying data simultaneously
+- **Optimistic UI** ·showing results before server confirmation
+- **Resilience** ·reconnection, inconsistent state, race conditions
 
 I wanted a project that, when a technical recruiter opens the code, thinks: *"This dev understands distributed systems, not just CRUD."*
 
@@ -26,7 +26,7 @@ I wanted a project that, when a technical recruiter opens the code, thinks: *"Th
 ```
 Controller → Service → Repository
 ```
-It's not just folder separation — it's separation of **responsibilities**:
+It's not just folder separation ·it's separation of **responsibilities**:
 - Controller: ZERO business logic. Only extracts data from the request and formats the response.
 - Service: ALL business logic. Testable without HTTP.
 - Repository: Single access point to the database. Typed Prisma queries.
@@ -83,13 +83,13 @@ Each event has payload types defined in `types/socket.ts`. The server and client
 
 ## What I Would Do Differently with More Time
 
-1. **Redis for cache + pub/sub** — horizontal WebSocket scaling with `@socket.io/redis-adapter`
-2. **E2E tests with Playwright** — complete flows: register → create room → send message → receive
-3. **Message queue (BullMQ)** — process push notifications and emails asynchronously
-4. **Storybook** — interactive visual documentation of the 40+ components
-5. **E2E encryption** — Web Crypto API for 1:1 chats (ECDH + AES-GCM)
-6. **Image optimization** — thumbnails generated on upload, lazy loading with blur placeholder
-7. **Internationalization (i18n)** — multi-language support with react-intl
+1. **Redis for cache + pub/sub** ·horizontal WebSocket scaling with `@socket.io/redis-adapter`
+2. **E2E tests with Playwright** ·complete flows: register → create room → send message → receive
+3. **Message queue (BullMQ)** ·process push notifications and emails asynchronously
+4. **Storybook** ·interactive visual documentation of the 40+ components
+5. **E2E encryption** ·Web Crypto API for 1:1 chats (ECDH + AES-GCM)
+6. **Image optimization** ·thumbnails generated on upload, lazy loading with blur placeholder
+7. **Internationalization (i18n)** ·multi-language support with react-intl
 
 ---
 
@@ -118,13 +118,13 @@ Prisma 7 generates code with `import.meta.url` that doesn't work in CommonJS. In
 Express 5 changed `req.params` and `req.query` to read-only. Data validated by Zod cannot be reassigned to the request. **Solution:** use `res.locals.validated` to pass validated data from middleware to controller.
 
 ### React 19 + Zustand
-React 19 Strict Mode renders components twice in dev. With Zustand, it's safe because stores are external to the React tree. But `setState` inside `useEffect` causes warnings — I used the "adjust state during render" pattern.
+React 19 Strict Mode renders components twice in dev. With Zustand, it's safe because stores are external to the React tree. But `setState` inside `useEffect` causes warnings ·I used the "adjust state during render" pattern.
 
 ### Socket.io + Multiple Tabs
 A single user can have multiple tabs open (= multiple sockets). The "ONLINE" status needs to consider `userSockets.size > 0`, not just an individual socket. Only mark as OFFLINE when the **last** tab closes.
 
 ### Cross-Framework Design System
-Adapting components from Next.js to React/Vite required: removing `next/image`, `next/link`, `next-themes`, and replacing them with native equivalents. **Lesson:** design systems should be framework-agnostic — depending on framework features couples the components.
+Adapting components from Next.js to React/Vite required: removing `next/image`, `next/link`, `next-themes`, and replacing them with native equivalents. **Lesson:** design systems should be framework-agnostic ·depending on framework features couples the components.
 
 ---
 

@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" fill="none">
+
+  <!-- Background -->
+  <rect width="700" height="480" rx="12" fill="#0d1117" />
+
+  <!-- Title -->
+  <text x="350" y="26" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="2">SCALING STRATEGY · MVP TO 100K+ USERS</text>
+
+  <!-- ═══ TIER 0: MVP ═══ -->
+  <rect x="30" y="44" width="640" height="70" rx="8" fill="#111827" stroke="#22c55e" stroke-width="1.5" />
+  <text x="50" y="64" fill="#4ade80" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="1">MVP</text>
+  <text x="95" y="64" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">up to 500 users · ~$10/month</text>
+
+  <rect x="45" y="76" width="120" height="28" rx="5" fill="#1a1a2e" stroke="#16a34a" stroke-width="1" />
+  <text x="105" y="94" text-anchor="middle" fill="#86efac" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Vercel (CDN)</text>
+
+  <path d="M165,90 L195,90" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="197,90 191,86 191,94" />
+
+  <rect x="200" y="76" width="170" height="28" rx="5" fill="#1a1a2e" stroke="#16a34a" stroke-width="1" />
+  <text x="285" y="94" text-anchor="middle" fill="#86efac" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">1x Express + Socket.io</text>
+
+  <path d="M370,90 L400,90" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="402,90 396,86 396,94" />
+
+  <rect x="405" y="76" width="140" height="28" rx="5" fill="#1a1a2e" stroke="#16a34a" stroke-width="1" />
+  <text x="475" y="94" text-anchor="middle" fill="#86efac" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">PostgreSQL (1 instance)</text>
+
+  <!-- Arrow down -->
+  <path d="M350,114 L350,132" stroke="#475569" stroke-width="1.5" fill="none" />
+  <polygon fill="#475569" points="350,135 346,129 354,129" />
+
+  <!-- ═══ TIER 1: Redis ═══ -->
+  <rect x="30" y="138" width="640" height="82" rx="8" fill="#111827" stroke="#6366f1" stroke-width="1.5" />
+  <text x="50" y="158" fill="#a5b4fc" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="1">TIER 1</text>
+  <text x="110" y="158" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">1K-5K users · ~$25/month</text>
+
+  <rect x="45" y="168" width="180" height="40" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="135" y="185" text-anchor="middle" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">1x Express + Socket.io</text>
+  <text x="135" y="200" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">+ shared rate limiting</text>
+
+  <path d="M225,190 L265,190" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="267,190 261,186 261,194" />
+
+  <rect x="270" y="168" width="180" height="40" rx="5" fill="#1a1a2e" stroke="#ef4444" stroke-width="1" />
+  <text x="360" y="185" text-anchor="middle" fill="#fca5a5" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Redis (NEW)</text>
+  <text x="360" y="200" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Cache · Online Status · Pub/Sub</text>
+
+  <path d="M450,190 L490,190" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="492,190 486,186 486,194" />
+
+  <rect x="495" y="168" width="160" height="40" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="575" y="185" text-anchor="middle" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">PostgreSQL</text>
+  <text x="575" y="200" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">60-80% less DB load</text>
+
+  <!-- Arrow down -->
+  <path d="M350,220 L350,238" stroke="#475569" stroke-width="1.5" fill="none" />
+  <polygon fill="#475569" points="350,241 346,235 354,235" />
+
+  <!-- ═══ TIER 2: Horizontal ═══ -->
+  <rect x="30" y="244" width="640" height="100" rx="8" fill="#111827" stroke="#14b8a6" stroke-width="1.5" />
+  <text x="50" y="264" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="1">TIER 2</text>
+  <text x="110" y="264" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">5K-50K users · ~$100-200/month</text>
+
+  <!-- Load balancer -->
+  <rect x="45" y="276" width="90" height="56" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="90" y="296" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Load</text>
+  <text x="90" y="310" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Balancer</text>
+  <text x="90" y="324" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="7">sticky sessions</text>
+
+  <!-- Servers -->
+  <path d="M135,290 L167,280" stroke="#475569" stroke-width="1" />
+  <path d="M135,304 L167,304" stroke="#475569" stroke-width="1" />
+  <path d="M135,318 L167,328" stroke="#475569" stroke-width="1" />
+
+  <rect x="170" y="272" width="80" height="22" rx="4" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="210" y="287" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="8" font-weight="600">Server 1</text>
+
+  <rect x="170" y="296" width="80" height="22" rx="4" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="210" y="311" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="8" font-weight="600">Server 2</text>
+
+  <rect x="170" y="320" width="80" height="22" rx="4" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="210" y="335" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="8" font-weight="600">Server 3</text>
+
+  <!-- Redis Adapter -->
+  <path d="M250,304 L290,304" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="292,304 286,300 286,308" />
+
+  <rect x="295" y="280" width="120" height="48" rx="5" fill="#1a1a2e" stroke="#ef4444" stroke-width="1" />
+  <text x="355" y="299" text-anchor="middle" fill="#fca5a5" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Redis Cluster</text>
+  <text x="355" y="313" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Socket.io Adapter</text>
+  <text x="355" y="324" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="7">cross-server broadcast</text>
+
+  <!-- PgBouncer + DB -->
+  <path d="M415,304 L445,304" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="447,304 441,300 441,308" />
+
+  <rect x="450" y="280" width="90" height="48" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="495" y="299" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">PgBouncer</text>
+  <text x="495" y="313" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Connection pool</text>
+
+  <path d="M540,304 L560,304" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="562,304 556,300 556,308" />
+
+  <rect x="565" y="276" width="90" height="56" rx="5" fill="#1a1a2e" stroke="#06b6d4" stroke-width="1" />
+  <text x="610" y="296" text-anchor="middle" fill="#67e8f9" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">PostgreSQL</text>
+  <text x="610" y="310" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Primary</text>
+  <text x="610" y="324" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">+ Read Replica</text>
+
+  <!-- Arrow down -->
+  <path d="M350,344 L350,362" stroke="#475569" stroke-width="1.5" fill="none" />
+  <polygon fill="#475569" points="350,365 346,359 354,359" />
+
+  <!-- ═══ TIER 3: Queues + Microservices ═══ -->
+  <rect x="30" y="368" width="640" height="98" rx="8" fill="#111827" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="50" y="388" fill="#fbbf24" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="1">TIER 3</text>
+  <text x="110" y="388" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">50K-100K+ users · ~$500-1000/month</text>
+
+  <rect x="45" y="400" width="120" height="52" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="105" y="418" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">API Gateway</text>
+  <text x="105" y="432" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Route to services</text>
+  <text x="105" y="444" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="7">Auth · Chat · Notify</text>
+
+  <path d="M165,426 L195,426" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="197,426 191,422 191,430" />
+
+  <rect x="200" y="400" width="100" height="52" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="250" y="418" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">BullMQ</text>
+  <text x="250" y="432" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Message Queue</text>
+  <text x="250" y="444" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="7">Async jobs</text>
+
+  <path d="M300,426 L330,426" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="332,426 326,422 326,430" />
+
+  <rect x="335" y="400" width="100" height="52" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="385" y="418" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Workers</text>
+  <text x="385" y="432" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Email · Push</text>
+  <text x="385" y="444" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="7">Analytics · Thumbs</text>
+
+  <path d="M435,426 L465,426" stroke="#475569" stroke-width="1" />
+  <polygon fill="#475569" points="467,426 461,422 461,430" />
+
+  <rect x="470" y="400" width="100" height="52" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="520" y="418" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">DB Partitions</text>
+  <text x="520" y="432" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Messages by month</text>
+  <text x="520" y="444" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="7">S3/R2 for uploads</text>
+
+  <rect x="580" y="400" width="80" height="52" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="620" y="418" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">CDN</text>
+  <text x="620" y="432" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">CloudFront</text>
+  <text x="620" y="444" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="7">Edge cache</text>
+
+</svg>
