@@ -15,12 +15,9 @@
 
 ## Current Architecture (MVP · up to 500 concurrent users)
 
-```
-┌─────────┐     ┌──────────────┐     ┌────────────┐
-│  Vercel │────►│  1x Express  │────►│ PostgreSQL │
-│  (CDN)  │     │  Server      │     │(1 instance)│
-└─────────┘     └──────────────┘     └────────────┘
-```
+<div align="center">
+  <img src="../assets/scaling-mvp.svg" alt="MVP Architecture" width="100%" />
+</div>
 
 **Current capacity:**
 - 1 Node.js server = ~10K WebSocket connections (limited by RAM)
@@ -42,19 +39,9 @@
 ### What to add:
 
 **1. Redis (Session + Cache + Pub/Sub)**
-```
-┌─────────┐     ┌──────────────┐     ┌────────────┐
-│  Vercel │────►│  1x Express  │────►│ PostgreSQL │
-│  (CDN)  │     │  + Socket.io │     └────────────┘
-└─────────┘     └──────┬───────┘
-                       │
-                ┌──────┴───────┐
-                │    Redis     │
-                │  • Sessions  │
-                │  • Cache     │
-                │  • Pub/Sub   │
-                └──────────────┘
-```
+<div align="center">
+  <img src="../assets/scaling-tier1.svg" alt="Tier 1 - Redis" width="100%" />
+</div>
 
 **Why:**
 - Cache frequent queries (room lists, profiles) → reduces DB load by 60-80%
@@ -86,19 +73,9 @@ if (count > 10) throw new RateLimitError()
 ### What to add:
 
 **1. Horizontal Scaling (multiple servers)**
-```
-                    ┌──────────────┐
-              ┌────►│  Server 1    │────┐
-┌─────────┐   │     └──────────────┘    │    ┌────────────┐
-│  Load   │───┤                         ├───►│ PostgreSQL │
-│ Balancer│   │     ┌──────────────┐    │    │  + Replica │
-└─────────┘   ├────►│  Server 2    │────┤    └────────────┘
-              │     └──────────────┘    │
-              │                         │    ┌────────────┐
-              └────►┌──────────────┐    ├───►│   Redis    │
-                    │  Server 3    │────┘    │  (Cluster) │
-                    └──────────────┘         └────────────┘
-```
+<div align="center">
+  <img src="../assets/scaling-tier2.svg" alt="Tier 2 - Horizontal Scaling" width="100%" />
+</div>
 
 **2. Socket.io with Redis Adapter**
 
@@ -147,16 +124,9 @@ const url = await getSignedUrl(s3, new PutObjectCommand({
 ### What to add:
 
 **1. Message Queue (BullMQ + Redis)**
-```
-┌──────────┐     ┌──────────────┐     ┌────────────┐
-│  Server  │────►│   BullMQ     │────►│  Workers   │
-│ (API)    │     │   Queue      │     │            │
-└──────────┘     └──────────────┘     │• Emails    │
-                                      │• Push      │
-                                      │• Analytics │
-                                      │• Thumbnails│
-                                      └────────────┘
-```
+<div align="center">
+  <img src="../assets/scaling-tier3-queue.svg" alt="Tier 3 - Message Queue" width="100%" />
+</div>
 
 **Why:** Long-running operations should not block the request. Sending notification emails, generating image thumbnails, processing analytics ·all go to a queue.
 
@@ -184,24 +154,9 @@ Recent queries (last 30 days) = fast. Old history = slower, but accessible.
 
 **3. Microservices (if truly necessary)**
 
-```
-┌─ API Gateway ──────────────────────────────────┐
-│                                                │
-│  ┌──────────┐  ┌──────────┐  ┌──────────────┐  │
-│  │   Auth   │  │   Chat   │  │ Notification │  │
-│  │ Service  │  │ Service  │  │   Service    │  │
-│  │          │  │          │  │              │  │
-│  │ • Login  │  │ • Rooms  │  │ • Push       │  │
-│  │ • JWT    │  │ • Msgs   │  │ • Email      │  │
-│  │ • Profile│  │ • Socket │  │ • In-App     │  │
-│  └────┬─────┘  └────┬─────┘  └──────┬───────┘  │
-│       │              │               │         │
-│  ┌────┴──┐     ┌────┴──┐      ┌────┴──┐        │
-│  │ Users │     │ Msgs  │      │ Redis │        │
-│  │  DB   │     │  DB   │      │ Queue │        │
-│  └───────┘     └───────┘      └───────┘        │
-└────────────────────────────────────────────────┘
-```
+<div align="center">
+  <img src="../assets/scaling-tier3-microservices.svg" alt="Tier 3 - Microservices" width="100%" />
+</div>
 
 **When to migrate to microservices:**
 - When different teams work on different features

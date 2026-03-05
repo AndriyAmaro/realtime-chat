@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 200" fill="none">
+  <rect width="700" height="200" rx="10" fill="#0d1117" />
+
+  <!-- API Gateway outer box -->
+  <rect x="20" y="10" width="660" height="180" rx="8" fill="#111827" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="350" y="32" text-anchor="middle" fill="#fbbf24" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">API GATEWAY</text>
+
+  <!-- Auth Service -->
+  <rect x="40" y="46" width="190" height="70" rx="6" fill="#1a1a2e" stroke="#6366f1" stroke-width="1" />
+  <text x="135" y="66" text-anchor="middle" fill="#a5b4fc" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700">Auth Service</text>
+  <text x="135" y="84" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Login · JWT · Profile</text>
+  <text x="135" y="100" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Token management</text>
+
+  <!-- Chat Service -->
+  <rect x="250" y="46" width="190" height="70" rx="6" fill="#1a1a2e" stroke="#14b8a6" stroke-width="1" />
+  <text x="345" y="66" text-anchor="middle" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700">Chat Service</text>
+  <text x="345" y="84" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Rooms · Messages · Socket</text>
+  <text x="345" y="100" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Real-time events</text>
+
+  <!-- Notification Service -->
+  <rect x="460" y="46" width="200" height="70" rx="6" fill="#1a1a2e" stroke="#ef4444" stroke-width="1" />
+  <text x="560" y="66" text-anchor="middle" fill="#fca5a5" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700">Notification Service</text>
+  <text x="560" y="84" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Push · Email · In-App</text>
+  <text x="560" y="100" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Async delivery</text>
+
+  <!-- Arrows down to DBs -->
+  <path d="M135,116 L135,140" stroke="#6366f1" stroke-width="1" />
+  <polygon fill="#6366f1" points="135,143 131,137 139,137" />
+
+  <path d="M345,116 L345,140" stroke="#14b8a6" stroke-width="1" />
+  <polygon fill="#14b8a6" points="345,143 341,137 349,137" />
+
+  <path d="M560,116 L560,140" stroke="#ef4444" stroke-width="1" />
+  <polygon fill="#ef4444" points="560,143 556,137 564,137" />
+
+  <!-- Databases -->
+  <rect x="65" y="146" width="140" height="34" rx="6" fill="#1a1a2e" stroke="#06b6d4" stroke-width="1" />
+  <text x="135" y="168" text-anchor="middle" fill="#a5f3fc" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600">Users DB</text>
+
+  <rect x="275" y="146" width="140" height="34" rx="6" fill="#1a1a2e" stroke="#06b6d4" stroke-width="1" />
+  <text x="345" y="168" text-anchor="middle" fill="#a5f3fc" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600">Messages DB</text>
+
+  <rect x="490" y="146" width="140" height="34" rx="6" fill="#1a1a2e" stroke="#06b6d4" stroke-width="1" />
+  <text x="560" y="168" text-anchor="middle" fill="#a5f3fc" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600">Redis Queue</text>
+</svg>
