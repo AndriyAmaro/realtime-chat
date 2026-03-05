@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 380" fill="none">
+
+  <!-- Background -->
+  <rect width="700" height="380" rx="12" fill="#0d1117" />
+
+  <!-- Title -->
+  <text x="350" y="28" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="2">FRONTEND ARCHITECTURE · REACT 19 + VITE 7</text>
+
+  <!-- ═══ STATE MANAGEMENT ═══ -->
+  <rect x="30" y="48" width="640" height="100" rx="8" fill="#111827" stroke="#6366f1" stroke-width="1.5" />
+  <text x="350" y="68" text-anchor="middle" fill="#a5b4fc" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">STATE MANAGEMENT</text>
+
+  <!-- Server State -->
+  <rect x="45" y="80" width="300" height="56" rx="6" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="195" y="96" text-anchor="middle" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="700">Server State · React Query</text>
+
+  <rect x="55" y="103" width="70" height="22" rx="4" fill="#0d1117" stroke="#6366f1" stroke-width="0.5" />
+  <text x="90" y="118" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="8">useMyRooms</text>
+
+  <rect x="131" y="103" width="60" height="22" rx="4" fill="#0d1117" stroke="#6366f1" stroke-width="0.5" />
+  <text x="161" y="118" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="8">useRoom</text>
+
+  <rect x="197" y="103" width="65" height="22" rx="4" fill="#0d1117" stroke="#6366f1" stroke-width="0.5" />
+  <text x="229" y="118" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="8">mutations</text>
+
+  <rect x="268" y="103" width="65" height="22" rx="4" fill="#0d1117" stroke="#6366f1" stroke-width="0.5" />
+  <text x="300" y="118" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="8">cache</text>
+
+  <!-- Client State -->
+  <rect x="355" y="80" width="300" height="56" rx="6" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="505" y="96" text-anchor="middle" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="700">Client State · Zustand Stores</text>
+
+  <rect x="365" y="103" width="70" height="22" rx="4" fill="#0d1117" stroke="#6366f1" stroke-width="0.5" />
+  <text x="400" y="118" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="8">auth.store</text>
+
+  <rect x="441" y="103" width="70" height="22" rx="4" fill="#0d1117" stroke="#6366f1" stroke-width="0.5" />
+  <text x="476" y="118" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="8">room.store</text>
+
+  <rect x="517" y="103" width="126" height="22" rx="4" fill="#0d1117" stroke="#6366f1" stroke-width="0.5" />
+  <text x="580" y="118" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="8">notification.store</text>
+
+  <!-- ═══ REAL-TIME LAYER ═══ -->
+  <rect x="30" y="160" width="640" height="100" rx="8" fill="#111827" stroke="#14b8a6" stroke-width="1.5" />
+  <text x="350" y="180" text-anchor="middle" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">REAL-TIME LAYER · SOCKET.IO</text>
+
+  <!-- Hooks row 1 -->
+  <rect x="45" y="192" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="103" y="209" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useSocket</text>
+
+  <rect x="169" y="192" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="227" y="209" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useMessages</text>
+
+  <rect x="293" y="192" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="351" y="209" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useTyping</text>
+
+  <rect x="417" y="192" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="475" y="209" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useOnlineStatus</text>
+
+  <rect x="541" y="192" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="599" y="209" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useReadReceipts</text>
+
+  <!-- Hooks row 2 -->
+  <rect x="45" y="224" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="103" y="241" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useNotifications</text>
+
+  <rect x="169" y="224" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="227" y="241" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useReactions</text>
+
+  <rect x="293" y="224" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="351" y="241" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useVoiceRecorder</text>
+
+  <rect x="417" y="224" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="475" y="241" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useFriendship</text>
+
+  <rect x="541" y="224" width="116" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="599" y="241" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">useEvents</text>
+
+  <!-- ═══ UI LAYER ═══ -->
+  <rect x="30" y="272" width="640" height="90" rx="8" fill="#111827" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="350" y="292" text-anchor="middle" fill="#fbbf24" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">UI LAYER · PULSE DESIGN SYSTEM</text>
+  <text x="350" y="308" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">40+ reusable components across 4 categories</text>
+
+  <rect x="45" y="318" width="145" height="30" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="117" y="333" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600">Primitives</text>
+  <text x="117" y="344" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Avatar, Button, Input</text>
+
+  <rect x="198" y="318" width="145" height="30" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="270" y="333" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600">Organisms</text>
+  <text x="270" y="344" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Modal, Form, Card</text>
+
+  <rect x="351" y="318" width="145" height="30" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="423" y="333" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600">Patterns</text>
+  <text x="423" y="344" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Toast, Tabs, ChatUI</text>
+
+  <rect x="504" y="318" width="153" height="30" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="580" y="333" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600">Layouts</text>
+  <text x="580" y="344" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Sidebar, Header, Main</text>
+
+</svg>

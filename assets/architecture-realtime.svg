@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" fill="none">
+
+  <!-- Background -->
+  <rect width="700" height="480" rx="12" fill="#0d1117" />
+
+  <!-- Title -->
+  <text x="350" y="28" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="2">REAL-TIME MESSAGE FLOW</text>
+
+  <!-- ═══ CLIENT A ═══ -->
+  <rect x="50" y="48" width="600" height="120" rx="8" fill="#111827" stroke="#6366f1" stroke-width="1.5" />
+  <text x="80" y="70" fill="#a5b4fc" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">CLIENT A</text>
+  <text x="210" y="70" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">User types "Hello" and hits Enter</text>
+
+  <rect x="65" y="82" width="270" height="26" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="75" y="99" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">1.</text>
+  <text x="90" y="99" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">ChatArea calls sendMessage("Hello")</text>
+
+  <rect x="345" y="82" width="290" height="26" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="355" y="99" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">2.</text>
+  <text x="370" y="99" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">socket.emit("message:send", { roomId, content })</text>
+
+  <rect x="65" y="116" width="270" height="26" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="75" y="133" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">3.</text>
+  <text x="90" y="133" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Message appears instantly (optimistic UI)</text>
+
+  <!-- Arrow down -->
+  <path d="M350,168 L350,196" stroke="#14b8a6" stroke-width="1.5" fill="none" />
+  <polygon fill="#14b8a6" points="350,199 346,193 354,193" />
+  <text x="380" y="186" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">WebSocket</text>
+
+  <!-- ═══ SERVER ═══ -->
+  <rect x="50" y="202" width="600" height="138" rx="8" fill="#111827" stroke="#14b8a6" stroke-width="1.5" />
+  <text x="80" y="224" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">SERVER</text>
+  <text x="168" y="224" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Express 5 + Socket.io</text>
+
+  <rect x="65" y="236" width="270" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="75" y="253" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">4.</text>
+  <text x="90" y="253" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">message.handler receives "message:send"</text>
+
+  <rect x="345" y="236" width="290" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="355" y="253" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">5.</text>
+  <text x="370" y="253" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">messageService.send() validates permissions</text>
+
+  <rect x="65" y="270" width="270" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="75" y="287" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">6.</text>
+  <text x="90" y="287" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">messageRepository.create() persists to DB</text>
+
+  <rect x="345" y="270" width="290" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="355" y="287" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">7.</text>
+  <text x="370" y="287" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">ACK callback sent to Client A (confirmed)</text>
+
+  <rect x="65" y="304" width="570" height="26" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="75" y="321" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">8.</text>
+  <text x="90" y="321" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">io.to("room:abc-123").emit("message:new", { id, content, user, createdAt })</text>
+
+  <!-- Arrow down -->
+  <path d="M350,340 L350,368" stroke="#f59e0b" stroke-width="1.5" fill="none" />
+  <polygon fill="#f59e0b" points="350,371 346,365 354,365" />
+  <text x="392" y="358" fill="#fbbf24" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Broadcast</text>
+
+  <!-- ═══ CLIENT B ═══ -->
+  <rect x="50" y="374" width="600" height="88" rx="8" fill="#111827" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="80" y="396" fill="#fbbf24" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">CLIENT B</text>
+  <text x="188" y="396" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">All room members receive the message</text>
+
+  <rect x="65" y="408" width="175" height="26" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="75" y="425" fill="#fbbf24" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">9.</text>
+  <text x="92" y="425" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Receives "message:new"</text>
+
+  <rect x="248" y="408" width="175" height="26" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="258" y="425" fill="#fbbf24" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">10.</text>
+  <text x="278" y="425" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Added to local state</text>
+
+  <rect x="431" y="408" width="204" height="26" rx="5" fill="#1a1a2e" stroke="#d97706" stroke-width="1" />
+  <text x="441" y="425" fill="#fbbf24" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">11.</text>
+  <text x="461" y="425" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Toast + sound + unread count</text>
+
+  <!-- ACK arrow back to Client A -->
+  <path d="M50,260 L30,260 L30,140 L50,140" stroke="#818cf8" stroke-width="1" stroke-dasharray="4,4" fill="none" />
+  <polygon fill="#818cf8" points="50,140 44,136 44,144" />
+  <text x="18" y="200" fill="#a5b4fc" font-family="Segoe UI, system-ui, sans-serif" font-size="8" font-weight="600" writing-mode="tb">ACK</text>
+
+</svg>

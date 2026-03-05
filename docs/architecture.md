@@ -16,69 +16,9 @@
 
 The server follows a strict **Controller → Service → Repository** pattern with zero business logic in controllers.
 
-```
-HTTP Request / Socket Event
-         │
-         ▼
-┌─────────────────────────────────────────────────┐
-│  MIDDLEWARE LAYER                                │
-│  auth.ts → validate.ts → rateLimiter.ts         │
-│  socketAuth.ts (JWT verification on handshake)  │
-│  errorHandler.ts (centralized error formatting) │
-│  requestLogger.ts (Morgan HTTP logging)         │
-└──────────────────────┬──────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────┐
-│  CONTROLLER LAYER                               │
-│  Extract data · Call service · Format response   │
-│  ZERO business logic                            │
-│                                                 │
-│  auth.controller.ts     → 7 handlers            │
-│  room.controller.ts     → 13 handlers           │
-│  message.controller.ts  → 3 handlers            │
-│  upload.controller.ts   → 1 handler             │
-│  friendship.controller  → 7 handlers            │
-│  event.controller.ts    → 5 handlers            │
-│  pinned.controller.ts   → 3 handlers            │
-└──────────────────────┬──────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────┐
-│  SERVICE LAYER                                  │
-│  ALL business logic · Permission checks          │
-│  Testable without HTTP (pure unit tests)         │
-│                                                 │
-│  auth.service.ts        → register, login, JWT  │
-│  room.service.ts        → CRUD, join, leave     │
-│  message.service.ts     → send, history, search │
-│  friendship.service.ts  → requests, accept      │
-│  pinned.service.ts      → pin, unpin, list      │
-│  event.service.ts       → CRUD, invites, RSVP   │
-│  upload.service.ts      → multer config, types  │
-└──────────────────────┬──────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────┐
-│  REPOSITORY LAYER                               │
-│  Single access point to the database             │
-│  Typed Prisma queries · Returns raw data         │
-│                                                 │
-│  user.repository.ts       → findByEmail, create │
-│  room.repository.ts       → CRUD + memberships  │
-│  message.repository.ts    → create, findByRoom  │
-│  friendship.repository.ts → requests, status    │
-│  pinnedMessage.repository → pin, unpin, find    │
-│  event.repository.ts      → CRUD + invites      │
-│  reaction.repository.ts   → toggle, aggregate   │
-└──────────────────────┬──────────────────────────┘
-                       │
-                       ▼
-               ┌───────────────┐
-               │  PostgreSQL   │
-               │  (via Prisma) │
-               └───────────────┘
-```
+<div align="center">
+  <img src="../assets/architecture-backend.svg" alt="Backend Architecture" width="100%" />
+</div>
 
 ---
 
@@ -86,132 +26,25 @@ HTTP Request / Socket Event
 
 How a message travels from sender to receiver in real-time:
 
-```
-User A types "Hello" and hits Enter
-         │
-         ▼
-┌─ Client A ──────────────────────────────────────┐
-│  1. ChatArea calls sendMessage("Hello")         │
-│  2. useMessages hook emits socket event:        │
-│     socket.emit("message:send", {               │
-│       roomId: "abc-123",                        │
-│       content: "Hello",                         │
-│       type: "TEXT"                               │
-│     }, callback)                                │
-│  3. Message appears instantly (optimistic UI)   │
-└───────────────────────┬─────────────────────────┘
-                        │ WebSocket
-                        ▼
-┌─ Server ────────────────────────────────────────┐
-│  4. message.handler receives "message:send"     │
-│  5. messageService.send() validates:            │
-│     · User is member of room ✓                  │
-│     · Content is not empty ✓                    │
-│  6. messageRepository.create() persists to DB   │
-│  7. ACK callback sent to User A (confirmed)     │
-│  8. io.to("room:abc-123").emit("message:new",   │
-│     { id, content, user, createdAt })           │
-└───────────────┬─────────────────────────────────┘
-                │ Broadcast to all room members
-                ▼
-┌─ Client B ──────────────────────────────────────┐
-│  9.  useMessages hook receives "message:new"    │
-│  10. Message added to local state               │
-│  11. Auto-scroll if near bottom                 │
-│  12. If room not active:                        │
-│      · useNotifications increments unread       │
-│      · Toast notification shown                 │
-│      · Sound played (if enabled)                │
-└─────────────────────────────────────────────────┘
-```
+<div align="center">
+  <img src="../assets/architecture-realtime.svg" alt="Real-time Message Flow" width="100%" />
+</div>
 
 ---
 
 ## Authentication Flow
 
-```
-┌─ Register / Login ──────────────────────────────┐
-│                                                  │
-│  Client                    Server                │
-│    │                         │                   │
-│    │  POST /auth/login       │                   │
-│    │  { email, password }    │                   │
-│    │────────────────────────►│                   │
-│    │                         │                   │
-│    │                    bcrypt.compare()          │
-│    │                    generateAccessToken()     │
-│    │                    generateRefreshToken()    │
-│    │                         │                   │
-│    │  200 OK                 │                   │
-│    │  { user, accessToken }  │                   │
-│    │  Set-Cookie: refresh_token (httpOnly)        │
-│    │◄────────────────────────│                   │
-│    │                         │                   │
-│    │  Store in Zustand:      │                   │
-│    │  auth.setAuth(user, token)                  │
-│    │                         │                   │
-└────┼─────────────────────────┼───────────────────┘
-     │                         │
-┌─ Token Refresh (automatic) ──┼───────────────────┐
-│    │                         │                   │
-│    │  GET /auth/me → 401     │                   │
-│    │◄────────────────────────│                   │
-│    │                         │                   │
-│    │  POST /auth/refresh-token                   │
-│    │  Cookie: refresh_token  │                   │
-│    │────────────────────────►│                   │
-│    │                    verifyRefreshToken()      │
-│    │                    generateTokenPair()       │
-│    │                         │                   │
-│    │  200 OK { accessToken } │                   │
-│    │  Set-Cookie: new refresh_token              │
-│    │◄────────────────────────│                   │
-│    │                         │                   │
-│    │  Retry original request │                   │
-│    │  with new accessToken   │                   │
-│    │────────────────────────►│                   │
-│    │                         │                   │
-└────┴─────────────────────────┴───────────────────┘
-```
+<div align="center">
+  <img src="../assets/architecture-auth.svg" alt="Authentication Flow" width="100%" />
+</div>
 
 ---
 
 ## Frontend Architecture
 
-```
-┌─ React 19 + Vite 7 ────────────────────────────────────────┐
-│                                                             │
-│  ┌─ State Management ────────────────────────────────────┐  │
-│  │                                                        │  │
-│  │  Server State              Client State                │  │
-│  │  ┌──────────────┐         ┌──────────────────┐        │  │
-│  │  │ React Query  │         │ Zustand Stores   │        │  │
-│  │  │ · useMyRooms │         │ · auth.store     │        │  │
-│  │  │ · useRoom    │         │ · room.store     │        │  │
-│  │  │ · mutations  │         │ · notification   │        │  │
-│  │  │ · cache      │         │   (unreads,sound)│        │  │
-│  │  └──────────────┘         └──────────────────┘        │  │
-│  └────────────────────────────────────────────────────────┘  │
-│                                                             │
-│  ┌─ Real-time Layer ──────────────────────────────────────┐  │
-│  │  useSocket()          → connection + auth               │  │
-│  │  useMessages()        → send, receive, history          │  │
-│  │  useTyping()          → typing indicators               │  │
-│  │  useOnlineStatus()    → user presence                   │  │
-│  │  useReadReceipts()    → read indicators (✓✓)            │  │
-│  │  useNotifications()   → unread counts, sounds, toasts   │  │
-│  │  useReactions()       → emoji reactions (toggle)        │  │
-│  │  useVoiceRecorder()   → voice message recording         │  │
-│  │  useFriendship()      → friend requests, status         │  │
-│  │  useEvents()          → room events, RSVP               │  │
-│  └────────────────────────────────────────────────────────┘  │
-│                                                             │
-│  ┌─ UI Layer (Pulse Design System) ───────────────────────┐  │
-│  │  40+ reusable components across 4 categories:          │  │
-│  │  Primitives │ Organisms │ Patterns │ Layouts            │  │
-│  └────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
+<div align="center">
+  <img src="../assets/architecture-frontend.svg" alt="Frontend Architecture" width="100%" />
+</div>
 
 ---
 
