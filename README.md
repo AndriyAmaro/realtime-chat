@@ -213,7 +213,7 @@ realtime-chat/
 │   │   ├── services/        # Business logic
 │   │   ├── repositories/    # Prisma database queries
 │   │   ├── events/          # Socket.io event handlers (5 modules)
-│   │   ├── middleware/       # 9 middleware (auth, validation, rate limiting, logging)
+│   │   ├── middleware/      # 9 middleware (auth, validation, rate limiting, logging)
 │   │   ├── routes/          # Express route definitions
 │   │   └── errors/          # Domain error classes
 │   └── prisma/              # Schema + migrations
