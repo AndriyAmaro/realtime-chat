@@ -1,68 +1,20 @@
-# Architecture Overview
+# System Architecture
 
-> Technical overview of Realtime Chat's architecture — how the components connect and why.
+> Pulse Chat · Real-time messaging platform built with React 19, Express 5, Socket.io, and PostgreSQL.
 
 ---
 
-## System Architecture
+## High-Level Architecture
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                           CLIENTS                                    │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐            │
-│  │   Browser 1  │   │   Browser 2  │   │   Mobile     │            │
-│  │  (React SPA) │   │  (React SPA) │   │  (Future)    │            │
-│  └──────┬───────┘   └──────┬───────┘   └──────┬───────┘            │
-│         │                  │                   │                     │
-│         └──────────────────┼───────────────────┘                     │
-│                            │                                         │
-│              ┌─────────────┴─────────────┐                          │
-│              │  HTTPS + WSS (encrypted)  │                          │
-│              └─────────────┬─────────────┘                          │
-└────────────────────────────┼─────────────────────────────────────────┘
-                             │
-┌────────────────────────────┼─────────────────────────────────────────┐
-│  VERCEL (CDN)              │                                         │
-│  ┌─────────────────────────┴─────────────────────────────┐          │
-│  │  Static Files (HTML, CSS, JS)                         │          │
-│  │  SPA Rewrite: /* → /index.html                        │          │
-│  │  Assets: immutable cache (1 year)                     │          │
-│  └───────────────────────────────────────────────────────┘          │
-└──────────────────────────────────────────────────────────────────────┘
-                             │
-                   API calls │ /api/v1/*
-                   WebSocket │ /socket.io/*
-                             │
-┌────────────────────────────┼─────────────────────────────────────────┐
-│  RAILWAY                   │                                         │
-│  ┌─────────────────────────┴─────────────────────────────┐          │
-│  │  Express 5 Server (Node.js 22)                        │          │
-│  │  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  │          │
-│  │  │  REST API   │  │  Socket.io   │  │  Static     │  │          │
-│  │  │  28 routes  │  │  32 events   │  │  /uploads   │  │          │
-│  │  └──────┬──────┘  └──────┬───────┘  └─────────────┘  │          │
-│  │         │                │                            │          │
-│  │  ┌──────┴────────────────┴──────────────────┐         │          │
-│  │  │          Business Logic Layer            │         │          │
-│  │  │  Controllers → Services → Repositories   │         │          │
-│  │  └──────────────────┬───────────────────────┘         │          │
-│  │                     │                                  │          │
-│  │  ┌──────────────────┴───────────────────────┐         │          │
-│  │  │  Prisma 7 ORM (Type-safe queries)        │         │          │
-│  │  └──────────────────┬───────────────────────┘         │          │
-│  └─────────────────────┼─────────────────────────────────┘          │
-│                        │                                             │
-│  ┌─────────────────────┴─────────────────────────────────┐          │
-│  │  PostgreSQL 16 (Managed)                              │          │
-│  │  Private network: postgres.railway.internal:5432      │          │
-│  │  10 models, 6 enums, 8+ indexes                       │          │
-│  └───────────────────────────────────────────────────────┘          │
-└──────────────────────────────────────────────────────────────────────┘
-```
+<div align="center">
+  <img src="../assets/architecture.svg" alt="System Architecture" width="100%" />
+</div>
 
 ---
 
 ## Backend Architecture (3-Layer)
+
+The server follows a strict **Controller → Service → Repository** pattern with zero business logic in controllers.
 
 ```
 HTTP Request / Socket Event
@@ -78,11 +30,9 @@ HTTP Request / Socket Event
                        │
                        ▼
 ┌─────────────────────────────────────────────────┐
-│  CONTROLLER LAYER (Routes + Controllers)        │
-│  - Extract data from request (body, params)     │
-│  - Call the appropriate service                 │
-│  - Format response (status code + JSON)         │
-│  - ZERO business logic                          │
+│  CONTROLLER LAYER                               │
+│  Extract data · Call service · Format response   │
+│  ZERO business logic                            │
 │                                                 │
 │  auth.controller.ts     → 7 handlers            │
 │  room.controller.ts     → 13 handlers           │
@@ -96,10 +46,8 @@ HTTP Request / Socket Event
                        ▼
 ┌─────────────────────────────────────────────────┐
 │  SERVICE LAYER                                  │
-│  - ALL business logic lives here                │
-│  - Permission validations                       │
-│  - Operation orchestration                      │
-│  - Testable without HTTP (pure unit tests)      │
+│  ALL business logic · Permission checks          │
+│  Testable without HTTP (pure unit tests)         │
 │                                                 │
 │  auth.service.ts        → register, login, JWT  │
 │  room.service.ts        → CRUD, join, leave     │
@@ -113,9 +61,8 @@ HTTP Request / Socket Event
                        ▼
 ┌─────────────────────────────────────────────────┐
 │  REPOSITORY LAYER                               │
-│  - SINGLE access point to the database          │
-│  - Typed Prisma queries                         │
-│  - Returns raw data (no HTTP formatting)        │
+│  Single access point to the database             │
+│  Typed Prisma queries · Returns raw data         │
 │                                                 │
 │  user.repository.ts       → findByEmail, create │
 │  room.repository.ts       → CRUD + memberships  │
@@ -137,43 +84,45 @@ HTTP Request / Socket Event
 
 ## Real-time Message Flow
 
+How a message travels from sender to receiver in real-time:
+
 ```
 User A types "Hello" and hits Enter
          │
          ▼
-┌─ Client A (Browser) ──────────────────────────┐
-│  1. ChatArea calls sendMessage("Hello")       │
-│  2. useMessages hook emits socket event:      │
-│     socket.emit("message:send", {             │
-│       roomId: "abc-123",                      │
-│       content: "Hello",                       │
-│       type: "TEXT"                             │
-│     }, callback)                              │
-│  3. Message appears instantly (optimistic)    │
-└───────────────────────┬───────────────────────┘
+┌─ Client A ──────────────────────────────────────┐
+│  1. ChatArea calls sendMessage("Hello")         │
+│  2. useMessages hook emits socket event:        │
+│     socket.emit("message:send", {               │
+│       roomId: "abc-123",                        │
+│       content: "Hello",                         │
+│       type: "TEXT"                               │
+│     }, callback)                                │
+│  3. Message appears instantly (optimistic UI)   │
+└───────────────────────┬─────────────────────────┘
                         │ WebSocket
                         ▼
-┌─ Server (Express + Socket.io) ────────────────┐
-│  4. message.handler receives "message:send"   │
-│  5. messageService.send() validates:          │
-│     - User is member of room ✓               │
-│     - Content is not empty ✓                 │
-│  6. messageRepository.create() persists to DB │
-│  7. ACK callback sent to User A (confirmed)  │
-│  8. io.to("room:abc-123").emit("message:new", │
-│     { id, content, user, createdAt })         │
-└───────────────┬───────────────────────────────┘
+┌─ Server ────────────────────────────────────────┐
+│  4. message.handler receives "message:send"     │
+│  5. messageService.send() validates:            │
+│     · User is member of room ✓                  │
+│     · Content is not empty ✓                    │
+│  6. messageRepository.create() persists to DB   │
+│  7. ACK callback sent to User A (confirmed)     │
+│  8. io.to("room:abc-123").emit("message:new",   │
+│     { id, content, user, createdAt })           │
+└───────────────┬─────────────────────────────────┘
                 │ Broadcast to all room members
                 ▼
-┌─ Client B (Browser) ──────────────────────────┐
-│  9. useMessages hook receives "message:new"   │
-│  10. Message added to local state             │
-│  11. Auto-scroll if near bottom               │
-│  12. If room not active:                      │
-│      - useNotifications increments unread     │
-│      - Toast notification shown               │
-│      - Sound played (if enabled)              │
-└───────────────────────────────────────────────┘
+┌─ Client B ──────────────────────────────────────┐
+│  9.  useMessages hook receives "message:new"    │
+│  10. Message added to local state               │
+│  11. Auto-scroll if near bottom                 │
+│  12. If room not active:                        │
+│      · useNotifications increments unread       │
+│      · Toast notification shown                 │
+│      · Sound played (if enabled)                │
+└─────────────────────────────────────────────────┘
 ```
 
 ---
@@ -181,60 +130,48 @@ User A types "Hello" and hits Enter
 ## Authentication Flow
 
 ```
-┌─ Register/Login ──────────────────────────────┐
-│                                                │
-│  Client                    Server              │
-│    │                         │                 │
-│    │  POST /auth/login       │                 │
-│    │  { email, password }    │                 │
-│    │────────────────────────►│                 │
-│    │                         │                 │
-│    │                    bcrypt.compare()        │
-│    │                    generateAccessToken()   │
-│    │                    generateRefreshToken()  │
-│    │                         │                 │
-│    │  200 OK                 │                 │
-│    │  { user, accessToken }  │                 │
-│    │  Set-Cookie: refresh_token (httpOnly)      │
-│    │◄────────────────────────│                 │
-│    │                         │                 │
-│    │  Store in Zustand:      │                 │
-│    │  auth.setAuth(user, token)                │
-│    │                         │                 │
-└────┼─────────────────────────┼─────────────────┘
+┌─ Register / Login ──────────────────────────────┐
+│                                                  │
+│  Client                    Server                │
+│    │                         │                   │
+│    │  POST /auth/login       │                   │
+│    │  { email, password }    │                   │
+│    │────────────────────────►│                   │
+│    │                         │                   │
+│    │                    bcrypt.compare()          │
+│    │                    generateAccessToken()     │
+│    │                    generateRefreshToken()    │
+│    │                         │                   │
+│    │  200 OK                 │                   │
+│    │  { user, accessToken }  │                   │
+│    │  Set-Cookie: refresh_token (httpOnly)        │
+│    │◄────────────────────────│                   │
+│    │                         │                   │
+│    │  Store in Zustand:      │                   │
+│    │  auth.setAuth(user, token)                  │
+│    │                         │                   │
+└────┼─────────────────────────┼───────────────────┘
      │                         │
-┌─ Authenticated Request ──────┼─────────────────┐
-│    │                         │                 │
-│    │  GET /auth/me           │                 │
-│    │  Authorization: Bearer {accessToken}      │
-│    │────────────────────────►│                 │
-│    │                    jwt.verify()            │
-│    │                    req.user = payload      │
-│    │  200 OK { user }        │                 │
-│    │◄────────────────────────│                 │
-│    │                         │                 │
-└────┼─────────────────────────┼─────────────────┘
-     │                         │
-┌─ Token Refresh (auto) ───────┼─────────────────┐
-│    │                         │                 │
-│    │  GET /auth/me → 401     │                 │
-│    │◄────────────────────────│                 │
-│    │                         │                 │
-│    │  POST /auth/refresh-token                 │
-│    │  Cookie: refresh_token  │                 │
-│    │────────────────────────►│                 │
-│    │                    verifyRefreshToken()    │
-│    │                    generateTokenPair()     │
-│    │                         │                 │
-│    │  200 OK { accessToken } │                 │
-│    │  Set-Cookie: new refresh_token            │
-│    │◄────────────────────────│                 │
-│    │                         │                 │
-│    │  Retry original request │                 │
-│    │  with new accessToken   │                 │
-│    │────────────────────────►│                 │
-│    │                         │                 │
-└────┴─────────────────────────┴─────────────────┘
+┌─ Token Refresh (automatic) ──┼───────────────────┐
+│    │                         │                   │
+│    │  GET /auth/me → 401     │                   │
+│    │◄────────────────────────│                   │
+│    │                         │                   │
+│    │  POST /auth/refresh-token                   │
+│    │  Cookie: refresh_token  │                   │
+│    │────────────────────────►│                   │
+│    │                    verifyRefreshToken()      │
+│    │                    generateTokenPair()       │
+│    │                         │                   │
+│    │  200 OK { accessToken } │                   │
+│    │  Set-Cookie: new refresh_token              │
+│    │◄────────────────────────│                   │
+│    │                         │                   │
+│    │  Retry original request │                   │
+│    │  with new accessToken   │                   │
+│    │────────────────────────►│                   │
+│    │                         │                   │
+└────┴─────────────────────────┴───────────────────┘
 ```
 
 ---
@@ -242,137 +179,76 @@ User A types "Hello" and hits Enter
 ## Frontend Architecture
 
 ```
-┌─ React 19 + Vite 7 ──────────────────────────────────────┐
-│                                                           │
-│  ┌─ State Management ──────────────────────────────────┐ │
-│  │                                                      │ │
-│  │  Server State          Client State                  │ │
-│  │  ┌──────────────┐     ┌──────────────────┐          │ │
-│  │  │ React Query  │     │ Zustand Stores   │          │ │
-│  │  │              │     │                  │          │ │
-│  │  │ • useMyRooms │     │ • auth.store     │          │ │
-│  │  │ • useRoom    │     │   (user, token)  │          │ │
-│  │  │ • mutations  │     │ • room.store     │          │ │
-│  │  │ • cache      │     │   (selectedRoom) │          │ │
-│  │  │ • staleTime  │     │ • notification   │          │ │
-│  │  └──────────────┘     │   (unreads,sound)│          │ │
-│  │                        └──────────────────┘          │ │
-│  └──────────────────────────────────────────────────────┘ │
-│                                                           │
-│  ┌─ Real-time Layer ────────────────────────────────────┐ │
-│  │  useSocket()          → connection + auth             │ │
-│  │  useMessages()        → send, receive, history        │ │
-│  │  useTyping()          → typing indicators             │ │
-│  │  useOnlineStatus()    → user presence                 │ │
-│  │  useReadReceipts()    → read indicators (✓✓)          │ │
-│  │  useNotifications()   → unread counts, sounds, toasts │ │
-│  │  useReactions()       → emoji reactions (toggle)      │ │
-│  │  useVoiceRecorder()   → voice message recording       │ │
-│  │  useFriendship()      → friend requests, status       │ │
-│  │  useEvents()          → room events, RSVP             │ │
-│  └──────────────────────────────────────────────────────┘ │
-│                                                           │
-│  ┌─ UI Layer (Pulse Design System) ─────────────────────┐ │
-│  │  40+ reusable components across 4 categories:        │ │
-│  │  Primitives │ Organisms │ Patterns │ Layouts          │ │
-│  │  (Avatar,   │ (Modal,   │ (Toast,  │ (Sidebar,       │ │
-│  │   Button,   │  Form,    │  Tabs,   │  Header,        │ │
-│  │   Input...) │  Card...) │  Chat..) │  Main)          │ │
-│  └──────────────────────────────────────────────────────┘ │
-└───────────────────────────────────────────────────────────┘
+┌─ React 19 + Vite 7 ────────────────────────────────────────┐
+│                                                             │
+│  ┌─ State Management ────────────────────────────────────┐  │
+│  │                                                        │  │
+│  │  Server State              Client State                │  │
+│  │  ┌──────────────┐         ┌──────────────────┐        │  │
+│  │  │ React Query  │         │ Zustand Stores   │        │  │
+│  │  │ · useMyRooms │         │ · auth.store     │        │  │
+│  │  │ · useRoom    │         │ · room.store     │        │  │
+│  │  │ · mutations  │         │ · notification   │        │  │
+│  │  │ · cache      │         │   (unreads,sound)│        │  │
+│  │  └──────────────┘         └──────────────────┘        │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                             │
+│  ┌─ Real-time Layer ──────────────────────────────────────┐  │
+│  │  useSocket()          → connection + auth               │  │
+│  │  useMessages()        → send, receive, history          │  │
+│  │  useTyping()          → typing indicators               │  │
+│  │  useOnlineStatus()    → user presence                   │  │
+│  │  useReadReceipts()    → read indicators (✓✓)            │  │
+│  │  useNotifications()   → unread counts, sounds, toasts   │  │
+│  │  useReactions()       → emoji reactions (toggle)        │  │
+│  │  useVoiceRecorder()   → voice message recording         │  │
+│  │  useFriendship()      → friend requests, status         │  │
+│  │  useEvents()          → room events, RSVP               │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                             │
+│  ┌─ UI Layer (Pulse Design System) ───────────────────────┐  │
+│  │  40+ reusable components across 4 categories:          │  │
+│  │  Primitives │ Organisms │ Patterns │ Layouts            │  │
+│  └────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## Database Schema
 
-```
-┌──────────────────┐     ┌──────────────────┐
-│      users       │     │      rooms       │
-├──────────────────┤     ├──────────────────┤
-│ id        (PK)   │◄────│ owner_id  (FK)   │
-│ email     (UQ)   │     │ id        (PK)   │
-│ password         │     │ name             │
-│ name             │     │ description      │
-│ avatar           │     │ is_private       │
-│ bio              │     │ invite_code (UQ) │
-│ status (enum)    │     │ created_at       │
-│ created_at       │     │ updated_at       │
-│ updated_at       │     └────────┬─────────┘
-└────────┬─────────┘              │
-         │    ┌───────────────────┘
-         │    │
-         ▼    ▼
-┌──────────────────┐     ┌──────────────────┐
-│  room_members    │     │    messages      │
-├──────────────────┤     ├──────────────────┤
-│ id        (PK)   │     │ id        (PK)   │
-│ user_id   (FK)   │     │ content          │
-│ room_id   (FK)   │     │ type (enum)      │  TEXT | IMAGE | FILE | VOICE
-│ role (enum)      │     │ file_url         │
-│ joined_at        │     │ duration         │  (for voice messages)
-│ last_read_at     │     │ edited_at        │
-│                  │     │ deleted_at       │  (soft delete)
-│ @@unique(user_id,│     │ client_id  (UQ)  │  (idempotency key)
-│          room_id)│     │ user_id   (FK)   │
-└──────────────────┘     │ room_id   (FK)   │
-                         │ reply_to_id (FK) │  (self-referencing)
-                         │ created_at       │
-                         │                  │
-                         │ @@index(room_id, │  (cursor pagination)
-                         │     created_at)  │
-                         └──────────────────┘
+| Model | Key Fields | Notes |
+|-------|-----------|-------|
+| **users** | id, email (UQ), password, name, avatar, bio, status | `UserStatus` enum |
+| **rooms** | id, name, owner_id (FK), is_private, invite_code (UQ) | Supports public/private |
+| **room_members** | user_id + room_id (UQ), role | `Role` enum (ADMIN, MEMBER) |
+| **messages** | id, content, type, client_id (UQ), reply_to_id (self-ref) | Soft delete, cursor pagination |
+| **message_reactions** | user_id + message_id + emoji (UQ) | Toggle-based |
+| **friendships** | sender_id + receiver_id (UQ), status | `FriendStatus` enum |
+| **pinned_messages** | message_id + room_id (UQ), pinned_by | Per-room pinning |
+| **events** | id, title, room_id, start/end_time, status | `EventStatus` enum |
+| **event_invites** | event_id + user_id (UQ), status, responded_at | `InviteStatus` enum |
 
-┌──────────────────┐     ┌──────────────────┐
-│message_reactions │     │  friendships     │
-├──────────────────┤     ├──────────────────┤
-│ id        (PK)   │     │ id        (PK)   │
-│ emoji            │     │ sender_id (FK)   │
-│ user_id   (FK)   │     │ receiver_id (FK) │
-│ message_id (FK)  │     │ status (enum)    │  PENDING | ACCEPTED | DECLINED
-│                  │     │ created_at       │
-│ @@unique(user_id,│     │ updated_at       │
-│  message_id,     │     │                  │
-│  emoji)          │     │ @@unique(sender, │
-└──────────────────┘     │      receiver)   │
-                         └──────────────────┘
+**10 models · 6 enums · 8+ indexes**
 
-┌──────────────────┐     ┌──────────────────┐
-│pinned_messages   │     │     events       │
-├──────────────────┤     ├──────────────────┤
-│ id        (PK)   │     │ id        (PK)   │
-│ message_id (FK)  │     │ title            │
-│ room_id   (FK)   │     │ description      │
-│ pinned_by (FK)   │     │ start_time       │
-│ pinned_at        │     │ end_time         │
-│                  │     │ room_id   (FK)   │
-│ @@unique(message,│     │ created_by (FK)  │
-│      room_id)    │     │ status (enum)    │  SCHEDULED | CANCELLED
-└──────────────────┘     │ created_at       │
-                         └────────┬─────────┘
-                                  │
-                         ┌────────┴─────────┐
-                         │  event_invites   │
-                         ├──────────────────┤
-                         │ id        (PK)   │
-                         │ event_id  (FK)   │
-                         │ user_id   (FK)   │
-                         │ status (enum)    │  PENDING | ACCEPTED | DECLINED
-                         │ responded_at     │
-                         │ created_at       │
-                         │                  │
-                         │ @@unique(event,  │
-                         │      user_id)    │
-                         └──────────────────┘
+---
 
-Enums:
-  UserStatus    → ONLINE | OFFLINE | AWAY
-  Role          → ADMIN | MEMBER
-  MessageType   → TEXT | IMAGE | FILE | VOICE
-  FriendStatus  → PENDING | ACCEPTED | DECLINED
-  EventStatus   → SCHEDULED | CANCELLED
-  InviteStatus  → PENDING | ACCEPTED | DECLINED
-```
+## Key Technologies
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| Frontend | React 19 + Vite 7 | SPA with HMR |
+| UI Components | Pulse Design System | 40+ shared components |
+| State (Server) | React Query | Cache, mutations, staleTime |
+| State (Client) | Zustand | Auth, room selection, notifications |
+| Real-time | Socket.io | 32 bidirectional events |
+| Backend | Express 5 + TypeScript | REST API (28 routes) |
+| ORM | Prisma 7 | Type-safe queries, migrations |
+| Database | PostgreSQL 16 | 10 models, managed on Railway |
+| Auth | JWT (access + refresh) | httpOnly cookies for refresh |
+| Testing | Vitest | 98 unit tests (service layer) |
+| DevOps | Docker + GitHub Actions | CI/CD pipeline |
+| Hosting | Vercel (client) + Railway (server) | Edge CDN + managed infra |
 
 ---
 
@@ -389,48 +265,37 @@ realtime-chat/
 │   │   │   └── layouts/             # Sidebar, Header, MainContent
 │   │   ├── pages/
 │   │   │   ├── auth/                # LoginPage, RegisterPage
-│   │   │   └── chat/                # ChatLayout, RoomSidebar, RoomView,
-│   │   │                            # ProfileModal, CreateRoomModal...
-│   │   ├── hooks/                   # useSocket, useMessages, useTyping,
-│   │   │                            # useReactions, useFriendship, useEvents...
+│   │   │   └── chat/                # ChatLayout, RoomSidebar, RoomView
+│   │   ├── hooks/                   # useSocket, useMessages, useTyping...
 │   │   ├── services/                # api.ts, auth.service, room.service...
 │   │   ├── store/                   # auth.store, room.store, notification.store
 │   │   └── types/                   # room.ts, shared types
-│   ├── vite.config.ts
-│   └── tsconfig.json
+│   └── vite.config.ts
 │
 ├── server/                          # Backend (Express 5 + TypeScript)
 │   ├── src/
-│   │   ├── config/                  # env.ts, database.ts, socket.ts, swagger.ts
-│   │   ├── controllers/             # auth, room, message, friendship, event,
-│   │   │                            # pinned, upload controllers
-│   │   ├── services/                # auth, room, message, friendship, event,
-│   │   │                            # pinned, upload services
+│   │   ├── config/                  # env.ts, database.ts, socket.ts
+│   │   ├── controllers/             # 7 controllers (28 routes)
+│   │   ├── services/                # 7 services (all business logic)
 │   │   │   └── __tests__/           # 98 unit tests (Vitest)
-│   │   ├── repositories/            # user, room, message, friendship, event,
-│   │   │                            # pinnedMessage, reaction repositories
-│   │   ├── routes/                  # auth, room, message, friendship, event,
-│   │   │                            # pinned, upload, health routes
+│   │   ├── repositories/            # 7 repositories (Prisma queries)
+│   │   ├── routes/                  # Route definitions
 │   │   ├── events/                  # Socket.io event handlers
-│   │   ├── middleware/              # auth, validate, rateLimiter, errorHandler...
-│   │   ├── errors/                  # AppError, AuthError, NotFoundError...
-│   │   ├── types/                   # api.ts, auth.ts, room.ts, socket.ts
-│   │   ├── utils/                   # jwt.ts
+│   │   ├── middleware/              # 9 middleware layers
+│   │   ├── errors/                  # AppError, AuthError, NotFoundError
 │   │   └── app.ts                   # Server entry point
 │   ├── prisma/
-│   │   ├── schema.prisma            # Database schema (10 models)
-│   │   ├── migrations/              # Versioned migrations
-│   │   └── seed.ts                  # Demo data
+│   │   ├── schema.prisma            # 10 models, 6 enums
+│   │   └── migrations/              # Versioned migrations
 │   └── tsconfig.json
 │
 ├── docs/                            # Architecture documentation
 │   ├── architecture.md              # This file
-│   ├── decisions.md                 # ADRs (Architecture Decision Records)
+│   ├── decisions.md                 # Architecture Decision Records
 │   ├── scaling.md                   # Scaling strategy
 │   └── why-i-built-this.md          # Project motivation
 │
 ├── .github/workflows/ci.yml         # CI/CD pipeline
-├── docker-compose.yml               # Local development (5 services)
-├── eslint.config.mjs                # Shared ESLint config
-└── progresso.md                     # Development progress tracker
+├── docker-compose.yml               # Local dev (5 services)
+└── eslint.config.mjs                # Shared ESLint config
 ```

@@ -87,9 +87,9 @@
   <text x="120" y="278" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Docker · GitHub Actions</text>
   <text x="120" y="292" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Vercel · Railway</text>
 
-  <!-- ═══ DESIGN SYSTEM connection ═══ -->
-  <path d="M160,198 L160,340" stroke="#6366f1" stroke-width="1" stroke-dasharray="4,4" fill="none" />
-  <polygon fill="#6366f1" points="160,342 156,336 164,336" />
+  <!-- ═══ DESIGN SYSTEM connection (routed left of DevOps) ═══ -->
+  <path d="M30,190 L14,190 L14,373 L28,373" stroke="#6366f1" stroke-width="1" stroke-dasharray="4,4" fill="none" />
+  <polygon fill="#6366f1" points="30,373 24,369 24,377" />
 
   <!-- Pulse Ecosystem Box -->
   <rect x="30" y="348" width="640" height="50" rx="8" fill="#111827" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,4" />
