@@ -77,7 +77,7 @@ function mockIO() {
 describe('FriendshipService', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(socketRegistry.getSocketIds).mockReturnValue([])
+    vi.mocked(socketRegistry.getSocketIds).mockReturnValue(new Set())
   })
 
   // ---- sendRequest ----
@@ -86,7 +86,7 @@ describe('FriendshipService', () => {
     it('should create a friend request and notify receiver via socket', async () => {
       vi.mocked(friendshipRepository.findBetween).mockResolvedValue(null)
       vi.mocked(friendshipRepository.create).mockResolvedValue(createFriendshipRecord() as never)
-      vi.mocked(socketRegistry.getSocketIds).mockReturnValue(['socket-1'])
+      vi.mocked(socketRegistry.getSocketIds).mockReturnValue(new Set(['socket-1']))
       const { toFn, emitFn } = mockIO()
 
       const result = await friendshipService.sendRequest('user-1', 'user-2')
@@ -174,7 +174,7 @@ describe('FriendshipService', () => {
       vi.mocked(friendshipRepository.findById).mockResolvedValue(createFriendshipRecord() as never)
       const accepted = createFriendshipRecord({ status: 'ACCEPTED' })
       vi.mocked(friendshipRepository.updateStatus).mockResolvedValue(accepted as never)
-      vi.mocked(socketRegistry.getSocketIds).mockReturnValue(['socket-sender'])
+      vi.mocked(socketRegistry.getSocketIds).mockReturnValue(new Set(['socket-sender']))
       const { toFn, emitFn } = mockIO()
 
       const result = await friendshipService.respondToRequest('friendship-1', 'user-2', 'accept')
@@ -234,7 +234,7 @@ describe('FriendshipService', () => {
         createFriendshipRecord({ status: 'ACCEPTED' }) as never
       )
       vi.mocked(friendshipRepository.delete).mockResolvedValue(undefined as never)
-      vi.mocked(socketRegistry.getSocketIds).mockReturnValue(['socket-other'])
+      vi.mocked(socketRegistry.getSocketIds).mockReturnValue(new Set(['socket-other']))
       const { toFn, emitFn } = mockIO()
 
       await friendshipService.removeFriend('friendship-1', 'user-1')
