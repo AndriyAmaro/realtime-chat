@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" fill="none">
+
+  <!-- Background -->
+  <rect width="700" height="420" rx="12" fill="#0d1117" />
+
+  <!-- Title -->
+  <text x="350" y="28" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="2">PULSE CHAT · SYSTEM ARCHITECTURE</text>
+
+  <!-- ═══ FRONTEND ═══ -->
+  <rect x="30" y="48" width="260" height="150" rx="8" fill="#111827" stroke="#6366f1" stroke-width="1.5" />
+  <text x="160" y="70" text-anchor="middle" fill="#a5b4fc" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">FRONTEND</text>
+  <text x="160" y="86" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">React 19 · Vite 7 · Vercel CDN</text>
+
+  <!-- Frontend inner boxes -->
+  <rect x="45" y="98" width="110" height="32" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="100" y="113" text-anchor="middle" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Pulse DS (40+)</text>
+  <text x="100" y="124" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Components</text>
+
+  <rect x="165" y="98" width="110" height="32" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="220" y="113" text-anchor="middle" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Zustand</text>
+  <text x="220" y="124" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">State Management</text>
+
+  <rect x="45" y="138" width="110" height="32" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="100" y="153" text-anchor="middle" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">React Query</text>
+  <text x="100" y="164" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Data Fetching</text>
+
+  <rect x="165" y="138" width="110" height="32" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
+  <text x="220" y="153" text-anchor="middle" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Socket.io Client</text>
+  <text x="220" y="164" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Real-time</text>
+
+  <!-- ═══ Connection arrows ═══ -->
+  <path d="M290,100 L410,100" stroke="#6366f1" stroke-width="1.5" fill="none" />
+  <text x="350" y="94" text-anchor="middle" fill="#818cf8" font-family="Segoe UI, system-ui, sans-serif" font-size="8" font-weight="600">HTTPS</text>
+  <polygon fill="#6366f1" points="410,100 404,96 404,104" />
+
+  <path d="M290,160 L410,160" stroke="#14b8a6" stroke-width="1.5" fill="none" />
+  <text x="350" y="154" text-anchor="middle" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="8" font-weight="600">WSS</text>
+  <polygon fill="#14b8a6" points="410,160 404,156 404,164" />
+
+  <!-- ═══ BACKEND ═══ -->
+  <rect x="410" y="48" width="260" height="150" rx="8" fill="#111827" stroke="#14b8a6" stroke-width="1.5" />
+  <text x="540" y="70" text-anchor="middle" fill="#5eead4" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">BACKEND</text>
+  <text x="540" y="86" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Express 5 · Node.js 22 · Railway</text>
+
+  <!-- Backend inner boxes -->
+  <rect x="425" y="98" width="72" height="32" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="461" y="113" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Controllers</text>
+  <text x="461" y="124" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">HTTP</text>
+
+  <rect x="504" y="98" width="72" height="32" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="540" y="113" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Services</text>
+  <text x="540" y="124" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Logic</text>
+
+  <rect x="583" y="98" width="72" height="32" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="619" y="113" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Repos</text>
+  <text x="619" y="124" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">Database</text>
+
+  <rect x="425" y="138" width="110" height="32" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="480" y="153" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Socket.io</text>
+  <text x="480" y="164" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">32 Events</text>
+
+  <rect x="545" y="138" width="110" height="32" rx="5" fill="#1a1a2e" stroke="#0d9488" stroke-width="1" />
+  <text x="600" y="153" text-anchor="middle" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Middleware</text>
+  <text x="600" y="164" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="8">9 Layers</text>
+
+  <!-- ═══ Arrow down to data ═══ -->
+  <path d="M540,198 L540,230" stroke="#06b6d4" stroke-width="1.5" fill="none" />
+  <polygon fill="#06b6d4" points="540,232 536,226 544,226" />
+
+  <!-- ═══ DATA LAYER ═══ -->
+  <rect x="220" y="238" width="450" height="70" rx="8" fill="#111827" stroke="#06b6d4" stroke-width="1.5" />
+  <text x="445" y="260" text-anchor="middle" fill="#67e8f9" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">DATA LAYER</text>
+
+  <rect x="240" y="272" width="130" height="26" rx="5" fill="#1a1a2e" stroke="#0891b2" stroke-width="1" />
+  <text x="305" y="289" text-anchor="middle" fill="#a5f3fc" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">PostgreSQL 16 · Prisma 7</text>
+
+  <rect x="380" y="272" width="90" height="26" rx="5" fill="#1a1a2e" stroke="#0891b2" stroke-width="1" />
+  <text x="425" y="289" text-anchor="middle" fill="#a5f3fc" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Redis (Cache)</text>
+
+  <rect x="480" y="272" width="90" height="26" rx="5" fill="#1a1a2e" stroke="#0891b2" stroke-width="1" />
+  <text x="525" y="289" text-anchor="middle" fill="#a5f3fc" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">S3 (Uploads)</text>
+
+  <!-- ═══ DEVOPS ═══ -->
+  <rect x="30" y="238" width="180" height="70" rx="8" fill="#111827" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,4" />
+  <text x="120" y="260" text-anchor="middle" fill="#4ade80" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="1">DEVOPS</text>
+
+  <text x="120" y="278" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Docker · GitHub Actions</text>
+  <text x="120" y="292" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Vercel · Railway</text>
+
+  <!-- ═══ DESIGN SYSTEM connection ═══ -->
+  <path d="M160,198 L160,340" stroke="#6366f1" stroke-width="1" stroke-dasharray="4,4" fill="none" />
+  <polygon fill="#6366f1" points="160,342 156,336 164,336" />
+
+  <!-- Pulse Ecosystem Box -->
+  <rect x="30" y="348" width="640" height="50" rx="8" fill="#111827" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,4" />
+  <text x="350" y="370" text-anchor="middle" fill="#a5b4fc" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700">POWERED BY PULSE DESIGN SYSTEM</text>
+  <text x="350" y="386" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">40+ shared components · Primitives · Patterns · Organisms · Layouts</text>
+
+</svg>

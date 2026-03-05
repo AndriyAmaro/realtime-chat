@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulse Chat Banner</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  .banner {
+    width: 1280px;
+    height: 640px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Base gradient - indigo/dark theme for Chat */
+  .bg-base {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(155deg, #0f0a2e 0%, #0a0820 35%, #0d0b28 55%, #06041c 100%);
+  }
+
+  /* Blobs */
+  .blob { position: absolute; }
+
+  .blob-main {
+    width: 60%;
+    height: 70%;
+    top: -15%;
+    left: -10%;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(99,102,241,0.25) 0%, rgba(79,70,229,0.12) 35%, rgba(55,48,163,0.05) 60%, transparent 75%);
+    filter: blur(50px);
+    border-radius: 42% 58% 65% 35% / 45% 55% 45% 55%;
+  }
+
+  .blob-glow {
+    width: 50%;
+    height: 45%;
+    bottom: -10%;
+    right: -5%;
+    background: radial-gradient(ellipse 65% 55% at 40% 35%, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.1) 35%, rgba(167,139,250,0.04) 55%, transparent 75%);
+    filter: blur(55px);
+    border-radius: 45% 55% 40% 60% / 55% 45% 55% 45%;
+  }
+
+  .blob-accent {
+    width: 30%;
+    height: 35%;
+    top: 20%;
+    right: 15%;
+    background: radial-gradient(ellipse at center, rgba(6,182,212,0.12) 0%, rgba(14,165,233,0.06) 40%, transparent 70%);
+    filter: blur(40px);
+    border-radius: 50%;
+  }
+
+  /* Content */
+  .content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    color: #fff;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.04));
+    color: #a5b4fc;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .badge-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #818cf8;
+    box-shadow: 0 0 6px rgba(129, 140, 248, 0.5);
+  }
+
+  .pulse-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 100px;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    background: rgba(99, 102, 241, 0.1);
+    backdrop-filter: blur(12px);
+    margin-bottom: 20px;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6366f1;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+  }
+
+  .pulse-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #a5b4fc;
+    letter-spacing: 2px;
+  }
+
+  .name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 76px;
+    font-weight: 900;
+    letter-spacing: 8px;
+    margin-bottom: 8px;
+    line-height: 1;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 20%, #a5b4fc 40%, #818cf8 60%, #6366f1 80%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.35)) drop-shadow(0 0 60px rgba(99, 102, 241, 0.15));
+  }
+
+  .subtitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: #cbd5e1;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 36px;
+  }
+
+  .stat-card {
+    text-align: center;
+    padding: 20px 32px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.03));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    min-width: 140px;
+  }
+
+  .stat-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: #a5b4fc;
+    line-height: 1;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 8px rgba(165, 180, 252, 0.3));
+  }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .footer-line {
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.4), transparent);
+  }
+
+  .footer-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #cbd5e1;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .footer-text strong {
+    color: #a5b4fc;
+    font-weight: 800;
+  }
+
+  .corner-tl, .corner-br {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    z-index: 10;
+  }
+
+  .corner-tl {
+    top: 20px;
+    left: 20px;
+    border-top: 2px solid rgba(99, 102, 241, 0.3);
+    border-left: 2px solid rgba(99, 102, 241, 0.3);
+  }
+
+  .corner-br {
+    bottom: 20px;
+    right: 20px;
+    border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+    border-right: 2px solid rgba(99, 102, 241, 0.3);
+  }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <div class="bg-base"></div>
+  <div class="blob blob-main"></div>
+  <div class="blob blob-glow"></div>
+  <div class="blob blob-accent"></div>
+
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <div class="badge-row">
+    <span class="badge"><span class="badge-dot"></span>React 19</span>
+    <span class="badge"><span class="badge-dot"></span>Express 5</span>
+    <span class="badge"><span class="badge-dot"></span>Socket.io</span>
+    <span class="badge"><span class="badge-dot"></span>PostgreSQL</span>
+    <span class="badge"><span class="badge-dot"></span>Prisma 7</span>
+    <span class="badge"><span class="badge-dot"></span>Docker</span>
+  </div>
+
+  <div class="content">
+    <div class="pulse-label">
+      <div class="pulse-dot"></div>
+      <span class="pulse-text">REAL-TIME MESSAGING</span>
+    </div>
+
+    <div class="name">PULSE CHAT</div>
+    <div class="subtitle">Voice · Reactions · Rooms · Friends</div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">98</div>
+        <div class="stat-label">Tests</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">28</div>
+        <div class="stat-label">Endpoints</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">32</div>
+        <div class="stat-label">WS Events</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">40+</div>
+        <div class="stat-label">Components</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-line"></div>
+      <div class="footer-text">Handcrafted by <strong>Andri Amaro</strong></div>
+      <div class="footer-line"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

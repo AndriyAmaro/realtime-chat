@@ -1,39 +1,65 @@
-# Realtime Chat
+<!-- Hero Banner -->
+<div align="center">
+  <img src="assets/banner.png" alt="Pulse Chat" width="100%" />
+</div>
+
+<div align="center">
+
+# Pulse Chat
+
+**Full-stack real-time messaging with voice, reactions, rooms & friends**
 
 [![CI](https://github.com/AndriyAmaro/realtime-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/AndriyAmaro/realtime-chat/actions/workflows/ci.yml)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express&logoColor=white)
+![Socket.io](https://img.shields.io/badge/Socket.io-4-010101?style=for-the-badge&logo=socket.io&logoColor=white)
 
-Full-stack realtime chat application with rooms, voice messages, pinned messages, emoji reactions, read receipts, typing indicators, friend system, room events with RSVP, offline queue, and structured observability. Built to demonstrate senior-level architecture across frontend, backend, DevOps, and system design.
-
----
+![Tests](https://img.shields.io/badge/Tests-98-6366F1?style=flat-square)
+![Endpoints](https://img.shields.io/badge/Endpoints-28-8B5CF6?style=flat-square)
+![WS Events](https://img.shields.io/badge/WS_Events-32-06B6D4?style=flat-square)
+![Components](https://img.shields.io/badge/Components-40+-14B8A6?style=flat-square)
 
 **[Live Demo](https://realtime-chat-eight-beryl.vercel.app)** · **[API Docs (Swagger)](https://server-production-f308.up.railway.app/api/docs)** · **[Architecture](/docs/architecture.md)**
 
 > Demo credentials: `andriy@example.com` / `password123`
 
+</div>
+
+---
+
+<div align="center">
+
+> **Part of the [Pulse Ecosystem](https://github.com/AndriyAmaro/pulse-saas-theme)** · Built on 40+ shared design system components
+
+</div>
+
 ---
 
 ## Screenshots
 
-<p align="center">
-  <img src="docs/screenshots/chat-light.jpeg" alt="Chat - Light Mode" width="100%">
-</p>
-<p align="center"><em>Real-time chat with emoji reactions, read receipts, room info panel, events, and member management</em></p>
+<div align="center">
+  <img src="docs/screenshots/chat-light.jpeg" alt="Chat · Light Mode" width="80%" />
+  <br />
+  <sub>Real-time chat · emoji reactions, read receipts, room info panel, events & member management</sub>
+</div>
 
-<p align="center">
-  <img src="docs/screenshots/chat-dark.jpeg" alt="Chat - Dark Mode" width="49%">
-  <img src="docs/screenshots/auth-dark.jpeg" alt="Authentication" width="49%">
-</p>
-<p align="center">
-  <em>Dark mode chat view &nbsp;·&nbsp; Login page with chat preview and social auth</em>
-</p>
+<br />
 
-<p align="center">
-  <img src="docs/screenshots/landing-dark.jpeg" alt="Landing Page" width="100%">
-</p>
-<p align="center"><em>Landing page with feature marquee and dark/light theme toggle</em></p>
+<div align="center">
+  <img src="docs/screenshots/chat-dark.jpeg" alt="Chat · Dark Mode" width="49%" />
+  <img src="docs/screenshots/auth-dark.jpeg" alt="Authentication" width="49%" />
+  <br />
+  <sub>Dark mode chat view &nbsp;·&nbsp; Login page with chat preview and social auth</sub>
+</div>
+
+<br />
+
+<div align="center">
+  <img src="docs/screenshots/landing-dark.jpeg" alt="Landing Page" width="80%" />
+  <br />
+  <sub>Landing page · feature marquee with dark/light theme toggle</sub>
+</div>
 
 ---
 
@@ -72,8 +98,8 @@ Full-stack realtime chat application with rooms, voice messages, pinned messages
 ### Resilience
 
 - Offline message queue with exponential backoff retry
-- Reconnection sync — fills missed messages automatically
-- Idempotency keys — deduplication within 5-minute window
+- Reconnection sync · fills missed messages automatically
+- Idempotency keys · deduplication within 5-minute window
 - Socket-level rate limiting (per-event, per-user)
 - Multi-device support (same user, multiple tabs)
 
@@ -101,32 +127,28 @@ Full-stack realtime chat application with rooms, voice messages, pinned messages
 
 ## Architecture
 
-```
-┌─────────────────┐     HTTPS / WSS      ┌──────────────────────┐
-│                 │ ──────────────────── │                      │
-│   React SPA     │     /api/v1/*        │   Express 5 Server   │
-│   (Vercel CDN)  │     /socket.io/*     │   (Railway)          │
-│                 │ ──────────────────── │                      │
-└─────────────────┘                       │  ┌────────────────┐ │
-                                          │  │  Controllers   │ │
-                                          │  │  Services      │ │
-                                          │  │  Repositories  │ │
-                                          │  └───────┬────────┘ │
-                                          │          │          │
-                                          │  ┌───────┴────────┐ │
-                                          │  │  Prisma 7 ORM  │ │
-                                          │  └───────┬────────┘ │
-                                          └──────────┼──────────┘
-                                                     │
-                                          ┌──────────┴──────────┐
-                                          │  PostgreSQL 16      │
-                                          │  (Railway managed)  │
-                                          └─────────────────────┘
-```
+<div align="center">
+  <img src="assets/architecture.svg" alt="System Architecture" width="100%" />
+</div>
 
-**Backend follows 3-layer architecture**: Middleware → Controller → Service → Repository. Each layer has a single responsibility — controllers handle HTTP, services hold business logic, repositories talk to the database.
+**Backend follows 3-layer architecture**: Middleware → Controller → Service → Repository. Each layer has a single responsibility · controllers handle HTTP, services hold business logic, repositories talk to the database.
 
 > Deep dive: [Architecture](/docs/architecture.md) · [ADRs](/docs/decisions.md) · [Scaling Strategy](/docs/scaling.md)
+
+---
+
+## Key Metrics
+
+| Metric | Value |
+|--------|-------|
+| Prisma Models | **10** |
+| REST API Endpoints | **28** |
+| Socket.io Events | **32** |
+| Automated Tests | **98** |
+| Custom React Hooks | **17** |
+| Design System Components | **40+** |
+| Middleware Stack | **9** |
+| Docker Services | **5** |
 
 ---
 
@@ -146,7 +168,7 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Access at **http://localhost** — PostgreSQL on port 5433, Redis on port 6380.
+Access at **http://localhost** · PostgreSQL on port 5433, Redis on port 6380.
 
 ### Local Development
 
@@ -215,32 +237,44 @@ Interactive Swagger UI available at [`/api/docs`](https://server-production-f308
 
 ---
 
-## Key Metrics
-
-| Metric | Value |
-|--------|-------|
-| Prisma Models | 10 |
-| REST API Endpoints | 28 |
-| Socket.io Events | 32 |
-| Automated Tests | 98 |
-| Custom React Hooks | 17 |
-| Design System Components | 40+ |
-| Middleware Stack | 9 |
-| Docker Services | 5 |
-
----
-
 ## Documentation
 
 | Document | Description |
 |----------|-------------|
 | [Architecture](/docs/architecture.md) | System diagrams, data flow, auth flow, database schema |
-| [Decisions](/docs/decisions.md) | 9 ADRs — why Vite over Next.js, Express over Fastify, Prisma adapter pattern, etc. |
+| [Decisions](/docs/decisions.md) | 9 ADRs · why Vite over Next.js, Express over Fastify, Prisma adapter pattern, etc. |
 | [Scaling](/docs/scaling.md) | 3-tier strategy from 500 to 100K+ users with cost estimates |
 | [Why I Built This](/docs/why-i-built-this.md) | Project motivation, trade-offs, and lessons learned |
+
+---
+
+## What Powers the Ecosystem
+
+Pulse Chat is part of the **Pulse Ecosystem** · multiple SaaS apps sharing one design system:
+
+| App | Stack | Status |
+|-----|-------|--------|
+| **[Pulse Design System](https://github.com/AndriyAmaro/pulse-saas-theme)** | Next.js 16 · Tailwind 4 · 104+ components | Live |
+| **[Pulse Finance](https://github.com/AndriyAmaro/finance-flow)** | Next.js 15 · Hono · Prisma · 143 tests | Live |
+| **Pulse Chat** | React 19 · Express 5 · Socket.io · 98 tests | **You are here** |
+| Vexiat · AI · CRM · LMS | Coming soon | Planned |
 
 ---
 
 ## License
 
 [MIT](LICENSE)
+
+<div align="center">
+
+<br />
+
+**Built from scratch by [Andri Amaro](https://github.com/AndriyAmaro)**
+
+*One design system. Infinite SaaS.*
+
+<br />
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=6366f1&height=60&section=footer" width="100%" />
+
+</div>
