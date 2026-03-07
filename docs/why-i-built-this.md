@@ -4,11 +4,11 @@
 
 ---
 
-## The Problem
+## The Motivation
 
-Most developer "portfolio" projects are CRUDs with authentication. You look at the repository and find: todo app, markdown blog, e-commerce with cart. They all demonstrate the same skills: forms, REST API, database.
+After building a few full-stack projects, I noticed I kept solving the same kind of problems · forms, REST endpoints, database queries. They taught me a lot, but I wanted to challenge myself with something that would push me into unfamiliar territory.
 
-**Real-time chat is different.** It requires mastery of concepts that CRUDs never touch:
+Real-time chat seemed like the right next step. It introduced concepts I hadn't worked with before:
 
 - **WebSocket** ·persistent bidirectional communication, not request-response
 - **Event-driven architecture** ·event handlers, broadcasts, rooms
@@ -16,28 +16,28 @@ Most developer "portfolio" projects are CRUDs with authentication. You look at t
 - **Optimistic UI** ·showing results before server confirmation
 - **Resilience** ·reconnection, inconsistent state, race conditions
 
-I wanted a project that, when a technical recruiter opens the code, thinks: *"This dev understands distributed systems, not just CRUD."*
+I learned more building this project than I expected. Every feature brought a new problem to solve · and that's what made it worth building.
 
 ---
 
-## What I Wanted to Demonstrate
+## What I Wanted to Learn & Demonstrate
 
 ### 1. 3-Layer Backend Architecture
 ```
 Controller → Service → Repository
 ```
-It's not just folder separation ·it's separation of **responsibilities**:
-- Controller: ZERO business logic. Only extracts data from the request and formats the response.
-- Service: ALL business logic. Testable without HTTP.
-- Repository: Single access point to the database. Typed Prisma queries.
+Each layer has a clear responsibility:
+- **Controller:** Handles HTTP · extracts request data, formats responses. No business logic.
+- **Service:** Contains business logic · testable without HTTP context.
+- **Repository:** Single access point to the database · typed Prisma queries.
 
-**Why it matters:** In production, when something breaks, you know EXACTLY where the bug is. If it's a validation error → controller. If it's a wrong business rule → service. If the query is slow → repository.
+This separation made debugging much easier. When something breaks, the layer tells you where to look: validation issue → controller, wrong rule → service, slow query → repository.
 
 ### 2. End-to-End Type Safety
 ```
 Prisma Schema → Generated Types → Service Types → API Response → Frontend Types
 ```
-From the database to the React component, **everything is typed**. Changed the Prisma schema? The TypeScript compiler tells you ALL the places that need updating. Zero `any`. Zero `as unknown`.
+From database to React component, the entire chain is typed. When the Prisma schema changes, the TypeScript compiler points to every place that needs updating. This saved me from a lot of runtime bugs during development.
 
 ### 3. Real-time Event Architecture
 ```
@@ -58,7 +58,7 @@ Socket.io Events: 32 typed events
 Each event has payload types defined in `types/socket.ts`. The server and client share the same event interface.
 
 ### 4. Reusable Design System
-40+ components adapted from my Pulse design system (originally for Next.js). Demonstrates that I know how to create and consume components following patterns: compound components, CVA for variants, composition over inheritance.
+40+ components adapted from my Pulse design system (originally built for Next.js). Porting them to React/Vite taught me a lot about keeping components framework-agnostic · and reinforced patterns like compound components, CVA for variants, and composition over inheritance.
 
 ### 5. Complete DevOps
 - Docker Compose with 5 orchestrated services
