@@ -6,9 +6,9 @@
 
 ## The Motivation
 
-After building a few full-stack projects, I noticed I kept solving the same kind of problems · forms, REST endpoints, database queries. They taught me a lot, but I wanted to challenge myself with something that would push me into unfamiliar territory.
+I wanted to build something that goes deeper than standard CRUD · a project where the interesting engineering happens at runtime, not just at the database layer.
 
-Real-time chat seemed like the right next step. It introduced concepts I hadn't worked with before:
+Real-time chat was the right fit because it combines several non-trivial challenges in one system:
 
 - **WebSocket** ·persistent bidirectional communication, not request-response
 - **Event-driven architecture** ·event handlers, broadcasts, rooms
@@ -16,7 +16,7 @@ Real-time chat seemed like the right next step. It introduced concepts I hadn't 
 - **Optimistic UI** ·showing results before server confirmation
 - **Resilience** ·reconnection, inconsistent state, race conditions
 
-I learned more building this project than I expected. Every feature brought a new problem to solve · and that's what made it worth building.
+Each of these required deliberate architectural decisions · and putting them all together in a single production-ready app is where the real complexity lives.
 
 ---
 
