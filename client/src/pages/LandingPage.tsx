@@ -737,7 +737,7 @@ export default function LandingPage() {
                 <div>
                   <h3 className="text-sm font-semibold text-[var(--text-primary)]">Frontend</h3>
                   <span className="text-[10px] font-medium tracking-wider text-[var(--primary-500)]">
-                    VERCEL
+                    CLOUDFLARE
                   </span>
                 </div>
               </div>
