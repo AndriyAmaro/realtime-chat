@@ -17,7 +17,7 @@ Use Vite 7 + React 19 as a SPA (Single Page Application).
 - (+) Build 10x faster than Next.js (Vite HMR < 50ms)
 - (+) Smaller bundle ·no SSR runtime, no hydration overhead
 - (+) Simpler configuration ·no app router, no server components, no API routes
-- (+) Simplified deployment ·static files on Vercel (no Edge Functions)
+- (+) Simplified deployment ·static files on Cloudflare Workers (no Edge Functions)
 - (-) No SSR/SSG (irrelevant for chat)
 - (-) No native Image Optimization (we use manual lazy loading)
 

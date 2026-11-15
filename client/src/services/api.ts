@@ -1,6 +1,6 @@
 import { useAuthStore } from '@store/auth.store'
 
-// Always use relative paths — Vite proxy (dev) and Vercel rewrites (prod)
+// Always use relative paths — Vite proxy (dev) and Cloudflare Worker rewrites (prod)
 // handle forwarding to the actual backend server.
 const BASE_URL = '/api/v1'
 

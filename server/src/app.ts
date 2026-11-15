@@ -25,7 +25,7 @@ import routes from './routes/index.js'
 const app = express()
 const httpServer = createServer(app)
 
-// ============ TRUST PROXY (Railway, Vercel, etc.) ============
+// ============ TRUST PROXY (Railway, Cloudflare, etc.) ============
 
 app.set('trust proxy', 1)
 

@@ -30,7 +30,7 @@
 - In-memory metrics (HTTP + socket) + error tracking by fingerprint
 - Graceful shutdown with Prisma disconnect + health check 503
 
-**Cost:** ~$10/month (Railway Hobby + Vercel Free)
+**Cost:** ~$10/month (Railway Hobby + Cloudflare Workers Free)
 
 ---
 
@@ -185,7 +185,7 @@ Recent queries (last 30 days) = fast. Old history = slower, but accessible.
 
 | Feature | Stack | Notes |
 |---|---|---|
-| **Auth** | JWT + refresh token | Cookie-free option (Vercel proxy compat) |
+| **Auth** | JWT + refresh token | Cookie-free option (Cloudflare proxy compat) |
 | **Rooms** | CRUD + members | Join/leave + admin roles + invite codes |
 | **Messages** | Socket.io realtime | TEXT, IMAGE, FILE, VOICE types |
 | **Voice messages** | MediaRecorder + Multer | Record, upload, playback with duration |

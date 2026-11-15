@@ -63,7 +63,7 @@ Each event has payload types defined in `types/socket.ts`. The server and client
 ### 5. Complete DevOps
 - Docker Compose with 5 orchestrated services
 - CI/CD with GitHub Actions (lint → typecheck → test → build)
-- Automated deployment (Vercel + Railway)
+- Automated deployment (Cloudflare Workers + Railway)
 - Health check endpoint with dependency status
 
 ---
@@ -134,6 +134,6 @@ Adapting components from Next.js to React/Vite required: removing `next/image`, 
 
 **Backend:** Node.js 22 · Express 5 · TypeScript 5.9 · Prisma 7 · PostgreSQL 16 · Socket.io · JWT · Multer · Swagger
 
-**DevOps:** Docker · Docker Compose · GitHub Actions · Vercel · Railway · Nginx
+**DevOps:** Docker · Docker Compose · GitHub Actions · Cloudflare Workers · Railway · Nginx
 
 **Testing:** Vitest · React Testing Library · 98 unit tests across 6 service test suites

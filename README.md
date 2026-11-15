@@ -20,7 +20,7 @@
 ![WS Events](https://img.shields.io/badge/WS_Events-32-06B6D4?style=flat-square)
 ![Components](https://img.shields.io/badge/Components-40+-14B8A6?style=flat-square)
 
-**[Live Demo](https://realtime-chat-eight-beryl.vercel.app)** · **[API Docs (Swagger)](https://server-production-f308.up.railway.app/api/docs)** · **[Architecture](/docs/architecture.md)**
+**[Live Demo](https://realtime-chat.andrifullstack.workers.dev)** · **[API Docs (Swagger)](https://server-production-f308.up.railway.app/api/docs)** · **[Architecture](/docs/architecture.md)**
 
 > Demo credentials: `andriy@example.com` / `password123`
 
@@ -120,7 +120,7 @@
 |-------|-------------|
 | **Frontend** | React 19, Vite 7, TypeScript 5.9, Tailwind CSS 4, Radix UI, Zustand, React Query, Socket.io Client |
 | **Backend** | Node.js 22, Express 5, TypeScript 5.9, Prisma 7, PostgreSQL 16, Socket.io, Pino, JWT, Zod |
-| **DevOps** | Docker Compose, GitHub Actions (CI/CD), Vercel (frontend), Railway (backend + database) |
+| **DevOps** | Docker Compose, GitHub Actions (CI/CD), Cloudflare Workers (frontend), Railway (backend + database) |
 | **Design System** | 40+ reusable components from Pulse (primitives, organisms, patterns, layouts) |
 
 ---

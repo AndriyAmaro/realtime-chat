@@ -40,7 +40,7 @@ export function initializeSocket(httpServer: HttpServer): TypedServer {
       origin: env.CLIENT_URL,
       credentials: true,
     },
-    // Keep intervals short for Vercel edge proxy compatibility (max ~25s)
+    // Keep intervals short for Cloudflare Worker proxy compatibility (max ~25s)
     pingInterval: 10_000,
     pingTimeout: 5_000,
   })

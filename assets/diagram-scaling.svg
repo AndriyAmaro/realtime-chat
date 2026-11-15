@@ -12,7 +12,7 @@
   <text x="95" y="64" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">up to 500 users · ~$10/month</text>
 
   <rect x="45" y="76" width="120" height="28" rx="5" fill="#1a1a2e" stroke="#16a34a" stroke-width="1" />
-  <text x="105" y="94" text-anchor="middle" fill="#86efac" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Vercel (CDN)</text>
+  <text x="105" y="94" text-anchor="middle" fill="#86efac" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="600">Cloudflare (CDN)</text>
 
   <path d="M165,90 L195,90" stroke="#475569" stroke-width="1" />
   <polygon fill="#475569" points="197,90 191,86 191,94" />

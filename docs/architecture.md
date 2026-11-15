@@ -81,7 +81,7 @@ How a message travels from sender to receiver in real-time:
 | Auth | JWT (access + refresh) | httpOnly cookies for refresh |
 | Testing | Vitest | 98 unit tests (service layer) |
 | DevOps | Docker + GitHub Actions | CI/CD pipeline |
-| Hosting | Vercel (client) + Railway (server) | Edge CDN + managed infra |
+| Hosting | Cloudflare Workers (client) + Railway (server) | Edge CDN + managed infra |
 
 ---
 

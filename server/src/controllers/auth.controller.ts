@@ -13,7 +13,7 @@ import type {
 
 const REFRESH_TOKEN_COOKIE = 'refresh_token'
 
-// API calls always arrive same-origin (Vite proxy in dev, Vercel rewrite in prod),
+// API calls always arrive same-origin (Vite proxy in dev, Cloudflare Worker rewrite in prod),
 // so cookies are first-party. SameSite=Lax is the safest cross-browser default.
 const cookieOptions = {
   httpOnly: true,

@@ -9,7 +9,7 @@
   <!-- ═══ FRONTEND ═══ -->
   <rect x="30" y="48" width="260" height="150" rx="8" fill="#111827" stroke="#6366f1" stroke-width="1.5" />
   <text x="160" y="70" text-anchor="middle" fill="#a5b4fc" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1">FRONTEND</text>
-  <text x="160" y="86" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">React 19 · Vite 7 · Vercel CDN</text>
+  <text x="160" y="86" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">React 19 · Vite 7 · Cloudflare Workers</text>
 
   <!-- Frontend inner boxes -->
   <rect x="45" y="98" width="110" height="32" rx="5" fill="#1a1a2e" stroke="#818cf8" stroke-width="1" />
@@ -85,7 +85,7 @@
   <text x="120" y="260" text-anchor="middle" fill="#4ade80" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="1">DEVOPS</text>
 
   <text x="120" y="278" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Docker · GitHub Actions</text>
-  <text x="120" y="292" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Vercel · Railway</text>
+  <text x="120" y="292" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="9">Cloudflare · Railway</text>
 
   <!-- ═══ DESIGN SYSTEM connection (DevOps → Pulse Ecosystem) ═══ -->
   <path d="M120,308 L120,346" stroke="#6366f1" stroke-width="1" stroke-dasharray="4,4" fill="none" />

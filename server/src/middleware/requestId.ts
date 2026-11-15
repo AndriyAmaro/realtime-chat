@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 
 /**
  * Assigns a unique request ID to every incoming HTTP request.
- * - Checks for an existing X-Request-ID header (from load balancers / Vercel proxy)
+ * - Checks for an existing X-Request-ID header (from load balancers / Cloudflare proxy)
  * - Falls back to crypto.randomUUID()
  * - Sets X-Request-ID on the response for client correlation
  * - Stores it on req.id for pino-http to pick up

@@ -14,9 +14,9 @@ let socket: TypedSocket | null = null
 export function getSocket(): TypedSocket {
   if (socket) return socket
 
-  // In production, Socket.io is proxied through Vercel edge rewrites
+  // In production, Socket.io is proxied through Cloudflare Worker rewrites
   // (/socket.io/* → Railway) so it's same-origin — no CORS issues.
-  // Polling-only because Vercel edge doesn't support WebSocket upgrade.
+  // Polling-only because the edge proxy doesn't support WebSocket upgrade.
   // In dev, Vite proxy handles /socket.io.
   socket = io('/', {
     auth: (cb) => {
